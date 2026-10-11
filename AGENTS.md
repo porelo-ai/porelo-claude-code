@@ -258,7 +258,7 @@ and the UTC time that text last changed; change it in the channel first, never i
 
 ## Shared by the agent adapter repositories
 
-> **BEGIN Agent Adapter Area** · sha256 `c340cc8c209408eb` · changed 2026-10-05T06:45Z
+> **BEGIN Agent Adapter Area** · sha256 `f3f88ecfcefe4cab` · changed 2026-10-11T05:02Z
 
 Identical in `sokar-claude-code`, `sokar-pi` and `sokar-omp`, marked and changed like the shared block;
 what is one adapter's alone stays outside.
@@ -285,12 +285,13 @@ what is one adapter's alone stays outside.
 - **A first-run question is measured attended, at a real terminal, in `/workspace`, on an account
   where the agent never ran.** `--version` and `-p` never reach the first-run dialogs, and from
   `/home/agent` the agent asks to trust that directory instead.
-- **The task image has neither `python3` nor `node`**, so a probe that changes an agent's JSON writes
-  the whole file.
+- **The task image Sokar builds has `python3` but no `node`** where the base has a package manager; a
+  project's own image may still lack it. So a probe that changes an agent's JSON writes the whole file,
+  which works in every image.
 - **Sokar's acceptance suite runs a stub agent without dialogs**, so what a real agent asks is checked
   only in the adapter's repository.
 
-> **END Agent Adapter Area** · sha256 `c340cc8c209408eb`
+> **END Agent Adapter Area** · sha256 `f3f88ecfcefe4cab`
 
 ## Work in this repository
 
