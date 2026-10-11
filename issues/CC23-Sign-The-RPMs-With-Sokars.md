@@ -24,6 +24,8 @@ changes nothing for a user, because both share one repository and one `.repo` fi
   secret first, for snapshots and releases alike, and removes it in an `always()` step.
 - **The acceptance legs** (`AgentLeg` in `sokar-buildtools`) set `gpgcheck=1`, `repo_gpgcheck=1` and
   `gpgkey=` as part of [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99), and this repository's acceptance runs with them.
+- **Before the upload:** the publish job runs the release tools' shared `check-signed`, which refuses an
+  unsigned package, as [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99) plans for every repository.
 - **Red first:** `rpm -K` on the built `.rpm` says it is unsigned; green once it is signed by that key.
 
 ## Acceptance
@@ -32,8 +34,3 @@ changes nothing for a user, because both share one repository and one `.repo` fi
   the three agents.
 - The `.repo` file uses `gpgcheck=1` with `gpgkey=`, and an acceptance leg installs with it on; an
   unsigned or re-signed package is seen to be refused.
-
-## To be checked
-
-- Whether the check that refuses an unsigned RPM before it is published is a step here or one shared
-  check from `sokar-buildtools` - to settle with Agent Core in [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99).

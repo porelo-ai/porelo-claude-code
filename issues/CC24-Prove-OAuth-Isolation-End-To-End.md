@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Analyzed.
+**Status:** Analyzed; blocked by sokar (an issue to be opened: a refresh token stored without a person).
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
 adapter's code; a real CI subscription instead would make it the operator's to provide.
 
@@ -22,7 +22,9 @@ token.
   and a rotated refresh token, and counting what it is asked. Sokar's renewal (`TokenPurchase`) takes
   https, or http on loopback, so no certificate is needed.
 - **The scenario stores a subscription login as `ClaudeCredentialExtractor` would:** type `oauth`, an
-  access token about to expire, a refresh token, the client id, and the token URL naming the stand-in.
+  access token about to expire, a refresh token, the client id, and the token URL naming the stand-in. Today
+  only `vault login` and `vault authorize` write a refresh token, and `vault put` refuses every grant's name,
+  so this needs a way of Sokar's to store one without a person.
 - **It starts a Claude Code task with that entry,** then checks the task's environment, its files under
   `/home/agent` and its logs for the refresh token, as `credential.feature` checks for the API key.
 - **Renewal:** a request after the access token's expiry is seen renewed by the host - the stand-in
@@ -39,8 +41,3 @@ token.
 ## Open questions
 
 - A stand-in token endpoint, or a dedicated CI Claude subscription - the plan above assumes the stand-in.
-
-## To be checked
-
-- How the kit stores a refresh token without a person: today only the agent's own login writes one
-  (`ClaudeCredentialExtractor`), and `vault put --setting` is for what is not secret - to ask Agent Core.
