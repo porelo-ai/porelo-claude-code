@@ -1,8 +1,8 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Analyzed; blocked by sokar (an issue to be opened: a refresh token stored without a person).
+**Status:** Estimated; blocked by sokar (an issue to be opened: a refresh token stored without a person).
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
-adapter's code; a real CI subscription instead would make it the operator's to provide.
+adapter's code.
 
 **What must be true.** A task started with a Claude subscription holds only its own short-lived token:
 the refresh token never reaches it, and only the host renews.
@@ -17,7 +17,7 @@ token.
 
 ## Plan
 
-- **A stand-in token endpoint** on the host's loopback, in the acceptance kit
+- **A stand-in token endpoint** on the host's loopback, not a CI subscription, in the acceptance kit
   (`src/acceptance/java/.../acceptance/`), answering `grant_type=refresh_token` with a new access token
   and a rotated refresh token, and counting what it is asked. Sokar's renewal (`TokenPurchase`) takes
   https, or http on loopback, so no certificate is needed.
@@ -37,7 +37,3 @@ token.
 - A scenario shows the task holds only its own token, and the refresh token is in neither its
   environment nor its files nor the logs.
 - A renewal from inside the task is seen to be refused, and the host renews.
-
-## Open questions
-
-- A stand-in token endpoint, or a dedicated CI Claude subscription - the plan above assumes the stand-in.
