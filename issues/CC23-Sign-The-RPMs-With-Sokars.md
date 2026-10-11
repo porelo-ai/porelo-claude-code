@@ -1,6 +1,6 @@
 # CC23 — Sign the RPMs, together with Sokar's
 
-**Status:** Analyzed; blocked by sokar [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99).
+**Status:** Estimated; blocked by sokar [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99).
 **Size:** S - here one pom property and a key step in the release job; the key, its CI secret, the day
 every repository switches and the legs that install with `gpgcheck=1` are [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99)'s.
 

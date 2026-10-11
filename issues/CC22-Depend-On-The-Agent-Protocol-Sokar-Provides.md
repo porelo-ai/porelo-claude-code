@@ -1,6 +1,6 @@
 # CC22 — Depend on the agent protocol Sokar's package provides
 
-**Status:** Analyzed; blocked by sokar (an issue to be opened).
+**Status:** Estimated; blocked by sokar (an issue to be opened).
 **Size:** S - here two dependency lines and one test; Sokar's `Provides` is its own issue, and
 `sokar-pi` and `sokar-omp` take the same lines.
 

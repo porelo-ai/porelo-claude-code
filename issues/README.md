@@ -4,18 +4,13 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Analyzed
-
-| # | Size | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|
-| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Sokars.md) | S | sokar [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs | — |
-| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | S | Sokar (to be opened) | the agent contract named at install time | — |
-
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | sokar [B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
+| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Sokars.md) | S | sokar [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
+| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | S | Sokar (to be opened) | the agent contract named at install time |
 
 ## Where an agent's requirements live
 
