@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Estimated; blocked by sokar (an issue to be opened: a refresh token stored without a person).
+**Status:** Estimated; blocked by sokar [B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173).
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
 adapter's code.
 
@@ -21,10 +21,11 @@ token.
   (`src/acceptance/java/.../acceptance/`), answering `grant_type=refresh_token` with a new access token
   and a rotated refresh token, and counting what it is asked. Sokar's renewal (`TokenPurchase`) takes
   https, or http on loopback, so no certificate is needed.
-- **The scenario stores a subscription login as `ClaudeCredentialExtractor` would:** type `oauth`, an
-  access token about to expire, a refresh token, the client id, and the token URL naming the stand-in. Today
-  only `vault login` and `vault authorize` write a refresh token, and `vault put` refuses every grant's name,
-  so this needs a way of Sokar's to store one without a person.
+- **The scenario stores a subscription login without a person:** the kit writes a credentials file as Claude
+  Code leaves it, with an access token about to expire and a refresh token, and stores it with `sokar vault
+  login claude --credentials-from <its copy> --token-url http://127.0.0.1:<port>/token` ([B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173)).
+  `ClaudeCredentialExtractor` reads it as after a real login; the token URL comes only from that host-side
+  option, never from the file, and is accepted only as http on loopback.
 - **It starts a Claude Code task with that entry,** then checks the task's environment, its files under
   `/home/agent` and its logs for the refresh token, as `credential.feature` checks for the API key.
 - **Renewal:** a request after the access token's expiry is seen renewed by the host - the stand-in

@@ -15,7 +15,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | Sokar (to be opened) | a subscription's refresh token never in a task |
+| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | sokar [B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
 
 ## Where an agent's requirements live
 
