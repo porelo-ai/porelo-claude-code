@@ -39,4 +39,4 @@ an adapter's `protocolVersion` before using it and refuses a mismatch with a mes
 ## To be checked
 
 - Whether `sokar` stays a plain dependency beside the protocol, so a Sokar from before the `Provides` is
-  refused by name rather than as a missing virtual package - Agent Core's, with Sokar's issue.
+  refused by name rather than as a missing virtual package - to settle with Agent Core in Sokar's issue.

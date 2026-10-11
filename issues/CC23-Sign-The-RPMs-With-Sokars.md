@@ -36,4 +36,4 @@ changes nothing for a user, because both share one repository and one `.repo` fi
 ## To be checked
 
 - Whether the check that refuses an unsigned RPM before it is published is a step here or one shared
-  check from `sokar-buildtools` - Agent Core's, with [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99).
+  check from `sokar-buildtools` - to settle with Agent Core in [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99).

@@ -36,9 +36,11 @@ token.
   environment nor its files nor the logs.
 - A renewal from inside the task is seen to be refused, and the host renews.
 
+## Open questions
+
+- A stand-in token endpoint, or a dedicated CI Claude subscription - the plan above assumes the stand-in.
+
 ## To be checked
 
 - How the kit stores a refresh token without a person: today only the agent's own login writes one
-  (`ClaudeCredentialExtractor`), and `vault put --setting` is for what is not secret - Agent Core's.
-- A stand-in endpoint or a dedicated CI subscription - the operator's; the plan above assumes the
-  stand-in.
+  (`ClaudeCredentialExtractor`), and `vault put --setting` is for what is not secret - to ask Agent Core.
