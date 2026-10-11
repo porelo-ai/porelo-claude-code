@@ -1,26 +1,16 @@
 # Issues
 
-What is open in this repository, grouped by the MVP (`sokar-project` PJ17): **Now**
-serves one person, one machine, one agent, from install to a reviewed push; **Soon** follows right
-after it; **Later** is the rest. Within a group, ordered by what to do next rather than by number. The
-number is identity, not sequence.
+What is open in this repository, grouped by state in the order Review, Rework, Implementing, Backlog,
+Analyzed, Accepted, Idea, Estimated and Rejected; a group with nothing in it is left out. Within a
+group, the order is the priority. The number is identity, not sequence.
 
-## Now
-
-None open.
-
-## Soon
+## Analyzed
 
 | # | Status | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|---|
-| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | open | S | sokar B99 | package-level signatures on the published RPMs | 1 |
-
-## Later
-
-| # | Status | Size | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|---|
-| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | open | S | Sokar (to be opened) | the agent contract named at install time | 1 |
-| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | open | M |  | a subscription's refresh token never in a task | 2 |
+| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | Analyzed | S | sokar B99 | package-level signatures on the published RPMs | 1 |
+| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | Analyzed | M |  | a subscription's refresh token never in a task | 2 |
+| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | Analyzed | S | Sokar (to be opened) | the agent contract named at install time | 1 |
 
 ## Where an agent's requirements live
 

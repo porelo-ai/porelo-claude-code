@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** later.
+**Status:** Analyzed.
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
 adapter's code; a real CI subscription instead would make it the operator's to provide.
 
