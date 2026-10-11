@@ -6,11 +6,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Analyzed
 
-| # | Status | Size | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|---|
-| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | Analyzed | S | sokar B99 | package-level signatures on the published RPMs | 1 |
-| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | Analyzed | M |  | a subscription's refresh token never in a task | 2 |
-| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | Analyzed | S | Sokar (to be opened) | the agent contract named at install time | 1 |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | S | sokar B99 | package-level signatures on the published RPMs | 1 |
+| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M |  | a subscription's refresh token never in a task | 2 |
+| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | S | Sokar (to be opened) | the agent contract named at install time | 1 |
 
 ## Where an agent's requirements live
 

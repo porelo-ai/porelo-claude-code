@@ -2,7 +2,7 @@
 
 ## Shared across the Sokar repositories
 
-> **BEGIN Shared Area** · sha256 `f55e05ebf3dfea1b` · changed 2026-10-11T08:07Z
+> **BEGIN Shared Area** · sha256 `845398696eac94da` · changed 2026-10-11T08:11Z
 
 Identical in every repository `project.yml` names but `sokar-parent`, which holds only the parent pom
 and no `AGENTS.md`. The markers carry the SHA-256 of the lines between them (the first 16 hex digits)
@@ -105,7 +105,8 @@ and the UTC time that text last changed; change it in the channel first, never i
   size or plan that grows clearly while building is said before building on.
 - **`issues/README.md` is the index, grouped by state** in this order: Review, Rework, Implementing,
   Backlog, Analyzed, Accepted, Idea, Estimated, then Finished and Rejected last; each group a table of number,
-  status, size, blocked by, what it covers and open questions, ordered by what to do next; it changes in
+  size, blocked by, what it covers and open questions (the group's heading says the state; a note on
+  how far it is goes into what it covers), ordered by what to do next; it changes in
   the same commit as the issue. An open task is never a TODO in code or a note in a commit message.
 - **A rejected issue's file is deleted**; its number, title and one sentence why stay as a row under
   *Rejected* in the index, so the same idea is not brought twice.
@@ -290,7 +291,7 @@ and the UTC time that text last changed; change it in the channel first, never i
 - **Every native executable is built with `-march=x86-64`**, so it starts on any x86-64 CPU, and the
   build checks each executable for exactly that instruction set.
 
-> **END Shared Area** · sha256 `f55e05ebf3dfea1b`
+> **END Shared Area** · sha256 `845398696eac94da`
 
 ## Shared by the agent adapter repositories
 
