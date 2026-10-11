@@ -11,16 +11,16 @@ None open.
 
 ## Soon
 
-| # | Status | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|
-| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | open | Sokar (to be opened) | package-level signatures on the published RPMs | 0 |
+| # | Status | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|---|
+| [CC23](CC23-Sign-The-RPMs-With-Sokars.md) | open | S | sokar B99 | package-level signatures on the published RPMs | 1 |
 
 ## Later
 
-| # | Status | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|
-| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | open | Sokar (to be opened) | the agent contract named at install time | 0 |
-| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | open |  | a subscription's refresh token never in a task | 1 |
+| # | Status | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|---|
+| [CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | open | S | Sokar (to be opened) | the agent contract named at install time | 1 |
+| [CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | open | M |  | a subscription's refresh token never in a task | 2 |
 
 ## Where an agent's requirements live
 
