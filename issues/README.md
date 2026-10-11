@@ -1,8 +1,8 @@
 # Issues
 
 What is open in this repository, grouped by state in the order Review, Rework, Implementing, Backlog,
-Analyzed, Accepted, Idea, Estimated and Rejected; a group with nothing in it is left out. Within a
-group, the order is the priority. The number is identity, not sequence.
+Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
+Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Analyzed
 
