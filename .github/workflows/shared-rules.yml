@@ -1,15 +1,16 @@
 # The marked rule blocks in AGENTS.md are shared copies; a hash that no longer fits its text means one
 # was edited alone. Beside it the shared document checks: citations of issues in any page or source, and
-# the documentation chapter, and the tests tagged documents. A job of its own, so a document-only change
-# checks them without leasing machines; on every path, since a citation can land in any file.
+# the documentation chapter, and the tests tagged documents. A job of its own, so it checks them without
+# leasing machines.
 name: Shared rules check
 run-name: "${{ github.workflow }} · ${{ github.ref_name }}: ${{ github.event.head_commit.message || github.event.pull_request.title || github.workflow }}"
 
+# Once a day, not on a push: every hand-over runs the same checks locally on its exact commit first, and a run per
+# push spent build minutes on what was already known. 03:17 UTC lies outside the hours the repositories are worked in.
 on:
-  push:
-    branches: ['**']
+  schedule:
+    - cron: '17 3 * * *'
   pull_request:
-    branches: ['**']
   workflow_dispatch:
 
 # Read by every Maven call, the pinned-jdk action's too: Maven asks for a newer snapshot once a day, and a
