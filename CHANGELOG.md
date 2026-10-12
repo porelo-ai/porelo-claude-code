@@ -12,6 +12,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
+- Claude Code pinned to 2.1.287 (was 2.1.267).
 - Every workflow's token reads only at its top; only the update job may push the pin's branch and open its pull request, and only the job that deletes old runs may delete them.
 - The unattended broker scenario asks again when the model ends its turn with no text and the CLI exits 0, twice at most and said each time; a failing run is never asked again.
 - A tag's build takes nothing from Central's snapshots and asks for nothing again, and a tag on a Sokar snapshot is seen refused by the channel step itself, run in a test.

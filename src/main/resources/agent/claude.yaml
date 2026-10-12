@@ -181,7 +181,7 @@ install:
   version: "${agent.cli.version}"
   artifacts:
     - url: https://downloads.claude.ai/claude-code-releases/${agent.cli.version}/linux-x64/claude
-      sha256: "0399c793ff571d5946ef923d80b4f330d05ac4b6842a6b0775468f5d389403c0"
+      sha256: "3920489a5109cff5786a1a392c25277408ff22bc796d5edb9c16a60e5a1718f0"
       license: "SEE LICENSE IN README.md"
       target: /home/agent/.local/bin/claude
       mode: "0755"
