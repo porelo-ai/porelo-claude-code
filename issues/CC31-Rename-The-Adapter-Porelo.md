@@ -22,11 +22,15 @@ file, and no image that draws the name.
 - **Read by others:** the artifact and native executable `sokar-agent-claude`; the packages it
   builds, which `Depends: sokar` and `Provides: sokar-agent` and install into `/usr/libexec/sokar/agents`, where the
   daemon looks; the service file naming Sokar's `Agent` interface; the guide written into every task, which names
-  `/sokar/files`. Each follows Sokar's own rename, so they move with it and nothing is kept for the old name.
+  `/sokar/files`. Each follows Sokar's own rename, so they move with it and nothing is kept for the old name:
+  Sokar's side is the plain replacement too - `org.fuin.porelo.agent.api.Agent`, `/usr/libexec/porelo/agents`,
+  `/porelo/files`, `Provides: porelo-agent`, the token prefix `porelo_pt_`, `PORELO_VAULT`.
 - **Read from others:** `org.fuin.sokar` (100 times) - the BOM, `sokar-agent-api`, `sokar-wire`, the acceptance
   kit, the parent, `sokar-release` and `sokar-machines` called by name in the workflows; the properties
   `-Dsokar.release` and `-Dsokar.acceptance.*`; the variables `SOKAR_CI_LEG`, `SOKAR_E2E_EXPECT_CLI`, `SOKAR_E2E_MODEL`, `SOKAR_E2E_OPENROUTER_API_KEY`, `SOKAR_E2E_REFUSED_KEY`, `SOKAR_VAULT`, of which `SOKAR_VAULT` is Sokar's own
-  and the CI leg and most of the `SOKAR_E2E_*` set are read by `sokar-machines` and Sokar's acceptance kit.
+  and the CI leg and most of the `SOKAR_E2E_*` set are read by `sokar-machines` and Sokar's acceptance kit. The build
+  tools and the parent read the plain replacement as well: `PORELO_CI_LEG`, `PORELO_E2E_*`, `porelo.release.*`,
+  `porelo.acceptance.*`. The OpenRouter key comes from the secret `OPEN_ROUTER_API_KEY`, which keeps its name.
 - **At the forge and Artifactory:** the secret `SOKAR_UPDATE_TOKEN` and the variable `SOKAR_UPDATE_AUTO_MERGE`, made
   again as `PORELO_*` in [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41)'s preparation; the repositories `sokar-dist-deb` and `sokar-dist-rpm` the workflows
   upload into, and the links to `github.com/sokar-ai/...`.
@@ -44,6 +48,9 @@ file, and no image that draws the name.
   outside that keeps the old name.
 - **Lengths:** `porelo` is one longer; the test tokens `sokar_pt_...` become `porelo_pt_...`, and the tests that
   assert on them are read, not regenerated.
+- **Published before this builds**, in this order: `org.fuin.porelo:porelo-parent:0.2.0`, the tools `0.5.0`
+  (`porelo-release`, `porelo-machines`), then Porelo's `0.5.0-SNAPSHOT` with its packages in `porelo-dist-deb`
+  and `porelo-dist-rpm` for the VM.
 - **Checked as any change to the adapter:** unit tests, the native build with its linkage check, the packages, and the
   acceptance on the VM against Porelo installed afresh; then the whole workflow on the renamed repository.
 
@@ -53,11 +60,3 @@ file, and no image that draws the name.
 - The packages are named `porelo-agent-...`, install into Porelo's agent directory and are found by `porelo agents`;
   the acceptance passes on the VM against Porelo installed afresh.
 - The renamed repository's Build uploads into `porelo-dist-deb` and `porelo-dist-rpm`, at the pool's letter `p`.
-
-## To be checked
-
-- With Core, that Sokar's renamed contract is what replacement makes of today's: the interface
-  `org.fuin.porelo.agent.api.Agent`, `/usr/libexec/porelo/agents`, `/porelo/files`, the token prefix `porelo_pt_`,
-  the variables `PORELO_CI_LEG` and `PORELO_E2E_*`, the properties `porelo.release` and `porelo.acceptance.*`.
-- What must be published before this builds: `porelo-parent` `0.2.0`, `porelo-release` and `porelo-machines`, and
-  Porelo's `0.5.0` snapshot with its packages for the VM.
