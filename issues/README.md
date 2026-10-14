@@ -9,6 +9,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
 | <a id="cc29"></a>[CC29](CC29-Read-The-Code-Changed-Since-The-Last-Skills-Review.md) | M | — | the code changed since 2026-09-27 read against the seven skills | 0 |
+| <a id="cc31"></a>[CC31](CC31-Rename-The-Adapter-Porelo.md) | S | sokar-project [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41) | the adapter renamed Porelo, by script, with its exceptions | 0 |
 
 ## Accepted
 
