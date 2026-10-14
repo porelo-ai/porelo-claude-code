@@ -1,6 +1,6 @@
 # CC31 — Rename The Adapter Porelo
 
-**Status:** Analyzed; blocked by sokar-project [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41)'s
+**Status:** Estimated; blocked by sokar-project [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41)'s
 preparation and by Porelo's `0.5.0` snapshot.
 **Size:** S - one commit made by a script and read through; 730 occurrences in one module, and the build,
 the native build and the acceptance as for any change to the adapter.
