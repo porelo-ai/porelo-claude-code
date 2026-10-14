@@ -10,6 +10,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|---|
 | <a id="cc29"></a>[CC29](CC29-Read-The-Code-Changed-Since-The-Last-Skills-Review.md) | M | — | the code changed since 2026-09-27 read against the seven skills | 0 |
 
+## Accepted
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | — | sokar [B194](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b194) | Claude Code's own memory off in a task; `.AGENTS.md` in its place |
+
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
