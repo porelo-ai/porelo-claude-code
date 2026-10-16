@@ -15,7 +15,7 @@
 
     <groupId>org.fuin.sokar</groupId>
     <artifactId>sokar-agent-claude</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
+    <version>0.4.3-SNAPSHOT</version>
     <name>Sokar Agent Claude Code</name>
     <description>Sokar agent for Claude Code</description>
 
@@ -47,7 +47,7 @@
         <!-- The Claude Code version this agent installs. Filtered into claude.yaml and carried
              in the package description, so 'dpkg -s' and 'rpm -qi' answer which CLI an image
              build installs. Deliberately not part of the package version. -->
-        <agent.cli.version>2.1.267</agent.cli.version>
+        <agent.cli.version>2.1.292</agent.cli.version>
 
         <!-- What this agent's update differs in, read by Sokar's release tool beside the pin. -->
         <sokar.release.agent>Claude Code</sokar.release.agent>
