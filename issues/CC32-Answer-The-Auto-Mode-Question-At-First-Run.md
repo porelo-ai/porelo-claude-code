@@ -1,6 +1,6 @@
 # CC32 — Answer The Auto Mode Question At First Run
 
-**Status:** Idea.
+**Status:** Accepted.
 
 **What must be true.** A task running a Claude Code version that asks at start "Make auto mode your default
 permission mode?" reaches work without being asked anything, as it does with the pinned version, so the update job

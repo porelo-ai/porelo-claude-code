@@ -15,11 +15,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | — | sokar [B194](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b194) | Claude Code's own memory off in a task; `.AGENTS.md` in its place |
-
-## Idea
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
 | <a id="cc32"></a>[CC32](CC32-Answer-The-Auto-Mode-Question-At-First-Run.md) | — | — | the new first-run question about auto mode answered, so the pin can move |
 
 ## Estimated
