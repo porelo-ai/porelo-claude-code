@@ -4,11 +4,12 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Analyzed
+## Backlog
 
-| # | Size | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|
-| <a id="cc29"></a>[CC29](CC29-Read-The-Code-Changed-Since-The-Last-Skills-Review.md) | M | — | the code changed since 2026-09-27 read against the seven skills | 0 |
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc33"></a>[CC33](CC33-Reformat-To-The-Shared-Style.md) | S | porelo-project [PJ29](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj29) | the code reformatted to the shared style, which the build then checks |
+| <a id="cc29"></a>[CC29](CC29-Read-The-Code-Changed-Since-The-Last-Skills-Review.md) | M | — | the code changed since 2026-09-27 read against the seven skills |
 
 ## Accepted
 
