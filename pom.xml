@@ -7,31 +7,31 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.fuin.sokar</groupId>
-        <artifactId>sokar-parent</artifactId>
-        <version>0.1.4-SNAPSHOT</version>
+        <groupId>org.fuin.porelo</groupId>
+        <artifactId>porelo-parent</artifactId>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
-    <groupId>org.fuin.sokar</groupId>
-    <artifactId>sokar-agent-claude</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
-    <name>Sokar Agent Claude Code</name>
-    <description>Sokar agent for Claude Code</description>
+    <groupId>org.fuin.porelo</groupId>
+    <artifactId>porelo-agent-claude</artifactId>
+    <version>0.5.0-SNAPSHOT</version>
+    <name>Porelo Agent Claude Code</name>
+    <description>Porelo agent for Claude Code</description>
 
-    <url>https://github.com/sokar-ai/sokar-claude-code/</url>
+    <url>https://github.com/porelo-ai/porelo-claude-code/</url>
 
     <scm child.scm.url.inherit.append.path="false"
          child.scm.connection.inherit.append.path="false"
          child.scm.developerConnection.inherit.append.path="false">
-        <url>https://github.com/sokar-ai/sokar-claude-code/</url>
-        <connection>scm:git:git://github.com/sokar-ai/sokar-claude-code.git</connection>
-        <developerConnection>scm:git:git@github.com:sokar-ai/sokar-claude-code.git</developerConnection>
+        <url>https://github.com/porelo-ai/porelo-claude-code/</url>
+        <connection>scm:git:git://github.com/porelo-ai/porelo-claude-code.git</connection>
+        <developerConnection>scm:git:git@github.com:porelo-ai/porelo-claude-code.git</developerConnection>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/sokar-ai/sokar-claude-code/issues</url>
+        <url>https://github.com/porelo-ai/porelo-claude-code/issues</url>
     </issueManagement>
 
     <properties>
@@ -40,7 +40,7 @@
              saw nothing to do and whoever installed yesterday stayed on it until they purged.
              CI passes the run number; a local build is 0, which sorts below every CI build and
              above the old flat ~SNAPSHOT, so an existing install upgrades cleanly.
-             Kept identical in shape to sokar's own packages, so both sort the same way in one
+             Kept identical in shape to porelo's own packages, so both sort the same way in one
              repository. The counters are per repository and are NOT shared. -->
         <agent.snapshot.run>0</agent.snapshot.run>
 
@@ -49,23 +49,23 @@
              build installs. Deliberately not part of the package version. -->
         <agent.cli.version>2.1.267</agent.cli.version>
 
-        <!-- What this agent's update differs in, read by Sokar's release tool beside the pin. -->
-        <sokar.release.agent>Claude Code</sokar.release.agent>
-        <sokar.release.definition>src/main/resources/agent/claude.yaml</sokar.release.definition>
-        <sokar.release.upstream>pointer https://downloads.claude.ai/claude-code-releases</sokar.release.upstream>
-        <sokar.release.channel>stable</sokar.release.channel>
-        <sokar.release.digest>manifest https://downloads.claude.ai/claude-code-releases/{version}/manifest.json linux-x64</sokar.release.digest>
-        <sokar.release.license>npm https://registry.npmjs.org/@anthropic-ai%2fclaude-code</sokar.release.license>
+        <!-- What this agent's update differs in, read by Porelo's release tool beside the pin. -->
+        <porelo.release.agent>Claude Code</porelo.release.agent>
+        <porelo.release.definition>src/main/resources/agent/claude.yaml</porelo.release.definition>
+        <porelo.release.upstream>pointer https://downloads.claude.ai/claude-code-releases</porelo.release.upstream>
+        <porelo.release.channel>stable</porelo.release.channel>
+        <porelo.release.digest>manifest https://downloads.claude.ai/claude-code-releases/{version}/manifest.json linux-x64</porelo.release.digest>
+        <porelo.release.license>npm https://registry.npmjs.org/@anthropic-ai%2fclaude-code</porelo.release.license>
         <!-- The rule: a release is taken once it is three days old. -->
-        <sokar.release.min-age>3d</sokar.release.min-age>
+        <porelo.release.min-age>3d</porelo.release.min-age>
 
-        <!-- The published contract this builds against. Nothing else of Sokar's is on the
-             classpath, and no checkout of the sokar repository is needed to build here. -->
-        <sokar.version>0.4.2-SNAPSHOT</sokar.version>
+        <!-- The published contract this builds against. Nothing else of Porelo's is on the
+             classpath, and no checkout of the porelo repository is needed to build here. -->
+        <porelo.version>0.5.0-SNAPSHOT</porelo.version>
 
-        <agent.install.dir>/usr/libexec/sokar/agents</agent.install.dir>
-        <sbom.install.dir>/usr/share/sokar/sbom</sbom.install.dir>
-        <!-- RPMs are unsigned everywhere for now, like Sokar's own; what is signed is the repository
+        <agent.install.dir>/usr/libexec/porelo/agents</agent.install.dir>
+        <sbom.install.dir>/usr/share/porelo/sbom</sbom.install.dir>
+        <!-- RPMs are unsigned everywhere for now, like Porelo's own; what is signed is the repository
              metadata. -->
         <rpm.sign.skip>true</rpm.sign.skip>
 
@@ -81,7 +81,7 @@
 
         <dependencies>
 
-            <!-- JUnit's own BOM first, so no BOM imported after it can pull JUnit back - sokar-bom
+            <!-- JUnit's own BOM first, so no BOM imported after it can pull JUnit back - porelo-bom
                  stops importing it with 0.4.1, and the org BOM pins an older Jupiter. -->
 
             <dependency>
@@ -92,21 +92,21 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Before the org BOM, so its versions win: the Sokar artifacts, and JUnit as ONE set
+            <!-- Before the org BOM, so its versions win: the Porelo artifacts, and JUnit as ONE set
                  with the platform Cucumber is built against. Imported before the org BOM on
                  purpose - that one pins a Jupiter beside a suite engine from a different
                  platform, and through the acceptance kit the mixed set reaches this build and
                  the suite engine dies on a missing method. -->
 
             <dependency>
-                <groupId>org.fuin.sokar</groupId>
-                <artifactId>sokar-bom</artifactId>
-                <version>${sokar.version}</version>
+                <groupId>org.fuin.porelo</groupId>
+                <artifactId>porelo-bom</artifactId>
+                <version>${porelo.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-            <!-- Where jspecify, junit and assertj get their versions, as in the sokar
+            <!-- Where jspecify, junit and assertj get their versions, as in the porelo
                  repository. Also pins Byte Buddy to a release that accepts JDK 25 class files. -->
 
             <dependency>
@@ -126,13 +126,13 @@
         <!-- compile: the agent contract, and nothing else. Never another agent. -->
 
         <dependency>
-            <groupId>org.fuin.sokar</groupId>
-            <artifactId>sokar-agent-api</artifactId>
+            <groupId>org.fuin.porelo</groupId>
+            <artifactId>porelo-agent-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.fuin.sokar</groupId>
-            <artifactId>sokar-wire</artifactId>
+            <groupId>org.fuin.porelo</groupId>
+            <artifactId>porelo-wire</artifactId>
         </dependency>
 
         <dependency>
@@ -140,7 +140,7 @@
             <artifactId>jspecify</artifactId>
         </dependency>
 
-        <!-- test: versions come from the org.fuin parent, as they do in the sokar repository -->
+        <!-- test: versions come from the org.fuin parent, as they do in the porelo repository -->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -219,8 +219,8 @@
             </properties>
         </profile>
 
-        <!-- Requires GraalVM as JAVA_HOME. Produces target/sokar-agent-claude, which is
-             installed into the agent directory and started by Sokar on demand. -->
+        <!-- Requires GraalVM as JAVA_HOME. Produces target/porelo-agent-claude, which is
+             installed into the agent directory and started by Porelo on demand. -->
 
         <profile>
             <id>native</id>
@@ -232,14 +232,14 @@
                         <extensions>true</extensions>
                         <executions>
                             <execution>
-                                <id>build-sokar-agent-claude</id>
+                                <id>build-porelo-agent-claude</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>compile-no-fork</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>sokar-agent-claude</imageName>
-                                    <mainClass>org.fuin.sokar.agent.impl.claude.ClaudeAgent</mainClass>
+                                    <imageName>porelo-agent-claude</imageName>
+                                    <mainClass>org.fuin.porelo.agent.impl.claude.ClaudeAgent</mainClass>
                                     <!-- The x86-64 baseline: native-image's default is v3,
                                          and a CPU or VM without AVX2 would install the package and not start it.
                                          NativeLinkageCheck holds the binary to exactly the baseline. -->
@@ -281,13 +281,13 @@
                                 </goals>
                                 <configuration>
                                     <executable>${java.home}/bin/java</executable>
-                                    <!-- Puts sokar-release, a plugin dependency, on the classpath
+                                    <!-- Puts porelo-release, a plugin dependency, on the classpath
                                          below, so it never becomes a dependency of the package. -->
                                     <includePluginDependencies>true</includePluginDependencies>
                                     <arguments>
                                         <argument>-classpath</argument>
                                         <classpath/>
-                                        <argument>org.fuin.sokar.release.Main</argument>
+                                        <argument>org.fuin.porelo.release.Main</argument>
                                         <argument>add-fetched-cli</argument>
                                         <argument>${project.build.directory}/${project.artifactId}.cdx.json</argument>
                                         <argument>${project.build.outputDirectory}/agent/claude.yaml</argument>
@@ -298,9 +298,9 @@
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>org.fuin.sokar</groupId>
-                                <artifactId>sokar-release</artifactId>
-                                <version>${sokar.buildtools.version}</version>
+                                <groupId>org.fuin.porelo</groupId>
+                                <artifactId>porelo-release</artifactId>
+                                <version>${porelo.buildtools.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -351,7 +351,7 @@
                                         <include>**/NativeLinkageCheck.java</include>
                                     </includes>
                                     <systemPropertyVariables>
-                                        <sokar.native.binary>${project.build.directory}/${project.artifactId}</sokar.native.binary>
+                                        <porelo.native.binary>${project.build.directory}/${project.artifactId}</porelo.native.binary>
                                         <package.glibc.floor>${package.glibc.floor}</package.glibc.floor>
                                         <package.zlib.floor>${package.zlib.floor}</package.zlib.floor>
                                     </systemPropertyVariables>
@@ -434,7 +434,7 @@
                             <snapshotVersion>${agent.package.version}</snapshotVersion>
                             <release>1</release>
                             <summary>${project.description}</summary>
-                            <description>${project.description} ${agent.cli.version}. Installs into /usr/libexec/sokar/agents, where the sokar binary scans for agents.</description>
+                            <description>${project.description} ${agent.cli.version}. Installs into /usr/libexec/porelo/agents, where the porelo binary scans for agents.</description>
                             <!-- Without this a snapshot build gets a timestamp release and the
                                  rpm and the deb disagree about what version they are. -->
                             <forceRelease>true</forceRelease>
@@ -443,14 +443,14 @@
                             <license>GPL-3.0-or-later</license>
                             <packager>fuin.org</packager>
                             <requires>
-                                <require>sokar</require>
+                                <require>porelo</require>
                                 <!-- The names rpmbuild itself generates for these libraries. -->
                                 <require>libc.so.6(GLIBC_${package.glibc.floor})(64bit)</require>
                                 <require>libz.so.1(ZLIB_${package.zlib.floor})(64bit)</require>
                             </requires>
                             <!-- As the deb: what the setup script lists as a choosable agent. -->
                             <provides>
-                                <provide>sokar-agent</provide>
+                                <provide>porelo-agent</provide>
                             </provides>
                             <signature>
                                 <skip>${rpm.sign.skip}</skip>
@@ -504,7 +504,7 @@
                                     </includes>
                                     <reportsDirectory>${project.build.directory}/surefire-reports-package-version</reportsDirectory>
                                     <systemPropertyVariables>
-                                        <sokar.target>${project.build.directory}</sokar.target>
+                                        <porelo.target>${project.build.directory}</porelo.target>
                                         <project.version>${project.version}</project.version>
                                         <agent.snapshot.run>${agent.snapshot.run}</agent.snapshot.run>
                                     </systemPropertyVariables>
@@ -518,12 +518,12 @@
         </profile>
 
         <!-- The acceptance suite: what a person does at a terminal with this agent, run against a
-             real machine through Sokar's published kit. Off unless a host is named - then the
+             real machine through Porelo's published kit. Off unless a host is named - then the
              ordinary build neither resolves the kit nor compiles src/acceptance, so main stays
              green whatever Central holds. Naming a host is what turns it on:
 
-               ./mvnw -s settings.xml verify -Dsokar.acceptance.host=<machine> \
-                   -Dsokar.acceptance.user=acceptance -Dsokar.acceptance.key=<key>
+               ./mvnw -s settings.xml verify -Dporelo.acceptance.host=<machine> \
+                   -Dporelo.acceptance.user=acceptance -Dporelo.acceptance.key=<key>
 
              Its own source root rather than src/test: these are integration tests that rent a
              machine, and a unit test that cannot run without one would make 'mvn test' mean
@@ -532,19 +532,19 @@
         <profile>
             <id>acceptance</id>
             <activation>
-                <property><name>sokar.acceptance.host</name></property>
+                <property><name>porelo.acceptance.host</name></property>
             </activation>
             <properties>
-                <sokar.acceptance.user>acceptance</sokar.acceptance.user>
-                <sokar.acceptance.key>${user.home}/.ssh/id_ed25519</sokar.acceptance.key>
-                <sokar.acceptance.as/>
+                <porelo.acceptance.user>acceptance</porelo.acceptance.user>
+                <porelo.acceptance.key>${user.home}/.ssh/id_ed25519</porelo.acceptance.key>
+                <porelo.acceptance.as/>
             </properties>
             <dependencies>
                 <!-- test: brings Cucumber, the JUnit platform, the ssh client and AssertJ. The
-                     one thing of Sokar's an agent may depend on in test scope beside the API. -->
+                     one thing of Porelo's an agent may depend on in test scope beside the API. -->
                 <dependency>
-                    <groupId>org.fuin.sokar</groupId>
-                    <artifactId>sokar-acceptance-kit</artifactId>
+                    <groupId>org.fuin.porelo</groupId>
+                    <artifactId>porelo-acceptance-kit</artifactId>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -587,17 +587,17 @@
                         </executions>
                         <configuration>
                             <systemPropertyVariables>
-                                <sokar.acceptance.host>${sokar.acceptance.host}</sokar.acceptance.host>
-                                <sokar.acceptance.user>${sokar.acceptance.user}</sokar.acceptance.user>
-                                <sokar.acceptance.as>${sokar.acceptance.as}</sokar.acceptance.as>
-                                <sokar.acceptance.key>${sokar.acceptance.key}</sokar.acceptance.key>
+                                <porelo.acceptance.host>${porelo.acceptance.host}</porelo.acceptance.host>
+                                <porelo.acceptance.user>${porelo.acceptance.user}</porelo.acceptance.user>
+                                <porelo.acceptance.as>${porelo.acceptance.as}</porelo.acceptance.as>
+                                <porelo.acceptance.key>${porelo.acceptance.key}</porelo.acceptance.key>
                                 <!-- Repository-relative, so an annotation lands on the feature file. -->
-                                <sokar.acceptance.features>src/acceptance/resources/</sokar.acceptance.features>
-                                <cucumber.plugin>pretty, html:target/acceptance.html, json:target/acceptance.json, org.fuin.sokar.acceptance.GitHubReport</cucumber.plugin>
+                                <porelo.acceptance.features>src/acceptance/resources/</porelo.acceptance.features>
+                                <cucumber.plugin>pretty, html:target/acceptance.html, json:target/acceptance.json, org.fuin.porelo.acceptance.GitHubReport</cucumber.plugin>
                             </systemPropertyVariables>
                             <!-- A key OpenRouter does not know, for the scenario whose provider refuses it. -->
                             <environmentVariables>
-                                <SOKAR_E2E_REFUSED_KEY>sokar-acceptance-not-a-key</SOKAR_E2E_REFUSED_KEY>
+                                <PORELO_E2E_REFUSED_KEY>porelo-acceptance-not-a-key</PORELO_E2E_REFUSED_KEY>
                             </environmentVariables>
                         </configuration>
                     </plugin>

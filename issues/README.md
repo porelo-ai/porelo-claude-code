@@ -4,6 +4,12 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc31"></a>[CC31](CC31-Rename-The-Adapter-Porelo.md) | S | — | the adapter renamed Porelo, by script, with its exceptions |
+
 ## Analyzed
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -14,24 +20,23 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | — | sokar [B194](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b194) | Claude Code's own memory off in a task; `.AGENTS.md` in its place |
+| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | — | porelo [B194](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b194) | Claude Code's own memory off in a task; `.AGENTS.md` in its place |
 | <a id="cc32"></a>[CC32](CC32-Answer-The-Auto-Mode-Question-At-First-Run.md) | — | — | the new first-run question about auto mode answered, so the pin can move |
 
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc31"></a>[CC31](CC31-Rename-The-Adapter-Porelo.md) | S | sokar-project [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41) | the adapter renamed Porelo, by script, with its exceptions |
-| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | sokar [B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
-| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Sokars.md) | S | sokar [B99](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
-| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Sokar-Provides.md) | S | Sokar (to be opened) | the agent contract named at install time |
+| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
+| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | porelo [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
+| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | Porelo (to be opened) | the agent contract named at install time |
 
 ## Where an agent's requirements live
 
 An agent's work lives in its own repository, so a requirement for this agent is an issue here, and
 what outlived the ones already met is in [`doc/decisions.md`](../doc/decisions.md).
 
-The candidate agents without a repository wait in `sokar-project` until a repository builds them.
+The candidate agents without a repository wait in `porelo-project` until a repository builds them.
 
 ## Where the rest of the open work lives
 

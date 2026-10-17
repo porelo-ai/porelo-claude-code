@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: sokar-agent-claude
-Source: https://github.com/sokar-ai/sokar-claude-code
+Upstream-Name: porelo-agent-claude
+Source: https://github.com/porelo-ai/porelo-claude-code
 
 Files: *
 Copyright: 2026 Michael Schnell <michael@fuin.org>

@@ -26,12 +26,12 @@ repository is built.
 | [A model the CLI does not know keeps its own window](#a-model-the-cli-does-not-know-keeps-its-own-window) | the provider says when the context is full, not a window the CLI assumes |
 | [Accepted risk: the release binary and its digest share one trust root](#accepted-risk-the-release-binary-and-its-digest-share-one-trust-root) | nothing independent to verify the download against, and why that stays |
 | **The build** | |
-| [The release tooling is Sokar's, configured from the pom](#the-release-tooling-is-sokars-configured-from-the-pom) | data beside the pin, never a copy of code |
-| [A release is built from releases only](#a-release-is-built-from-releases-only) | on a tag nothing from Central's snapshots, and a tag on a Sokar snapshot refused by the step itself |
-| [Actions run from a commit, and Dependabot moves them](#actions-run-from-a-commit-and-dependabot-moves-them) | every `uses:` by commit, GraalVM by Sokar's pin, checked by `check-actions` |
+| [The release tooling is Porelo's, configured from the pom](#the-release-tooling-is-porelos-configured-from-the-pom) | data beside the pin, never a copy of code |
+| [A release is built from releases only](#a-release-is-built-from-releases-only) | on a tag nothing from Central's snapshots, and a tag on a Porelo snapshot refused by the step itself |
+| [Actions run from a commit, and Dependabot moves them](#actions-run-from-a-commit-and-dependabot-moves-them) | every `uses:` by commit, GraalVM by Porelo's pin, checked by `check-actions` |
 | [What an update takes, and when](#what-an-update-takes-and-when) | three days old and still the newest, verified on rented machines before the pull request |
-| [NullAway comes from `sokar-parent`](#nullaway-comes-from-sokar-parent) | one compiler configuration for every repository; `.mvn/jvm.config` stays here |
-| [No check requires a changelog entry](#no-check-requires-a-changelog-entry) | requiring one belongs to Sokar's changelog check, on logchange |
+| [NullAway comes from `porelo-parent`](#nullaway-comes-from-porelo-parent) | one compiler configuration for every repository; `.mvn/jvm.config` stays here |
+| [No check requires a changelog entry](#no-check-requires-a-changelog-entry) | requiring one belongs to Porelo's changelog check, on logchange |
 
 ## Why this agent needs container setup at all
 
@@ -96,7 +96,7 @@ gets the file from the login itself.
 
 Started with a key in `ANTHROPIC_API_KEY`, Claude Code asks whether to use *"a custom API key"* and
 recommends **No**. Answering it is not a billing decision: the key shown is the **phantom token
-Sokar minted for this task**, not a payment credential. The billing decision is made elsewhere -
+Porelo minted for this task**, not a payment credential. The billing decision is made elsewhere -
 when the real credential goes into the vault and a provider is chosen.
 
 **The recommended answer is the harmful one.** Taking *No* refuses the only credential the task
@@ -130,7 +130,7 @@ administrator"*.
 - **Not `autoUpdates: false`**, which the CLI writes into `.claude.json` itself and then ignores for a
   native install, because it also sets `autoUpdatesProtectedForNative`.
 - **In `settings.json` rather than the container's environment**, because that file is this
-  repository's and the environment is Sokar's. Measured to work from there.
+  repository's and the environment is Porelo's. Measured to work from there.
 
 **Behind it, the network:** `downloads.claude.ai` is in `refused_domains`, so inside a task it
 answers NXDOMAIN - although `claude.ai` above it is allowed - while `claude.ai` and
@@ -196,16 +196,16 @@ opens a pull request rather than publishing by itself.
 
 ## Waiting for a person is read from the question's own last line
 
-Sokar tells a person the agent is waiting for them from `session.waiting` in the agent's YAML: literal
+Porelo tells a person the agent is waiting for them from `session.waiting` in the agent's YAML: literal
 lines on the attached screen that only a question draws. Measured on 2.1.267 at a terminal, a
 question Claude Code puts ends with `Enter to select · ↑/↓ to navigate · Esc to cancel`, and its first-run consents with `Enter to confirm · Esc to cancel`. The rule is `Esc to cancel` in the last 5 lines. At work its last lines say `esc to interrupt`, never "cancel", and matching ignores case, so the rule cannot be the shorter `esc to`.
 
 **Proven three ways.** `WaitingDeclarationTest` reads the declaration against the measured screens, and
-fails without it. By hand on the VM, Sokar read the agent as not waiting at rest and as waiting once it
-asked. `waiting.feature` drives it to a question at the version it pins and asks Sokar, never the
+fails without it. By hand on the VM, Porelo read the agent as not waiting at rest and as waiting once it
+asked. `waiting.feature` drives it to a question at the version it pins and asks Porelo, never the
 screen - so a release that words its questions differently fails the build instead of going quiet. The scenario types the prompt, then presses Enter as a separate step. A line feed is a new line in its prompt, and text with its carriage return in one write reads as a paste, whose carriage return does not submit either - so `I enter` alone never asks anything here.
 
-**Unattended there is nothing to declare**: a run that wanted to ask ends, and Sokar says what it said
+**Unattended there is nothing to declare**: a run that wanted to ask ends, and Porelo says what it said
 last rather than that it waits.
 
 **What would change the answer:** a release that draws its questions differently, which the scenario is
@@ -213,25 +213,25 @@ there to catch.
 
 ## A task that comes back continues its conversation
 
-Sokar records the session a task's agent ran and passes it back with `--resume` when the task starts
+Porelo records the session a task's agent ran and passes it back with `--resume` when the task starts
 again. Where the id is, `claude.yaml` declares under `session.session_id`. Measured on 2.1.267: an
 unattended run's first record, `{"type":"system","subtype":"init"}`, carries `session_id`, and the same id
 names the session file of any run, `~/.claude/projects/-workspace/<id>.jsonl` - the working directory with
-`/` as `-`, and Sokar's is always `/workspace`. So one id serves an unattended and an attached task alike.
+`/` as `-`, and Porelo's is always `/workspace`. So one id serves an unattended and an attached task alike.
 
 **Proven at the version it pins.** `SessionIdDeclarationTest` reads the declaration against the measured
-records and file names. `session.feature` drives it through Sokar on a VM: a word to remember in one run,
-the task started again, Sokar reporting that it continues the session, and the word given back although
+records and file names. `session.feature` drives it through Porelo on a VM: a word to remember in one run,
+the task started again, Porelo reporting that it continues the session, and the word given back although
 the second prompt never names it.
 The attached half is proven the same way: a message, the task stopped and started
 again, and the earlier message back on its screen.
 
-## The release tooling is Sokar's, configured from the pom
+## The release tooling is Porelo's, configured from the pom
 
-The release tooling is the shared `sokar-release`, not tools copied into each agent repository:
+The release tooling is the shared `porelo-release`, not tools copied into each agent repository:
 copies drift apart.
 
-**What differs between agents is data**, and it lives in `pom.xml` as `sokar.release.*`, beside
+**What differs between agents is data**, and it lives in `pom.xml` as `porelo.release.*`, beside
 `agent.cli.version`: the label, the source definition, where upstream is read, the channel, where
 the digest is read. The pin lives there and every command reads it there. The alternative, flags on
 each call, would put the same five facts on every workflow line - twice in `update.yml` - and the
@@ -240,7 +240,7 @@ second copy is the one that goes stale.
 **At package time the tool is a plugin dependency of the exec plugin**, put on the classpath with
 `includePluginDependencies`, not a dependency of the project: a project dependency would land in the
 bill of materials and on the native image's classpath. The workflows resolve it through
-`-Pci-tools`, beside `sokar-machines`.
+`-Pci-tools`, beside `porelo-machines`.
 
 **Measured against the tools it replaces, on the same inputs:** the component `add-fetched-cli`
 records is identical; `compare-bills` stops with exit 1 on a wrongly named update, on an unnamed new
@@ -253,19 +253,19 @@ belongs in the tool as a named strategy, as the three upstream kinds are.
 
 ## A release is built from releases only
 
-Between releases everything is built on snapshots: `sokar.version`, the parent, and with the parent the release
+Between releases everything is built on snapshots: `porelo.version`, the parent, and with the parent the release
 tooling. A tag's build takes none of them.
 
 - **Nothing from Central's snapshots on a tag.** The snapshot repository is a profile in `settings.xml` that
-  switches itself off when `sokar.release` is set, and `build.yml` sets `MAVEN_ARGS` to `-Dsokar.release` on a tag
+  switches itself off when `porelo.release` is set, and `build.yml` sets `MAVEN_ARGS` to `-Dporelo.release` on a tag
   and to `-U` elsewhere. Measured: with it, a build from an empty local repository cannot resolve the snapshot
   parent; without it, it does. Not `-P!standard`: Maven then lists the profile as inactive and still takes the
   parent from its repository, also measured.
 - **Nothing asked for again on a tag.** `-U` is in no command; `MAVEN_ARGS` carries it where it belongs, also into
   the `pinned-jdk` action.
-- **A tag on a snapshot is refused.** "Which channel" refuses a `sokar.version` that names a snapshot, in the build
+- **A tag on a snapshot is refused.** "Which channel" refuses a `porelo.version` that names a snapshot, in the build
   job and in the release job. `ReleaseChannelTest` runs both steps as a tag's run would, sees the refusal, and sees
-  a released Sokar let through; it was seen to fail with the refusal taken out. `check-releases` then refuses any
+  a released Porelo let through; it was seen to fail with the refusal taken out. `check-releases` then refuses any
   snapshot left in the effective pom.
 - **Secrets only where a tool needs them.** The tooling is resolved and the channel decided in steps that hold no
   secret. The steps that hold one run only what needs it: the acceptance legs and their clean-up the cloud's key and
@@ -282,9 +282,9 @@ pin nobody moves rots, and a stale action with a known flaw is not safer than th
 release arrives as a pull request with the new commit and its version, and nothing merges it
 automatically: the review is what the pin buys.
 
-**`sokar-release check-actions` fails the build on a step that names a tag, a branch, a bare hash or a
+**`porelo-release check-actions` fails the build on a step that names a tag, a branch, a bare hash or a
 line of releases like `# v7`**, and says how to pin it, so a new workflow cannot bring a tag back. It is
-Sokar's one check for this rule, run in the build job, and this repository keeps no second test for it.
+Porelo's one check for this rule, run in the build job, and this repository keeps no second test for it.
 A step of this repository and an image by digest pass. Measured against this repository's workflows,
 with a tag, a `# v7`, a `setup-graalvm` at a commit and a Dependabot without `/.github/actions/*` each
 put in: every one refused.
@@ -304,24 +304,24 @@ product's own Artifactory. The setup actions download their tools themselves, an
 - **The JFrog CLI is fixed by the action's commit.** `setup-jfrog-cli` 5.2.0 defaults to `jf` 2.124.0
   and asks for the newest only when told to, so a Dependabot bump moves both together, under review. It
   checks no digest, which is the same publisher's trust as the action.
-- **GraalVM is the one Sokar pins, checked against its digest.** `setup-graalvm` with `'25'` resolves
+- **GraalVM is the one Porelo pins, checked against its digest.** `setup-graalvm` with `'25'` resolves
   the newest 25.x at run time and checks nothing for community builds - and that JDK compiles the
   native binary this repository publishes. So every job uses `./.github/actions/pinned-jdk`: the
-  runner's own Java 25 runs `sokar-machines jdk --github` once, which installs the GraalVM
-  `sokar-machines` pins (`machines.graalvm.*`, moved by Sokar's Machines workflow under the same
+  runner's own Java 25 runs `porelo-machines jdk --github` once, which installs the GraalVM
+  `porelo-machines` pins (`machines.graalvm.*`, moved by Porelo's Machines workflow under the same
   three-day rule), checks its digest before unpacking, and sets `JAVA_HOME`. The build and the
   acceptance machines use the same pin, by construction. `check-actions` refuses `setup-graalvm` and
   `setup-java` even at a pinned commit, because the commit fixes the action, not the JDK it fetches.
   Measured on a VM as a stand-in runner - an empty home, Temurin 25 in place of
-  the runner's Java, Sokar's artifacts at `0bce03a`: GraalVM 25.0.2 installed and checked, and this
+  the runner's Java, Porelo's artifacts at `0bce03a`: GraalVM 25.0.2 installed and checked, and this
   repository's native build and packages made with it.
 
 ## What an update takes, and when
 
-Sokar's release tool applies these rules; `UpdateRulesTest`
+Porelo's release tool applies these rules; `UpdateRulesTest`
 fails when this repository stops asking for them.
 
-**A release is taken once it is three days old, and still the newest**: `sokar.release.min-age` is
+**A release is taken once it is three days old, and still the newest**: `porelo.release.min-age` is
 `3d`. A release withdrawn or patched within days never becomes a pull request, and the people who
 install on the first day get the days to report what breaks. A younger release is not skipped for the
 one before it: the job waits and says until when. A release whose date cannot be read is never old
@@ -335,16 +335,16 @@ temporary. Published metadata proves the download is intact; only a real request
 version still starts without a question, reads its credential variable, routes through the broker and
 gets an answer.
 
-**The CI machines are not kept current here.** GraalVM and the pre-pulled base images are Sokar's
+**The CI machines are not kept current here.** GraalVM and the pre-pulled base images are Porelo's
 machine tooling, under the same rule, once for every repository.
 
 **What would change the answer:** a release that cannot wait three days. Dispatching the job with the
 version named takes it at once - that is the way round the rule, not a change to it.
 
-## NullAway comes from `sokar-parent`
+## NullAway comes from `porelo-parent`
 
 The compiler configuration that runs NullAway - Error Prone with only NullAway, `OnlyNullMarked`, the
-two processor paths - is `sokar-parent`'s, managed for every Sokar repository, so this pom declares no
+two processor paths - is `porelo-parent`'s, managed for every Porelo repository, so this pom declares no
 compiler plugin. Only the `default-compile` execution runs it: tests pass `null` on purpose, and Error
 Prone never sees them.
 
@@ -354,10 +354,10 @@ on that JVM refuses it the compiler's internals - measured on JDK 25, an `Illega
 
 ## No check requires a changelog entry
 
-The changelog is written by hand in the same commit as the change; nothing enforces it. Sokar is
+The changelog is written by hand in the same commit as the change; nothing enforces it. Porelo is
 moving to logchange - one YAML file per change, and a generated `CHANGELOG.md` - and a check for a
 hand-kept file would have to be rebuilt the moment that reaches this repository. Requiring an entry
-is Sokar's changelog check, proposed to logchange upstream first, and keeps three rules: a waiver answers for its
+is Porelo's changelog check, proposed to logchange upstream first, and keeps three rules: a waiver answers for its
 own commit only, documentation is not exempt, and a range that cannot be compared fails.
 
-**What would change it:** Sokar's changelog check landing, or logchange being adopted here.
+**What would change it:** Porelo's changelog check landing, or logchange being adopted here.

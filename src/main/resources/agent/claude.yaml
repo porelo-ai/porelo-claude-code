@@ -2,26 +2,26 @@
 #
 # Everything here is data. The one thing that is not - reading an OAuth token out
 # of the credentials file Claude writes at login - is a method override in
-# ClaudeAgent, in this module, rather than a branch somewhere in Sokar.
+# ClaudeAgent, in this module, rather than a branch somewhere in Porelo.
 
 name: claude
 label: Claude Code
 binary: claude
 
-# Where this agent keeps its own credentials, for 'sokar vault import' and for collecting what
+# Where this agent keeps its own credentials, for 'porelo vault import' and for collecting what
 # a login produced. Read on the node when importing, and inside the container when logging in -
 # the agent runs as 'agent' there, so this is /home/agent/.claude in that case.
 config_dir: "~/.claude"
 
-# How this agent logs in, for 'sokar vault login'. The list is arguments to 'binary' above, and
+# How this agent logs in, for 'porelo vault login'. The list is arguments to 'binary' above, and
 # an empty list means the binary alone - which is this agent's case: running 'claude' with no
 # credentials starts its own authentication and writes .credentials.json when it finishes.
 #
 # NOT 'setup-token'. That prints a long-lived token to the terminal and writes no credentials
-# file, so there would be nothing for Sokar to collect and the person would be back to copying a
+# file, so there would be nothing for Porelo to collect and the person would be back to copying a
 # value by hand - which is the thing this exists to remove.
 #
-# The section's presence is what says this agent can log in at all. Sokar does not know that
+# The section's presence is what says this agent can log in at all. Porelo does not know that
 # Claude Code has such a verb, and must not guess: hardcoding one agent's would be wrong for
 # every other.
 login:
@@ -32,7 +32,7 @@ login:
   # on at 127.0.0.1 - which is why a remote login needs that port forwarded.
   documentation: "https://code.claude.com/docs/en/authentication"
 
-# What turns this agent's own permission prompts off. Sokar adds these to every run inside a
+# What turns this agent's own permission prompts off. Porelo adds these to every run inside a
 # task, attached or not - it never asks whether to, and there is no option for it: the container
 # is what makes the answer always yes, and unattended there is nobody to answer a prompt anyway.
 #
@@ -43,8 +43,8 @@ login:
 sandboxed:
   arguments: []
 
-# How the agent is told what Sokar puts in its task - the mailbox where there is one, /sokar/files and
-# what arrives there. Sokar writes this guide to a read-only file in every task Sokar makes and puts these
+# How the agent is told what Porelo puts in its task - the mailbox where there is one, /porelo/files and
+# what arrives there. Porelo writes this guide to a read-only file in every task Porelo makes and puts these
 # arguments behind the 'sandboxed' ones, '{file}' standing for its path, on every start, attended or not, a resumed
 # one included. 'claude --help' on 2.1.267 names --append-system-prompt <text> and --append-system-prompt-file <path>; the file one
 # is taken, so the text is read from the task and never rides on the command line.
@@ -72,7 +72,7 @@ session:
   # Where it names the session it runs, so a task that comes back continues it. Measured on 2.1.267:
   # an unattended run's first record, {"type":"system","subtype":"init"}, carries
   # session_id, and the same id names its session file, ~/.claude/projects/-workspace/<id>.jsonl - the
-  # directory is the working directory with '/' as '-', and Sokar's is always /workspace. So one id serves
+  # directory is the working directory with '/' as '-', and Porelo's is always /workspace. So one id serves
   # both, and '--resume <id>' continues it: the resumed run reports the same session.
   session_id:
     record: { type: system }
@@ -84,14 +84,14 @@ session:
   # the API-key dialog is up. The bound covers a first image build.
   ready_marker: "bypass permissions on"
   ready_within_seconds: 300
-  # When the agent is at rest at its prompt, for Sokar to type its one wake line into the session
+  # When the agent is at rest at its prompt, for Porelo to type its one wake line into the session
   # and only then; never where 'waiting' matches. Read from the last 20 lines of the screen, plain. Measured
   # on the VM at a terminal: its footer says "bypass permissions on" at rest and at work, and adds "esc to interrupt" while it works - thinking
   # and during a tool call alike (a 'sleep 90' through Bash); a question box ends "Esc to cancel".
   at_rest:
     shows: ["bypass permissions on"]
     lacks: ["esc to interrupt", "Esc to cancel"]
-  # What waiting for a person looks like on the attached screen, for Sokar to read. Measured on
+  # What waiting for a person looks like on the attached screen, for Porelo to read. Measured on
   # 2.1.267 at a terminal: a question it puts ends with "Enter to select · ↑/↓ to
   # navigate · Esc to cancel", and the first-run consents with "Enter to confirm · Esc to cancel".
   # Both are gone once answered. At work its last lines say "esc to interrupt", never "cancel",
@@ -127,7 +127,7 @@ provider:
 
   # The variable the credential is read from is a fact about THIS CLI, not about whoever serves
   # it: Claude Code reads ANTHROPIC_API_KEY whether the provider is Anthropic or OpenRouter.
-  # Sokar falls back to the provider's own variable when an agent names none, which is right for
+  # Porelo falls back to the provider's own variable when an agent names none, which is right for
   # a provider-agnostic agent and wrong here - pointed at OpenRouter, this agent was handed
   # OPENROUTER_API_KEY and reported 'Not logged in'. Found by the acceptance suite.
   token_env:
@@ -147,7 +147,7 @@ allowed_domains:
 # Names Claude Code asks for that it does NOT get. Listed rather than simply left out of
 # allowed_domains, because the two cases look alike to the firewall and completely different to a
 # reviewer: an undeclared name is usually a bug that breaks the agent for everyone, while these are
-# a deliberate refusal. 'sokar agents --verbose' shows the list, so an operator sees what is
+# a deliberate refusal. 'porelo agents --verbose' shows the list, so an operator sees what is
 # refused rather than finding it in a drop log.
 #
 # What a refusal does: the name answers NXDOMAIN inside the task, even under an allowed parent -
@@ -175,7 +175,7 @@ install:
   #   https://downloads.claude.ai/claude-code-releases/<version>/manifest.json
   #
   # Bumping it is a one-line change plus the new digest, and until it is bumped every
-  # image build installs the same bytes. `sokar agents --supply-chain` reports what is
+  # image build installs the same bytes. `porelo agents --supply-chain` reports what is
   # pinned here, so "which version ran" is answerable from the definition rather than
   # from a build log that may no longer exist.
   version: "${agent.cli.version}"

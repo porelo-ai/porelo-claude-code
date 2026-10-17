@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Estimated; blocked by sokar [B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173).
+**Status:** Estimated; blocked by porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173).
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
 adapter's code.
 
@@ -10,7 +10,7 @@ the refresh token never reaches it, and only the host renews.
 ## Why
 
 The acceptance scenarios run with an OpenRouter API key only. OAuth is covered by unit tests here
-(`ClaudeCredentialExtractorTest`, `ClaudeContainerSetupTest`) and by Sokar's own tests and its
+(`ClaudeCredentialExtractorTest`, `ClaudeContainerSetupTest`) and by Porelo's own tests and its
 stub-agent `agent-login.feature`; no scenario signs in with a subscription and looks inside a Claude
 Code task. A live subscription in CI would spend a person's login: every renewal rotates the refresh
 token.
@@ -19,11 +19,11 @@ token.
 
 - **A stand-in token endpoint** on the host's loopback, not a CI subscription, in the acceptance kit
   (`src/acceptance/java/.../acceptance/`), answering `grant_type=refresh_token` with a new access token
-  and a rotated refresh token, and counting what it is asked. Sokar's renewal (`TokenPurchase`) takes
+  and a rotated refresh token, and counting what it is asked. Porelo's renewal (`TokenPurchase`) takes
   https, or http on loopback, so no certificate is needed.
 - **The scenario stores a subscription login without a person:** the kit writes a credentials file as Claude
-  Code leaves it, with an access token about to expire and a refresh token, and stores it with `sokar vault
-  login claude --credentials-from <its copy> --token-url http://127.0.0.1:<port>/token` ([B173](https://github.com/sokar-ai/sokar/blob/main/issues/base/README.md#b173)).
+  Code leaves it, with an access token about to expire and a refresh token, and stores it with `porelo vault
+  login claude --credentials-from <its copy> --token-url http://127.0.0.1:<port>/token` ([B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173)).
   `ClaudeCredentialExtractor` reads it as after a real login; the token URL comes only from that host-side
   option, never from the file, and is accepted only as http on loopback.
 - **It starts a Claude Code task with that entry,** then checks the task's environment, its files under

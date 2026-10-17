@@ -1,12 +1,12 @@
-# The GraalVM Sokar's CI machines pin, installed on a GitHub runner and checked against its digest - so a
+# The GraalVM Porelo's CI machines pin, installed on a GitHub runner and checked against its digest - so a
 # job compiles with the JDK the acceptance machines build with, never with whatever release a moving
-# name ('25') resolved to that day. The pin is sokar-machines' own, resolved with -Pci-tools, and Sokar's
+# name ('25') resolved to that day. The pin is porelo-machines' own, resolved with -Pci-tools, and Porelo's
 # Machines workflow moves it once a release is three days old.
 #
-# Bootstrapped from the runner's own Java 25 (JAVA_HOME_25_X64), which only runs sokar-machines once;
+# Bootstrapped from the runner's own Java 25 (JAVA_HOME_25_X64), which only runs porelo-machines once;
 # nothing it compiles is published. Needs the repository checked out.
 name: Pinned GraalVM
-description: Installs the GraalVM Sokar pins, checked against its digest, as JAVA_HOME for the rest of the job.
+description: Installs the GraalVM Porelo pins, checked against its digest, as JAVA_HOME for the rest of the job.
 runs:
   using: composite
   steps:
@@ -26,6 +26,6 @@ runs:
             exit 1
         fi
         export JAVA_HOME="$JAVA_HOME_25_X64"
-        # MAVEN_ARGS, from the workflow, says -U or -Dsokar.release: the cache above is keyed on pom.xml alone.
+        # MAVEN_ARGS, from the workflow, says -U or -Dporelo.release: the cache above is keyed on pom.xml alone.
         ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath -Dmdep.outputFile=target/jdk-cp.txt
-        "$JAVA_HOME/bin/java" -cp "$(cat target/jdk-cp.txt)" org.fuin.sokar.machines.Main jdk --github
+        "$JAVA_HOME/bin/java" -cp "$(cat target/jdk-cp.txt)" org.fuin.porelo.machines.Main jdk --github

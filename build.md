@@ -1,9 +1,9 @@
 # Building
 
-Nothing here needs a checkout of [Sokar](https://github.com/sokar-ai/sokar). This
-repository compiles against the **published agent contract** - `sokar-agent-api`
-and `sokar-wire` - resolved from Maven, and that is the property worth keeping: if
-a build here ever needs the Sokar sources, the split has been undone without
+Nothing here needs a checkout of [Porelo](https://github.com/porelo-ai/porelo). This
+repository compiles against the **published agent contract** - `porelo-agent-api`
+and `porelo-wire` - resolved from Maven, and that is the property worth keeping: if
+a build here ever needs the Porelo sources, the split has been undone without
 anyone deciding to undo it.
 
 ```
@@ -17,19 +17,19 @@ repository the snapshot comes from. The native build needs GraalVM as `JAVA_HOME
 What the second command leaves in `target/`:
 
 ```
-sokar-agent-claude                              the adapter, run by Sokar on the host
-sokar-agent-claude_0.4.0~SNAPSHOT_amd64.deb
-sokar-agent-claude-0.4.0~SNAPSHOT-1.x86_64.rpm
+porelo-agent-claude                              the adapter, run by Porelo on the host
+porelo-agent-claude_0.4.0~SNAPSHOT_amd64.deb
+porelo-agent-claude-0.4.0~SNAPSHOT-1.x86_64.rpm
 ```
 
-**The package version is this agent's own**, not Sokar's. An agent released against
-an unchanged CLI is still an upgrade, and a Sokar release does not move it. `~`
+**The package version is this agent's own**, not Porelo's. An agent released against
+an unchanged CLI is still an upgrade, and a Porelo release does not move it. `~`
 rather than `-` before `SNAPSHOT` because dpkg and rpm sort `~` below everything;
 left as `-SNAPSHOT` it would sort *above* the release and apt would refuse the
 upgrade.
 
 The Claude Code version the image installs is carried in the package description
-instead, so `dpkg -s sokar-agent-claude` and `rpm -qi` still answer it.
+instead, so `dpkg -s porelo-agent-claude` and `rpm -qi` still answer it.
 
 ## Bumping the CLI version
 
@@ -50,16 +50,16 @@ platform, at
 this is verifiable rather than trusted. Until it is bumped, every image build
 installs the same bytes.
 
-**Three lines change, and none is typed.** Sokar's release tool does it, resolved with the
+**Three lines change, and none is typed.** Porelo's release tool does it, resolved with the
 machine tooling:
 
 ```
 ./mvnw -s settings.xml -Pci-tools dependency:build-classpath -Dmdep.outputFile=target/cp.txt
-java -cp "$(cat target/cp.txt)" org.fuin.sokar.release.Main update 2.1.267
+java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main update 2.1.267
 ```
 
 What this agent differs in - where upstream is read, where the digest is read - is data, the
-`sokar.release.*` properties beside `agent.cli.version` in `pom.xml`. It reads the digest from that release's manifest and the license from npm's entry for that
+`porelo.release.*` properties beside `agent.cli.version` in `pom.xml`. It reads the digest from that release's manifest and the license from npm's entry for that
 version, writes the `agent.cli.version` property in `pom.xml` and the `sha256` and `license` here,
 and leaves a diff to review. The license lands in the bill, where the update gate stops on a change
 to it. It
@@ -79,7 +79,7 @@ be read, which is deliberately not the same answer.
 `agent.snapshot.run` - the CI run number - makes every build between two versions a strictly
 newer package than the last, which is what apt and dnf sort on.
 
-`sokar agents --supply-chain` reports what is pinned, so "which version ran" is
+`porelo agents --supply-chain` reports what is pinned, so "which version ran" is
 answerable from the installed adapter rather than from a build log. The acceptance
 suite asks the installed machine that question and compares the answer with the bill
 the package ships, so the two cannot drift apart unnoticed.
@@ -104,7 +104,7 @@ year. The `(was ...)` it keeps is the version at the last release, not the last 
 Written by hand, the changelog would be one more place a bump has to be applied, and the one
 that goes stale first.
 
-**Everything else is by hand**, and nothing checks for it; requiring one is Sokar's changelog check - see
+**Everything else is by hand**, and nothing checks for it; requiring one is Porelo's changelog check - see
 [`doc/decisions.md`](doc/decisions.md).
 
 ## Following Claude Code without watching it
@@ -147,31 +147,31 @@ the update.
 Whatever the outcome, the run opens a pull request - a green one says so, a stopped
 one says which condition stopped it. Merging is what publishes.
 
-**Auto-merge is off**, and the repository variable `SOKAR_UPDATE_AUTO_MERGE` turns it
+**Auto-merge is off**, and the repository variable `PORELO_UPDATE_AUTO_MERGE` turns it
 on. The run says which state it is in on every run rather than skipping a step in
-silence. Turning it on also needs the secret `SOKAR_UPDATE_TOKEN`, and that is not a
+silence. Turning it on also needs the secret `PORELO_UPDATE_TOKEN`, and that is not a
 preference: a push made with the workflow's own `GITHUB_TOKEN` triggers no further
 workflow, so merging with it would update `main`, publish nothing, and report success.
 The job refuses that rather than producing it.
 
 **How an update is proved before it is published.**
 `Main acceptance --candidate target` installs the packages built in that run
-instead of the published ones, in the same command that installs `sokar` from
-Artifactory - so the repository, its signature, the index and `Depends: sokar` are
-all still exercised, and one package comes from a file. `SOKAR_E2E_EXPECT_CLI` makes
+instead of the published ones, in the same command that installs `porelo` from
+Artifactory - so the repository, its signature, the index and `Depends: porelo` are
+all still exercised, and one package comes from a file. `PORELO_E2E_EXPECT_CLI` makes
 the suite fail if the machine ended up on any other version, so a candidate that
 quietly did not install cannot pass.
 
 ## Publishing
 
 A push to `main` uploads the two packages to Artifactory, into the **same repositories
-Sokar itself publishes to** - `sokar-dist-deb` and `sokar-dist-rpm`. They belong
-together: this package declares `Depends: sokar`, so split across repositories an
+Porelo itself publishes to** - `porelo-dist-deb` and `porelo-dist-rpm`. They belong
+together: this package declares `Depends: porelo`, so split across repositories an
 operator would have to configure both for the dependency to resolve.
 
 A pull request builds and packages but publishes nothing.
 
-Two repository settings are needed, the same ones Sokar uses: the variable `JF_URL`
+Two repository settings are needed, the same ones Porelo uses: the variable `JF_URL`
 (the platform url, **without** `/artifactory`) and the secret `JF_ACCESS_TOKEN`. The
 token needs Read, Deploy/Cache, **Annotate** and **Delete** on both repositories -
 Annotate because the Debian index is driven by properties, Delete because the snapshot
@@ -187,9 +187,9 @@ The scenarios in `src/acceptance` are the last step, and the only one that insta
 operator installs. Everything before it proves the code is right; this proves the
 **package** is. It runs on a stock Hetzner image that has never seen this project -
 never a prepared snapshot - so it exercises the package repository itself: the
-signature, the index, and `Depends: sokar` resolving from the same place.
+signature, the index, and `Depends: porelo` resolving from the same place.
 
-`org.fuin.sokar.machines.Main acceptance` provisions the machine, installs from Artifactory
+`org.fuin.porelo.machines.Main acceptance` provisions the machine, installs from Artifactory
 the way [the README](README.md#install) says, creates an unprivileged user (a task runs
 rootless, so running the suite as root would prove less - and the scenarios refuse it), runs the
 scenarios from the runner and destroys the server in a `finally`. A `cpx12` is enough - one core and 2 GB, because this installs
@@ -197,21 +197,21 @@ packages and runs a single prompt.
 
 Both distributions, because they differ where packaging breaks: the `.deb`
 path and AppArmor on Ubuntu against the `.rpm` path and SELinux enforcing on Fedora. Ubuntu
-26.04, not 24.04 - Sokar needs podman 5, and 24.04 ships 4.9.3 for the whole of its life.
+26.04, not 24.04 - Porelo needs podman 5, and 24.04 ships 4.9.3 for the whole of its life.
 
 Two halves:
 
-- **install** - the packages install, `sokar agents` lists an agent it was never linked
-  against, `sokar setup` registers the hooks. No credential needed.
+- **install** - the packages install, `porelo agents` lists an agent it was never linked
+  against, `porelo setup` registers the hooks. No credential needed.
 - **tier 2** - a task authenticates against OpenRouter and completes a prompt, and the
   real credential is then searched for in the container's environment and in every log
   the task left, and the broker is asked whether it saw the request. Needs
-  `SOKAR_E2E_OPENROUTER_API_KEY`; without it those scenarios are skipped and shown as
+  `PORELO_E2E_OPENROUTER_API_KEY`; without it those scenarios are skipped and shown as
   skipped, so a fork or a revoked key loses coverage rather than turning the build red with
   no information. Each scenario brings a vault of its own, so what vault the account holds
   never matters.
 
-**The model is set in the workflow**, `SOKAR_E2E_MODEL` in `.github/workflows/build.yml`,
+**The model is set in the workflow**, `PORELO_E2E_MODEL` in `.github/workflows/build.yml`,
 rather than in a repository setting - so it is visible in the diff, reviewable, and changes
 with a commit rather than silently. Each agent picks its own: what is measured is that the
 credential was accepted, so the model only has to be cheap and able to follow one instruction.
@@ -231,35 +231,35 @@ it has failed quietly, and only a real credential makes the leak searchable.
 Run it by hand with `workflow_dispatch`, or locally:
 
 ```
-HETZNER_API=... HETZNER_SSH="$(cat key)" SOKAR_E2E_OPENROUTER_API_KEY=... \
-  java -cp "$(cat target/cp.txt)" org.fuin.sokar.machines.Main acceptance \
-      --os fedora --package sokar-agent-claude --cucumber .
+HETZNER_API=... HETZNER_SSH="$(cat key)" PORELO_E2E_OPENROUTER_API_KEY=... \
+  java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main acceptance \
+      --os fedora --package porelo-agent-claude --cucumber .
 ```
 
 `--candidate <dir>` in place of `--package` installs packages built locally rather than the
-published ones - `sokar`'s among them, if the directory holds a build of each.
+published ones - `porelo`'s among them, if the directory holds a build of each.
 
 ## What this repository cannot check
 
 That a real Claude Code CLI reaches only the hosts its definition declares. That is the
 domain-coverage check, it needs the resolver log from inside a task, and it lives in the
-Sokar repository as `buildtools/e2e-tier1.sh`.
+Porelo repository as `buildtools/e2e-tier1.sh`.
 
 ## Acceptance, as a person at a terminal
 
 `src/acceptance` holds Cucumber scenarios that drive a real machine over ssh - a pty for what a
-person sees, no pty for what a script gets - through Sokar's published acceptance kit. They are
+person sees, no pty for what a script gets - through Porelo's published acceptance kit. They are
 off unless a host is named, so an ordinary build neither resolves the kit nor compiles them:
 
 ```
 ./mvnw -s settings.xml verify \
-    -Dsokar.acceptance.host=<machine with sokar and this agent's package installed> \
-    -Dsokar.acceptance.user=acceptance \
-    -Dsokar.acceptance.key=$HOME/.ssh/id_ed25519
+    -Dporelo.acceptance.host=<machine with porelo and this agent's package installed> \
+    -Dporelo.acceptance.user=acceptance \
+    -Dporelo.acceptance.key=$HOME/.ssh/id_ed25519
 ```
 
 The report lands in `target/acceptance.html`. The scenarios tagged `@credential` need
-`SOKAR_E2E_OPENROUTER_API_KEY` and `SOKAR_E2E_MODEL` in the environment of the machine running the
+`PORELO_E2E_OPENROUTER_API_KEY` and `PORELO_E2E_MODEL` in the environment of the machine running the
 suite - typed into the vault at a terminal, never on a command line - and are **skipped**, not
 passed, without them. There is no glue class here: every step is the kit's, which is what keeps
 this repository free of test code that knows about ssh.

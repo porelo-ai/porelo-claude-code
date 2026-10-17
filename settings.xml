@@ -26,11 +26,11 @@
 
             <id>standard</id>
 
-            <!-- Central's snapshots, for everything between releases. A tag's build sets sokar.release, and then
+            <!-- Central's snapshots, for everything between releases. A tag's build sets porelo.release, and then
                  nothing comes from them: a release is built from releases only. -->
             <activation>
                 <property>
-                    <name>!sokar.release</name>
+                    <name>!porelo.release</name>
                 </property>
             </activation>
 

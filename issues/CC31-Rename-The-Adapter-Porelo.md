@@ -1,7 +1,6 @@
 # CC31 — Rename The Adapter Porelo
 
-**Status:** Estimated; blocked by sokar-project [PJ41](https://github.com/sokar-ai/sokar-project/blob/main/issues/README.md#pj41)'s
-preparation and by Porelo's `0.5.0` snapshot.
+**Status:** Implementing.
 **Size:** S - one commit made by a script and read through; 730 occurrences in one module, and the build,
 the native build and the acceptance as for any change to the adapter.
 
@@ -44,8 +43,9 @@ file, and no image that draws the name.
   - **the Debian pool's letter:** `pool/main/s/sokar-agent-...` becomes `pool/main/p/porelo-agent-...` in the
     7 places of the workflows that upload to or look into the pool, since the letter is the package's first.
 - **Exceptions, the whole list:** the released entries in `CHANGELOG.md` (every section below `[Unreleased]`), which
-  stay as released; `0.5.0`'s first entry says the adapter was renamed. Nothing else: this repository names nothing
-  outside that keeps the old name.
+  stay as released; `0.5.0`'s first entry says the adapter was renamed. And this issue, whole, with the anchor of
+  its index row, since it says what the old name was. Nothing else: this repository names nothing outside that
+  keeps the old name.
 - **Lengths:** `porelo` is one longer; the test tokens `sokar_pt_...` become `porelo_pt_...`, and the tests that
   assert on them are read, not regenerated.
 - **Published before this builds**, in this order: `org.fuin.porelo:porelo-parent:0.2.0`, the tools `0.5.0`

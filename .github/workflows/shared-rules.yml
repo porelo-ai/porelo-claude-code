@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 # Read by every Maven call, the pinned-jdk action's too: Maven asks for a newer snapshot once a day, and a
-# cache restored the day Sokar publishes would keep yesterday's. Never run on a tag.
+# cache restored the day Porelo publishes would keep yesterday's. Never run on a tag.
 env:
   MAVEN_ARGS: -U
 
@@ -44,16 +44,16 @@ jobs:
               -Dmdep.outputFile=target/cp.txt
 
       - name: Every shared rules block is unchanged
-        run: java -cp "$(cat target/cp.txt)" org.fuin.sokar.release.Main check-shared AGENTS.md
+        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-shared AGENTS.md
 
       - name: No issue is cited by its file or by a number that is gone
-        run: java -cp "$(cat target/cp.txt)" org.fuin.sokar.release.Main check-citations .
+        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-citations .
 
       - name: Every page of the documentation chapter is in its navigation once
-        run: java -cp "$(cat target/cp.txt)" org.fuin.sokar.release.Main check-doc-site doc mkdocs.yml
+        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-doc-site doc mkdocs.yml
 
       - name: Every module directory has a README that links its submodules
-        run: java -cp "$(cat target/cp.txt)" org.fuin.sokar.release.Main check-readmes .
+        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-readmes .
 
       - name: The tests that read a document
         run: ./mvnw -B -s settings.xml -Pdocuments test
