@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Headings name this package's version; Claude Code's version is what the package installs and
 appears as an entry rather than a heading. One sentence per change - `git log` has the detail.
 
+## [Unreleased]
+
+### Changed
+
+- Built on the snapshot of `porelo-parent` (0.2.1-SNAPSHOT, with the release tooling 0.5.1-SNAPSHOT), against Porelo 0.5.0.
+
 ## [0.5.0] - 2026-10-17
 
 ### Changed
