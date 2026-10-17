@@ -26,9 +26,6 @@ class NoOldNameTest {
 
     private static final String OLD = "so" + "kar";
 
-    /** The issue of the rename, which keeps the old name, name and text. */
-    private static final String RENAME_ISSUE = "cc31";
-
     /** The changelog file, whose released sections stay as they were released. */
     private static final String CHANGELOG = "CHANGELOG.md";
 
@@ -54,14 +51,6 @@ class NoOldNameTest {
         }
     }
 
-    private static boolean keptPath(String file) {
-        return file.toLowerCase(Locale.ROOT).startsWith("issues/" + RENAME_ISSUE + "-");
-    }
-
-    private static boolean keptLine(String line) {
-        return line.contains("<a id=\"" + RENAME_ISSUE + "\"></a>");
-    }
-
     private static int unreleasedEnd(String file, List<String> lines) {
         if (!file.equals(CHANGELOG)) {
             return lines.size();
@@ -80,9 +69,6 @@ class NoOldNameTest {
         final List<String> found = new ArrayList<>();
         int changelogReleased = 0;
         for (final String file : files) {
-            if (keptPath(file)) {
-                continue;
-            }
             if (file.toLowerCase(Locale.ROOT).contains(OLD)) {
                 found.add(file + ": its path");
             }
@@ -93,7 +79,7 @@ class NoOldNameTest {
             }
             for (int i = 0; i < end; i++) {
                 final String line = lines.get(i);
-                if (!keptLine(line) && line.toLowerCase(Locale.ROOT).contains(OLD)) {
+                if (line.toLowerCase(Locale.ROOT).contains(OLD)) {
                     found.add(file + ":" + (i + 1) + ": " + line.strip());
                 }
             }
@@ -101,7 +87,6 @@ class NoOldNameTest {
 
         // A guard that reads nothing passes forever: assert what it read, then what it checks.
         assertThat(files).as("the tracked files read").contains("pom.xml", "AGENTS.md", "issues/README.md", CHANGELOG);
-        assertThat(files).as("the rename issue kept whole").anyMatch(NoOldNameTest::keptPath);
         assertThat(changelogReleased).as("the changelog's released lines left as released").isPositive();
         assertThat(found).as("tracked files that say the old name").isEmpty();
     }
