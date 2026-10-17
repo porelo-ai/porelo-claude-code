@@ -131,6 +131,22 @@ Feature: A task authenticates without ever holding the credential
         Then it exits zero
 
     @slow
+    Scenario: a task whose provider refuses its key says it ended with an error
+        # The agent reads its own end and Porelo's task status says it. A key OpenRouter does not know is
+        # refused, so the run stops before its end; the key is fixed in the pom, so it is never a real one.
+        # Claude Code writes the refusal into its result line as "API Error: <status>", which makes it the provider's.
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        And the vault holds the value of "PORELO_E2E_REFUSED_KEY" as "openrouter" of kind "api-key"
+        And a project called "refused" of class "guarded" with a file in it
+        When a script runs "timeout 300 porelo task start talk --project refused --repository refused --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --prompt 'Reply with OK only.'"
+        # The start returns while the agent still runs; its end shows once the agent has written it.
+        And a script runs "for i in $(seq 60); do porelo task status porelo-refused-talk | grep -q 'with an error' && break; sleep 5; done; porelo task status porelo-refused-talk"
+        Then its output contains "with an error"
+        And its output contains "the provider"
+        When a script runs "porelo project unfollow refused --force"
+        Then it exits zero
+
+    @slow
     Scenario: a task's agent is told how its mailbox works
         # Porelo puts the agent's declared instructions arguments on its start, with the guide's path. Asked
         # without a tool, only the guide in its system prompt can say where its new messages arrive; the

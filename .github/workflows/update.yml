@@ -44,6 +44,8 @@ jobs:
         steps:
 
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
             # Before the lookup, which is Porelo's release tool; and before anything is rented, so the
             # cleanup below always has something to run.
@@ -235,14 +237,14 @@ jobs:
               env:
                   HETZNER_API: ${{ secrets.HETZNER_API }}
                   PORELO_CI_LEG: upd-ubuntu
-              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine || true
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine
 
             - name: Delete what this run created - fedora leg
               if: always() && steps.plan.outputs.proceed == 'yes'
               env:
                   HETZNER_API: ${{ secrets.HETZNER_API }}
                   PORELO_CI_LEG: upd-fedora
-              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine || true
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine
 
             # ------------------------------------------------------------------ ask, or publish
 
@@ -253,8 +255,13 @@ jobs:
                   GH_TOKEN: ${{ github.token }}
                   TARGET: ${{ steps.plan.outputs.target }}
                   WAS: ${{ steps.detect.outputs.pinned }}
+                  JOB_STATUS: ${{ job.status }}
               run: |
                   set -eu
+                  # A step ended by its limit, the job's or a cancel writes no STOP: anything but success is one.
+                  if [ "$JOB_STATUS" != success ] && [ -z "${STOP:-}" ]; then
+                      STOP="a step before this one ended the job as $JOB_STATUS"
+                  fi
                   git config user.name 'porelo-update'
                   git config user.email 'noreply@fuin.org'
                   if git diff --quiet; then
@@ -264,7 +271,17 @@ jobs:
                   BRANCH="update/claude-code-$TARGET"
                   git checkout -b "$BRANCH"
                   git commit -am "Pin Claude Code $TARGET"
-                  git push --force origin "$BRANCH"
+                  # The checkout keeps no token, so only this push gets it: built here by printf, a builtin,
+                  # into base64 on stdin, so it is in no argument list and in no later step.
+                  (
+                      HEADER="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+                      echo "::add-mask::$HEADER"
+                      export GIT_CONFIG_COUNT=1
+                      export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+                      GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $HEADER"
+                      export GIT_CONFIG_VALUE_0
+                      git push --force origin "$BRANCH"
+                  )
 
                   {
                     echo "\`$WAS\` -> \`$TARGET\`, applied by Porelo's release tool: the"
@@ -290,13 +307,13 @@ jobs:
                         echo "packages, an unchanged third-party component set, and the acceptance suites"
                         echo "on Ubuntu and Fedora against these packages rather than the published ones."
                     fi
-                  } > /tmp/body.md
+                  } > target/pull-request.md
                   # A weekly job reaches the same version twice whenever the first attempt stopped.
                   if gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
-                      gh pr comment "$BRANCH" --body-file /tmp/body.md
+                      gh pr comment "$BRANCH" --body-file target/pull-request.md
                       echo "the request for $TARGET was already open - re-verified, and said so on it"
                   else
-                      gh pr create --title "Pin Claude Code $TARGET" --body-file /tmp/body.md \
+                      gh pr create --title "Pin Claude Code $TARGET" --body-file target/pull-request.md \
                                    --head "$BRANCH" --base main
                   fi
                   echo "opened=yes" >> "$GITHUB_OUTPUT"
@@ -309,8 +326,13 @@ jobs:
                   AUTO: ${{ vars.PORELO_UPDATE_AUTO_MERGE }}
                   HAVE_TOKEN: ${{ secrets.PORELO_UPDATE_TOKEN != '' }}
                   TARGET: ${{ steps.plan.outputs.target }}
+                  JOB_STATUS: ${{ job.status }}
               run: |
                   set -eu
+                  # As in the request: a step ended by a limit or a cancel wrote no STOP.
+                  if [ "$JOB_STATUS" != success ] && [ -z "${STOP:-}" ]; then
+                      STOP="a step before this one ended the job as $JOB_STATUS"
+                  fi
                   if [ -n "${STOP:-}" ]; then
                       echo "Not merging: $STOP."
                       echo "The branch is open for whoever decides it."

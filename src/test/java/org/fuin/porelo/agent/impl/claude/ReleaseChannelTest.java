@@ -3,12 +3,10 @@ package org.fuin.porelo.agent.impl.claude;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -30,7 +28,7 @@ class ReleaseChannelTest {
                 .as("\"Which channel\" steps in build.yml, the build job's and the release job's")
                 .hasSize(2);
         for (final String step : steps) {
-            final Run run = run(step, dir, "0.4.2-SNAPSHOT");
+            final WorkflowSteps.Run run = run(step, dir, "0.4.2-SNAPSHOT");
             assertThat(run.exit()).as("exit of a tag on a Porelo snapshot").isNotZero();
             assertThat(run.output()).contains(REFUSAL);
         }
@@ -42,7 +40,7 @@ class ReleaseChannelTest {
         // The same steps let a released Porelo through, so the refusal above is the snapshot's and
         // nothing else's.
         for (final String step : whichChannel()) {
-            final Run run = run(step, dir, "0.4.2");
+            final WorkflowSteps.Run run = run(step, dir, "0.4.2");
             assertThat(run.exit())
                     .as("exit of a tag on a released Porelo:%n%s", run.output())
                     .isZero();
@@ -50,13 +48,11 @@ class ReleaseChannelTest {
         }
     }
 
-    private record Run(int exit, String output) {}
-
     /**
      * Runs a step's script in a directory holding a pom with version 0.5.0 and the given
      * porelo.version, as tag v0.5.0.
      */
-    private static Run run(final String script, final Path dir, final String porelo)
+    private static WorkflowSteps.Run run(final String script, final Path dir, final String porelo)
             throws IOException, InterruptedException {
         Files.writeString(
                 dir.resolve("pom.xml"),
@@ -65,57 +61,17 @@ class ReleaseChannelTest {
                         + porelo
                         + "</porelo.version>\n    </properties>\n</project>\n");
         Files.writeString(dir.resolve("output"), "");
-        final Path file = dir.resolve("step.sh");
-        Files.writeString(file, script);
-        final ProcessBuilder builder =
-                new ProcessBuilder("bash", file.toString())
-                        .directory(dir.toFile())
-                        .redirectErrorStream(true);
-        builder.environment().put("GITHUB_REF_TYPE", "tag");
-        builder.environment().put("GITHUB_REF_NAME", "v0.5.0");
-        builder.environment().put("GITHUB_OUTPUT", dir.resolve("output").toString());
-        final Process process = builder.start();
-        final String output =
-                new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        assertThat(process.waitFor(30, TimeUnit.SECONDS)).as("the step ends").isTrue();
-        return new Run(process.exitValue(), output);
+        return WorkflowSteps.run(
+                script,
+                dir,
+                Map.of(
+                        "GITHUB_REF_TYPE", "tag",
+                        "GITHUB_REF_NAME", "v0.5.0",
+                        "GITHUB_OUTPUT", dir.resolve("output").toString()));
     }
 
-    /** The run block of each step named "Which channel" in build.yml, its indentation removed. */
+    /** The run block of each step named "Which channel" in build.yml. */
     private static List<String> whichChannel() throws IOException {
-        final List<String> lines =
-                Files.readAllLines(
-                        RepositoryDocuments.root().resolve(".github/workflows/build.yml"));
-        final List<String> result = new ArrayList<>();
-        for (int i = 0; i < lines.size(); i++) {
-            if (!lines.get(i).strip().equals("- name: Which channel")) {
-                continue;
-            }
-            int j = i + 1;
-            while (!lines.get(j).strip().equals("run: |")) {
-                j++;
-            }
-            final int key = indentOf(lines.get(j));
-            final StringBuilder script = new StringBuilder();
-            int body = -1;
-            for (int k = j + 1;
-                    k < lines.size() && (lines.get(k).isBlank() || indentOf(lines.get(k)) > key);
-                    k++) {
-                if (lines.get(k).isBlank()) {
-                    script.append('\n');
-                    continue;
-                }
-                if (body < 0) {
-                    body = indentOf(lines.get(k));
-                }
-                script.append(lines.get(k).substring(body)).append('\n');
-            }
-            result.add(script.toString());
-        }
-        return result;
-    }
-
-    private static int indentOf(final String line) {
-        return line.length() - line.stripLeading().length();
+        return WorkflowSteps.named("build.yml", "Which channel");
     }
 }

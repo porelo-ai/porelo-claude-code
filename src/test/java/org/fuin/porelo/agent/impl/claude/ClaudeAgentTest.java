@@ -249,6 +249,47 @@ class ClaudeAgentTest {
     }
 
     @Test
+    void neverPassesATerminalControlCharacterToThePersonsTerminal() {
+
+        // What the model writes is steered by whatever it read, and JSON's escaped control
+        // characters parse back into live bytes: printed, they clear the screen, rewrite what was
+        // shown above or set the clipboard.
+        final var formatter = agent.logFormatter();
+        final String result =
+                "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,"
+                        + "\"result\":\"a\\u001b[2Jb\"}";
+        final String said =
+                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"type\":\"text\","
+                        + "\"text\":\"x\\u001b]52;c;Y3VybA==\\u0007\\ny\\tz\\u009b2J\"}]}}";
+        final String raw = "plain \u001b[2J\r text";
+
+        assertThat(controls(formatter.format(result)))
+                .as("control characters in the formatted result line")
+                .isEmpty();
+        assertThat(controls(formatter.format(said)))
+                .as("control characters in the formatted assistant text")
+                .isEmpty();
+        assertThat(controls(formatter.format(raw)))
+                .as("control characters in a line passed through")
+                .isEmpty();
+        assertThat(controls(new ClaudeAgent().ended(result).error()))
+                .as("control characters in the error the end reports")
+                .isEmpty();
+        assertThat(formatter.format(said))
+                .as("a line break and a tab are text, and stay")
+                .contains("\ny\tz");
+    }
+
+    /** The ISO control characters in a text, but the line break and the tab. */
+    private static java.util.List<String> controls(final String text) {
+        assertThat(text).as("the formatter's answer").isNotNull();
+        return text.codePoints()
+                .filter(c -> Character.isISOControl(c) && c != '\n' && c != '\t')
+                .mapToObj(c -> String.format("U+%04X", c))
+                .toList();
+    }
+
+    @Test
     void showsAnythingItDoesNotUnderstand() {
 
         // A viewer that swallowed unrecognised lines would hide exactly the output worth reading

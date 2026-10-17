@@ -1,8 +1,8 @@
 # CC29 — Read The Code Changed Since The Last Skills Review
 
-**Status:** Backlog.
-**Size:** M - 33 files read against seven skills, each finding fixed with its own test; no
-contract another repository reads.
+**Status:** Implementing.
+**Size:** M - 33 files read against seven skills, each finding that can do harm fixed with its own
+test; no contract another repository reads.
 
 **What must be true.** The code changed since this repository was last read against its skills, on
 2026-09-27, has been read against them as well, and the versions read are on record.
@@ -51,9 +51,11 @@ skills are applied, not only named.
     `src/acceptance`.
 
   Files unchanged since `8caca0c` were read on 2026-09-27 and stay out.
-- **Read each file against each skill.** A finding is a guess until a test reproduces it: it is fixed
-  with a test seen to fail on the unfixed code, or declined with the reason written here, or opened
-  as its own issue when it is larger than this one or belongs to another repository.
+- **Read each file against each skill.** A finding that can do harm is a guess until a test reproduces
+  it: it is fixed with a test seen to fail on the unfixed code, or declined with the reason written
+  here, or opened as its own issue when it is larger than this one or belongs to another repository.
+  A finding that only reads wrong - a wording, a comment, a test's own configuration - is fixed
+  without a test, as the shared testing rules say.
 - **A fix to what ships** gets its changelog entry in the same commit; the native build and the
   acceptance suite run as for any change to the adapter.
 - **Red first:** each fix's test, run against the code before the fix.
@@ -61,8 +63,8 @@ skills are applied, not only named.
 ## Acceptance
 
 - The seven skills listed here with the version read and its verified SHA-256.
-- Every file in scope read; each finding fixed with a test seen red first, declined here with its
-  reason, or opened as an issue named here.
+- Every file in scope read; each finding that can do harm fixed with a test seen red first, each that
+  only reads wrong fixed without one, declined here with its reason, or opened as an issue named here.
 - Unit tests, the native build and the acceptance suite green on the commit handed over.
 
 ## Findings, read on 2026-10-17
@@ -75,39 +77,43 @@ Porelo since `8caca0c` (the rename touched every path, so a plain diff lists all
 `AnthropicCredentialFile` and three document tests were deleted since. The workflows were read against
 `security-audit` too, which answers what was to be checked.
 
-Each finding is a guess until its test is seen red; none is fixed before [CC33](README.md#cc33).
+Each finding that can do harm is a guess until its test is seen red; none is fixed before [CC33](README.md#cc33).
+**Without a test,** since they only read wrong: A1, A2, A4, B7 and W6.
 
 **What ships:**
 - **A1, `ClaudeStreamJsonFormatter.ended`: a failed run's error reads "success" or "null".** With a blank result text
   it falls back to `String.valueOf(event.get("subtype"))`, so `{"type":"result","subtype":"success","is_error":true}`
   ends with the error "success" and one without a subtype with "null"; `porelo task status` shows it. `result()`
   leaves both out for the same event: what counts as failed is written twice and has drifted. Fix: one `failed`
-  and one `said`, used by both. Red: two cases in `ClaudeAgentEndTest`.
+  and one `said`, used by both; a failed run that says nothing ends with an error saying so. No test: it is a
+  wording.
 - **A2, the same class: the cut at 300 characters can split a surrogate pair**, which the log writes as `?`. Fix:
-  cut on a code point, the limit named. Red: `"a".repeat(299) + "😀b"` leaves no lone surrogate.
+  cut on a code point, the limit named. No test: a `?` in a log line only reads wrong.
 - **A3, terminal control characters pass through the formatter** (found in porelo-pi's reading, the same shape
   here): JSON's `\u001b` escapes are parsed back into live bytes and printed to the person's terminal. Red: a
   result text `"a\u001b[2Jb"` formats to text with no ISO control character, through `format` and `ended`.
 - **A4, comments:** `ClaudeAgent`'s Javadoc says two overrides where there are four; `src/deb/control/control` says
-  `~SNAPSHOT` where the pom writes `~snapshot.<run>`.
+  `~SNAPSHOT` where the pom writes `~snapshot.<run>`. No test: comments.
 
 **Tests that cannot fail, or prove less than they say:**
 - **B1, `ReleaseChannelTest`:** output is read to its end before `waitFor(30 s)`, so a hanging step hangs the suite.
-  Red: the helper on `sleep 120` fails within about 35 s. Fix as `PackageVersionCheck` does it, through a file.
+  Red: the helper, shared by every test that runs a step, given `sleep 20` and a limit of 1 s, returns after 20 s
+  instead of failing at its limit. Fix as `PackageVersionCheck` does it, through a file.
 - **B2, `WorkflowRulesTest` and `WorkflowTimeLimitTest` read nothing they assert:** no package build or job found is
   asserted, only `*.yml` is read, and an upper-case job id is skipped. Red: `-P native,dist … -DskipTests` and a
   `.yaml` job without a limit, each green today.
 - **B3, `WorkflowRulesTest`'s empty-key guard matches a string.** Red: the step run with an empty key, as
   `ReleaseChannelTest` runs "Which channel", exits non-zero.
 - **B4, `PackageVersionCheck.aSnapshotSortsBelowItsReleaseAndAboveTheRunBefore`** checks its own helper and sorts
-  nothing. Fix: `dpkg --compare-versions` on both sides.
+  nothing. Fix: `dpkg --compare-versions` on both sides, skipped by an assumption where `dpkg` is missing. Red: the
+  mapping to `-snapshot.<run>` sorts above its release.
 - **B5, `wake.feature`, the message while the agent works:** nothing asserts it still worked when the message came.
   Red: a `sleep 15` before the tell keeps it green. Fix: a longer task, and the screen still at work after the tell.
 - **B6, no scenario proves the provider half of `ended()`:** the pom sets `PORELO_E2E_REFUSED_KEY` for it, but only
   pi and omp have "a task whose provider refuses its key says it ended with an error". It is ported here; that
   `API Error: NNN` is what 2.1.267 prints for a refused key is so far assumed.
 - **B7, `NoOldNameTest` runs git with the machine's global configuration**, against the shared rule. Fix:
-  `GIT_CONFIG_GLOBAL=/dev/null`.
+  `GIT_CONFIG_GLOBAL=/dev/null`. No test: a test's own configuration.
 
 **Workflows, against `security-audit`:**
 - **W1, `update.yml`: a killed step opens a "Green" pull request.** Every gate reports by `|| echo STOP=...`; a step
@@ -122,12 +128,16 @@ Each finding is a guess until its test is seen red; none is fixed before [CC33](
   `curl` stub exiting 22 and a `jf` stub recording its calls; non-zero exit, no upload.
 - **W4, `build.yml`: `${{ github.event_name }}` and `${{ github.ref }}` are interpolated into a shell line.** A
   pushed branch named `x$(cmd)` runs `cmd`; it needs push access and the step holds no secret, so it is hardening.
-  Fix: through `env`, as `update.yml` already says.
+  Fix: the runner's `GITHUB_EVENT_NAME` and `GITHUB_REF`, the same values through the environment. Red: the step,
+  interpolated as the runner does, with the branch `x$(touch${IFS}ran)` runs `touch`.
 - **W5, `update.yml`: `sweep --mine || true`** hides a failed cleanup while rented machines keep running, against the
-  shared rule that a run exits non-zero naming what it left. Fix: drop `|| true`.
+  shared rule that a run exits non-zero naming what it left. Fix: drop `|| true`. Red: every cleanup step run with
+  a machine tooling that exits 1 exits 0 in the update job.
 - **W6, `doc/decisions.md`, "Actions run from a commit":** "the only `curl` is `jf rt curl`" is no longer true
-  (`build.yml` uses plain `curl` for the index). The text is corrected.
-- **W7, `persist-credentials`** and the push through the environment, as planned above.
+  (`build.yml` uses plain `curl` for the index). The text is corrected; no test.
+- **W7, `persist-credentials`** and the push through the environment, as planned above. Red: `check-actions` on
+  today's workflows names five checkouts; the request step run with a `git` that records which calls see the
+  header shows none, where only the push must, and no argument list may carry the token or its base64.
 
 **Declined:** the broad `catch (RuntimeException)` around `Json.parse` (passing an unreadable line through is
 documented); a blank token of an unknown kind (documented in its `@throws`); a redundant null check under
@@ -138,4 +148,4 @@ documented); a blank token of an unknown kind (documented in its `@throws`); a r
 `ClaudeCredentialExtractor` and `- url:`/`sha256:` from `claude.yaml` by their exact indentation; [CC33](README.md#cc33)
 changes those patterns with the 4-space YAML, or every update run stops.
 
-**Size:** about 10 fixes and 14 tests; M holds.
+**Size:** about 15 fixes, 10 of them with a test; M holds.

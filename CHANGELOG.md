@@ -14,6 +14,11 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 - Built on the snapshot of `porelo-parent` (0.2.1-SNAPSHOT, with the release tooling 0.5.1-SNAPSHOT), against Porelo 0.5.0.
 
+### Fixed
+
+- The log and the error a run ends with carry no terminal control characters but the line break and the tab, so nothing the model writes can clear or rewrite the screen that shows it.
+- A failed run whose result line gives no reason ends with an error saying so, never with "success" or "null", and what it said is cut at 300 characters without splitting one.
+
 ## [0.5.0] - 2026-10-17
 
 ### Changed

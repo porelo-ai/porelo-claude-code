@@ -37,6 +37,8 @@ jobs:
         timeout-minutes: 20
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
             - name: The pinned GraalVM
               uses: ./.github/actions/pinned-jdk
@@ -79,8 +81,9 @@ jobs:
             # Publishing only from main, as a snapshot, and from a tag v<version>, as a release once every leg passed.
             - name: Not publishing
               if: "!(github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))"
+              # The runner's own variables rather than expressions, so a branch's name never becomes shell.
               run: |
-                  echo "Not publishing. This run is '${{ github.event_name }}' on '${{ github.ref }}',"
+                  echo "Not publishing. This run is '$GITHUB_EVENT_NAME' on '$GITHUB_REF',"
                   echo "and only a push to main or a tag v<version> publishes. The packages were built and tested here"
                   echo "and are attached to this run as artifacts; nothing reached Artifactory, so"
                   echo "'apt' will still offer whatever was published last."
@@ -142,10 +145,14 @@ jobs:
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eux
-                  # A published release is never replaced, as on Central.
-                  if [ "$CHANNEL" = releases ] && curl -sfL "${JF_URL}/artifactory/porelo-dist-deb/dists/releases/main/binary-amd64/Packages" \
-                          | grep -qF "Filename: pool/main/p/porelo-agent-claude/$(basename target/*.deb)"; then
-                      echo "::error::this release is published already"; exit 1
+                  # A published release is never replaced, as on Central. Fetched to a file, so an index that
+                  # cannot be read stops the release rather than reading as "not published".
+                  if [ "$CHANNEL" = releases ]; then
+                      curl -sfL -o target/published-index "${JF_URL}/artifactory/porelo-dist-deb/dists/releases/main/binary-amd64/Packages" \
+                          || { echo "::error::the release index could not be read, so whether this release is published is unknown"; exit 1; }
+                      if grep -qF "Filename: pool/main/p/porelo-agent-claude/$(basename target/*.deb)" target/published-index; then
+                          echo "::error::this release is published already"; exit 1
+                      fi
                   fi
                   # --flat, or the source directory travels and the package lands away from its siblings.
                   jf rt upload "target/*.deb" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \
@@ -199,6 +206,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
             # A release is published only after these legs, so on a tag they install what this run built.
             - name: The packages this run built
@@ -253,6 +262,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
             # A tag publishes a release, everything else a snapshot. A release is refused unless the tag is exactly
             # 'v' plus the version it carries and Porelo is a release too, and a version is never both at once.
@@ -304,10 +315,14 @@ jobs:
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eux
-                  # A published release is never replaced, as on Central.
-                  if [ "$CHANNEL" = releases ] && curl -sfL "${JF_URL}/artifactory/porelo-dist-deb/dists/releases/main/binary-amd64/Packages" \
-                          | grep -qF "Filename: pool/main/p/porelo-agent-claude/$(basename target/*.deb)"; then
-                      echo "::error::this release is published already"; exit 1
+                  # A published release is never replaced, as on Central. Fetched to a file, so an index that
+                  # cannot be read stops the release rather than reading as "not published".
+                  if [ "$CHANNEL" = releases ]; then
+                      curl -sfL -o target/published-index "${JF_URL}/artifactory/porelo-dist-deb/dists/releases/main/binary-amd64/Packages" \
+                          || { echo "::error::the release index could not be read, so whether this release is published is unknown"; exit 1; }
+                      if grep -qF "Filename: pool/main/p/porelo-agent-claude/$(basename target/*.deb)" target/published-index; then
+                          echo "::error::this release is published already"; exit 1
+                      fi
                   fi
                   # --flat, or the source directory travels and the package lands away from its siblings.
                   jf rt upload "target/*.deb" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \

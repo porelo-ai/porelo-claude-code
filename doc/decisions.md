@@ -298,8 +298,10 @@ actions are not watched.
 **`mvnw` checks the Maven it downloads**: `distributionSha256Sum` in `.mvn/wrapper/maven-wrapper.properties`,
 for 3.9.15 the digest Apache's own SHA-512 confirms. A wrong one stops the wrapper before Maven runs.
 
-**Nothing else in these workflows is fetched by a name**: the only `curl` is `jf rt curl` reading this
-product's own Artifactory. The setup actions download their tools themselves, and there the two differ:
+**Nothing else in these workflows is fetched by a name**: `curl` reads this product's own Artifactory -
+through `jf rt curl`, and plainly for the Debian index a release is checked against before it is
+published - and, in the update job, the Claude Code binary the pin names, checked against the pinned
+SHA-256 before it is read. The setup actions download their tools themselves, and there the two differ:
 
 - **The JFrog CLI is fixed by the action's commit.** `setup-jfrog-cli` 5.2.0 defaults to `jf` 2.124.0
   and asks for the newest only when told to, so a Dependabot bump moves both together, under review. It

@@ -11,12 +11,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * Claude Code.
  *
- * <p>Two overrides, both because the definition genuinely cannot express them, and both living here
+ * <p>Four overrides, all because the definition genuinely cannot express them, and all living here
  * rather than in Porelo:
  *
  * <ul>
  *   <li>the credential is an OAuth token nested in a JSON file Claude writes at login;
- *   <li>the output is a stream of JSON objects rather than lines of text.
+ *   <li>a fresh container needs the files Claude reads at its first run and its settings;
+ *   <li>the output is a stream of JSON objects rather than lines of text;
+ *   <li>how the run ended is read from the last of those objects, the result line.
  * </ul>
  *
  * Everything else is {@code claude.yaml}.

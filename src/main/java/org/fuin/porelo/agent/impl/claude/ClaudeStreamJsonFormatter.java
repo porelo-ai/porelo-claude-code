@@ -17,10 +17,10 @@ import org.jspecify.annotations.Nullable;
  * so an agent added later either supplies its own formatter or gets plain text - and either way
  * says which, rather than inheriting a decision made about somebody else.
  *
- * <p>Anything unrecognised is passed through unchanged, and anything recognised but unreadable is
- * passed through with a marker. A log viewer that swallowed lines it did not understand would hide
- * exactly the output worth reading when something has gone wrong - and for an unattended run this
- * is the only record there is.
+ * <p>Anything unrecognised is passed through, and anything recognised but unreadable is passed
+ * through with a marker; either way without its terminal control characters. A log viewer that
+ * swallowed lines it did not understand would hide exactly the output worth reading when something
+ * has gone wrong - and for an unattended run this is the only record there is.
  */
 public class ClaudeStreamJsonFormatter implements LogFormatter {
 
@@ -34,8 +34,30 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
     /** Prefixes a line the formatter recognised but could not read, so it is visibly not prose. */
     private static final String UNREADABLE = "[unreadable] ";
 
+    /** How much of what a failed run said the log shows, in code points. */
+    private static final int SAID_LIMIT = 300;
+
+    /** The error of a failed run whose result line says neither a reason nor an error subtype. */
+    private static final String NO_REASON = "the run ended with an error and gave no reason";
+
     @Override
     public @Nullable String format(String line) {
+        final String rendered = render(line);
+        return rendered == null ? null : visible(rendered);
+    }
+
+    /**
+     * Drops the ISO control characters but the line break and the tab: JSON's escapes parse back
+     * into live bytes, and what the model wrote must not drive the terminal that shows it.
+     */
+    private static String visible(String text) {
+        return text.codePoints()
+                .filter(c -> !Character.isISOControl(c) || c == '\n' || c == '\t')
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+    }
+
+    private @Nullable String render(String line) {
 
         final String trimmed = line.strip();
         if (!trimmed.startsWith("{")) {
@@ -116,42 +138,63 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
         if (!(parsed instanceof Map<?, ?> event) || !"result".equals(event.get("type"))) {
             return null;
         }
-        final boolean failed =
-                Boolean.TRUE.equals(event.get("is_error"))
-                        || String.valueOf(event.get("subtype")).startsWith("error");
-        if (!failed) {
+        if (!failed(event)) {
             return new AgentEnd(true, "", AgentEnd.AGENT, null);
         }
-        final String said =
-                event.get("result") instanceof String text && !text.isBlank()
-                        ? text.strip().replaceAll("\\s+", " ")
-                        : String.valueOf(event.get("subtype"));
-        final java.util.regex.Matcher status = PROVIDER_STATUS.matcher(said);
+        final String said = said(event);
+        final String error = visible(said.isEmpty() ? errorSubtype(event) : said);
+        final java.util.regex.Matcher status = PROVIDER_STATUS.matcher(error);
         return status.find()
-                ? new AgentEnd(false, said, AgentEnd.PROVIDER, Integer.valueOf(status.group(1)))
-                : new AgentEnd(false, said, AgentEnd.AGENT, null);
+                ? new AgentEnd(false, error, AgentEnd.PROVIDER, Integer.valueOf(status.group(1)))
+                : new AgentEnd(false, error, AgentEnd.AGENT, null);
+    }
+
+    /**
+     * Whether a result line reports a run that stopped before its end: a provider's refusal or a
+     * turn limit still ends with one, marked {@code is_error} or with an error subtype.
+     */
+    private static boolean failed(Map<?, ?> event) {
+        return Boolean.TRUE.equals(event.get("is_error"))
+                || String.valueOf(event.get("subtype")).startsWith("error");
+    }
+
+    /** What the result line says, on one line, or empty when it says nothing. */
+    private static String said(Map<?, ?> event) {
+        return event.get("result") instanceof String text && !text.isBlank()
+                ? text.strip().replaceAll("\\s+", " ")
+                : "";
+    }
+
+    /**
+     * The subtype, when it names something other than success; otherwise that the line gave no
+     * reason, since "success" or a missing subtype is no error text.
+     */
+    private static String errorSubtype(Map<?, ?> event) {
+        return event.get("subtype") instanceof String subtype && !"success".equals(subtype)
+                ? subtype
+                : NO_REASON;
+    }
+
+    /** Cuts what a failed run said on a code point, so no half of a pair reaches the log. */
+    private static String cut(String text) {
+        return text.codePointCount(0, text.length()) > SAID_LIMIT
+                ? text.substring(0, text.offsetByCodePoints(0, SAID_LIMIT)) + "…"
+                : text;
     }
 
     private String result(Map<?, ?> event) {
         final Object cost = event.get("total_cost_usd");
         final Object turns = event.get("num_turns");
-        // A run that failed - a provider's refusal, a turn limit - still ends with a result line,
-        // marked
-        // is_error and with an error subtype. Read as "done", it looked like a success with nothing
-        // in it.
-        final boolean failed =
-                Boolean.TRUE.equals(event.get("is_error"))
-                        || String.valueOf(event.get("subtype")).startsWith("error");
+        final boolean failed = failed(event);
         final StringBuilder out = new StringBuilder(failed ? "-- ended with an error" : "-- done");
         if (failed) {
             final Object subtype = event.get("subtype");
             if (subtype != null && !"success".equals(subtype)) {
                 out.append(" (").append(subtype).append(')');
             }
-            final Object said = event.get("result");
-            if (said instanceof String text && !text.isBlank()) {
-                final String line = text.strip().replaceAll("\\s+", " ");
-                out.append(": ").append(line.length() > 300 ? line.substring(0, 300) + "…" : line);
+            final String said = said(event);
+            if (!said.isEmpty()) {
+                out.append(": ").append(cut(said));
             }
         }
         if (turns != null) {
@@ -160,10 +203,8 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
         }
         if (cost != null) {
             // Claude Code prices every run at API rates, a subscription's included. Said as such,
-            // so
-            // a person on a subscription does not read a bill; four places, because a double
-            // carries
-            // seventeen digits nobody priced.
+            // so a person on a subscription does not read a bill; four places, because a double
+            // carries seventeen digits nobody priced.
             out.append(", about $")
                     .append(
                             cost instanceof Number n
