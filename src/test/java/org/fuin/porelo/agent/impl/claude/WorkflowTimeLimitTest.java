@@ -14,15 +14,18 @@ import org.junit.jupiter.api.Test;
 
 class WorkflowTimeLimitTest {
 
-    private static final Pattern JOB = Pattern.compile("^  ([a-z][a-z0-9_-]*):$");
+    private static final Pattern JOB = Pattern.compile("^    ([a-z][a-z0-9_-]*):$");
 
     @Test
     void everyJobStopsAfterALimit() throws IOException {
 
-        // GitHub's default is six hours, and a leg on a rented machine pays for every minute of a hang.
+        // GitHub's default is six hours, and a leg on a rented machine pays for every minute of a
+        // hang.
         final List<String> unlimited = new ArrayList<>();
-        try (Stream<Path> files = Files.list(RepositoryDocuments.root().resolve(".github/workflows"))) {
-            for (final Path file : files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
+        try (Stream<Path> files =
+                Files.list(RepositoryDocuments.root().resolve(".github/workflows"))) {
+            for (final Path file :
+                    files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
                 boolean inJobs = false;
                 String job = null;
                 boolean limited = false;
@@ -38,7 +41,7 @@ class WorkflowTimeLimitTest {
                         }
                         job = m.group(1);
                         limited = false;
-                    } else if (line.matches("^    timeout-minutes: [1-9][0-9]*$")) {
+                    } else if (line.matches("^        timeout-minutes: [1-9][0-9]*$")) {
                         limited = true;
                     }
                 }

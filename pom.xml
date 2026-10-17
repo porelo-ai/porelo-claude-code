@@ -160,6 +160,13 @@
 
         <plugins>
 
+            <!-- The shared code style: porelo-parent checks Java against google-java-format and every
+                 *.sh against shfmt in validate; 'spotless:apply' formats them. -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+
             <!-- The bill of what this package carries. skipNotDeployed is off because nothing
                  here is deployed to Maven - the package is what ships. -->
 

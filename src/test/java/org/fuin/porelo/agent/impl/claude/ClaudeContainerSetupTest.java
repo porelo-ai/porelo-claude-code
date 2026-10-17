@@ -10,9 +10,7 @@ import org.fuin.porelo.agent.api.ContainerFile;
 import org.fuin.porelo.wire.Json;
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests for {@link ClaudeContainerSetup}.
- */
+/** Tests for {@link ClaudeContainerSetup}. */
 class ClaudeContainerSetupTest {
 
     private static final String TOKEN = "porelo_pt_example";
@@ -22,8 +20,10 @@ class ClaudeContainerSetupTest {
     }
 
     private List<ContainerFile> withToken(String token, String type) {
-        return new ClaudeContainerSetup().files(new org.fuin.porelo.agent.api.SetupContext(
-                token, type, "/workspace", "", "anthropic"));
+        return new ClaudeContainerSetup()
+                .files(
+                        new org.fuin.porelo.agent.api.SetupContext(
+                                token, type, "/workspace", "", "anthropic"));
     }
 
     private List<String> paths(List<ContainerFile> files) {
@@ -46,8 +46,10 @@ class ClaudeContainerSetupTest {
         final Map<?, ?> config = parse(named(ClaudeFirstRun.FILE, "oauth"));
 
         assertThat(config.get("hasCompletedOnboarding")).isEqualTo(Boolean.TRUE);
-        assertThat(((Map<?, ?>) ((Map<?, ?>) config.get("projects")).get("/workspace"))
-                .get("hasTrustDialogAccepted")).isEqualTo(Boolean.TRUE);
+        assertThat(
+                        ((Map<?, ?>) ((Map<?, ?>) config.get("projects")).get("/workspace"))
+                                .get("hasTrustDialogAccepted"))
+                .isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -76,12 +78,16 @@ class ClaudeContainerSetupTest {
     @Test
     void letsAModelTheCliDoesNotKnowUseItsOwnWindow() {
 
-        // Measured on 2.1.267 with z-ai/glm-5.3-flash over OpenRouter: the CLI says the model "isn't
-        // described by this version's model catalog" and holds the session to 200k tokens. With this
+        // Measured on 2.1.267 with z-ai/glm-5.3-flash over OpenRouter: the CLI says the model
+        // "isn't
+        // described by this version's model catalog" and holds the session to 200k tokens. With
+        // this
         // set it says nothing and leaves the window to the provider, as before 2.1.267.
         final Map<?, ?> settings = parse(named(ClaudeSettings.FILE, "oauth"));
 
-        assertThat(((Map<?, ?>) settings.get("env")).get("CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT"))
+        assertThat(
+                        ((Map<?, ?>) settings.get("env"))
+                                .get("CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT"))
                 .isEqualTo("1");
     }
 
@@ -100,7 +106,8 @@ class ClaudeContainerSetupTest {
         // .credentials.json holding the same token gave no key and no token with the variable gone.
         // A file nothing reads is only a second copy of the token.
         for (final String kind : List.of("api-key", "oauth")) {
-            assertThat(paths(files(kind))).containsExactlyInAnyOrder(ClaudeFirstRun.FILE, ClaudeSettings.FILE);
+            assertThat(paths(files(kind)))
+                    .containsExactlyInAnyOrder(ClaudeFirstRun.FILE, ClaudeSettings.FILE);
         }
     }
 
@@ -125,9 +132,10 @@ class ClaudeContainerSetupTest {
 
         // No key in the environment, no dialog to answer - and nothing of a token in a file
         // that is readable.
-        for (final ContainerFile file : List.of(
-                namedIn(withToken("", "api-key"), ClaudeFirstRun.FILE),
-                namedIn(withToken(TOKEN, "oauth"), ClaudeFirstRun.FILE))) {
+        for (final ContainerFile file :
+                List.of(
+                        namedIn(withToken("", "api-key"), ClaudeFirstRun.FILE),
+                        namedIn(withToken(TOKEN, "oauth"), ClaudeFirstRun.FILE))) {
             assertThat(parse(file).get("customApiKeyResponses")).isNull();
             assertThat(file.ownerOnly()).isFalse();
         }

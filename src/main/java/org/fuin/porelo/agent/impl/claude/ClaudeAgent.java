@@ -10,20 +10,20 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Claude Code.
- * <p>
- * Two overrides, both because the definition genuinely cannot express them, and both living here
+ *
+ * <p>Two overrides, both because the definition genuinely cannot express them, and both living here
  * rather than in Porelo:
+ *
  * <ul>
- * <li>the credential is an OAuth token nested in a JSON file Claude writes at login;</li>
- * <li>the output is a stream of JSON objects rather than lines of text.</li>
+ *   <li>the credential is an OAuth token nested in a JSON file Claude writes at login;
+ *   <li>the output is a stream of JSON objects rather than lines of text.
  * </ul>
+ *
  * Everything else is {@code claude.yaml}.
  */
 public final class ClaudeAgent extends YamlAgent {
 
-    /**
-     * Constructor.
-     */
+    /** Constructor. */
     public ClaudeAgent() {
         super("claude");
     }

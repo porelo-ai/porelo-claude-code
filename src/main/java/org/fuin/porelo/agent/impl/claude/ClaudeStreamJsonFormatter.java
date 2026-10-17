@@ -11,13 +11,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Renders Claude's {@code stream-json} output as readable lines.
- * <p>
- * This is the capability the reference implementation declares in YAML and then ignores, writing
+ *
+ * <p>This is the capability the reference implementation declares in YAML and then ignores, writing
  * {@code if effective_agent == "claude"} in the viewer instead. Here it is a method on the agent,
  * so an agent added later either supplies its own formatter or gets plain text - and either way
  * says which, rather than inheriting a decision made about somebody else.
- * <p>
- * Anything unrecognised is passed through unchanged, and anything recognised but unreadable is
+ *
+ * <p>Anything unrecognised is passed through unchanged, and anything recognised but unreadable is
  * passed through with a marker. A log viewer that swallowed lines it did not understand would hide
  * exactly the output worth reading when something has gone wrong - and for an unattended run this
  * is the only record there is.
@@ -89,13 +89,15 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
         return out.isEmpty() ? UNREADABLE + line : prefix + out;
     }
 
-    /** A provider's refusal, as Claude Code writes it into the result: {@code API Error: 402 ...}. */
+    /**
+     * A provider's refusal, as Claude Code writes it into the result: {@code API Error: 402 ...}.
+     */
     private static final java.util.regex.Pattern PROVIDER_STATUS =
             java.util.regex.Pattern.compile("API Error: (\\d{3})\\b");
 
     /**
-     * Reads one line for how the run ended: the {@code result} line, marked {@code is_error} or with an
-     * error subtype when the run stopped before its end.
+     * Reads one line for how the run ended: the {@code result} line, marked {@code is_error} or
+     * with an error subtype when the run stopped before its end.
      *
      * @param line One raw line of output.
      * @return How the run ended, or {@code null} for a line that is not its end.
@@ -114,14 +116,16 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
         if (!(parsed instanceof Map<?, ?> event) || !"result".equals(event.get("type"))) {
             return null;
         }
-        final boolean failed = Boolean.TRUE.equals(event.get("is_error"))
-                || String.valueOf(event.get("subtype")).startsWith("error");
+        final boolean failed =
+                Boolean.TRUE.equals(event.get("is_error"))
+                        || String.valueOf(event.get("subtype")).startsWith("error");
         if (!failed) {
             return new AgentEnd(true, "", AgentEnd.AGENT, null);
         }
-        final String said = event.get("result") instanceof String text && !text.isBlank()
-                ? text.strip().replaceAll("\\s+", " ")
-                : String.valueOf(event.get("subtype"));
+        final String said =
+                event.get("result") instanceof String text && !text.isBlank()
+                        ? text.strip().replaceAll("\\s+", " ")
+                        : String.valueOf(event.get("subtype"));
         final java.util.regex.Matcher status = PROVIDER_STATUS.matcher(said);
         return status.find()
                 ? new AgentEnd(false, said, AgentEnd.PROVIDER, Integer.valueOf(status.group(1)))
@@ -131,10 +135,13 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
     private String result(Map<?, ?> event) {
         final Object cost = event.get("total_cost_usd");
         final Object turns = event.get("num_turns");
-        // A run that failed - a provider's refusal, a turn limit - still ends with a result line, marked
-        // is_error and with an error subtype. Read as "done", it looked like a success with nothing in it.
-        final boolean failed = Boolean.TRUE.equals(event.get("is_error"))
-                || String.valueOf(event.get("subtype")).startsWith("error");
+        // A run that failed - a provider's refusal, a turn limit - still ends with a result line,
+        // marked
+        // is_error and with an error subtype. Read as "done", it looked like a success with nothing
+        // in it.
+        final boolean failed =
+                Boolean.TRUE.equals(event.get("is_error"))
+                        || String.valueOf(event.get("subtype")).startsWith("error");
         final StringBuilder out = new StringBuilder(failed ? "-- ended with an error" : "-- done");
         if (failed) {
             final Object subtype = event.get("subtype");
@@ -152,13 +159,20 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             out.append(", ").append(count).append("1".equals(count) ? " turn" : " turns");
         }
         if (cost != null) {
-            // Claude Code prices every run at API rates, a subscription's included. Said as such, so
-            // a person on a subscription does not read a bill; four places, because a double carries
+            // Claude Code prices every run at API rates, a subscription's included. Said as such,
+            // so
+            // a person on a subscription does not read a bill; four places, because a double
+            // carries
             // seventeen digits nobody priced.
-            out.append(", about $").append(cost instanceof Number n
-                    ? BigDecimal.valueOf(n.doubleValue()).setScale(4, RoundingMode.HALF_UP)
-                            .stripTrailingZeros().toPlainString()
-                    : String.valueOf(cost)).append(" at API prices");
+            out.append(", about $")
+                    .append(
+                            cost instanceof Number n
+                                    ? BigDecimal.valueOf(n.doubleValue())
+                                            .setScale(4, RoundingMode.HALF_UP)
+                                            .stripTrailingZeros()
+                                            .toPlainString()
+                                    : String.valueOf(cost))
+                    .append(" at API prices");
         }
         return out.toString();
     }

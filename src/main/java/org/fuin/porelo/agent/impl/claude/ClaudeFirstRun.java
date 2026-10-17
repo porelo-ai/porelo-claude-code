@@ -7,13 +7,13 @@ import org.fuin.porelo.wire.Json;
 
 /**
  * The answers a fresh container would otherwise be asked for.
- * <p>
- * Measured, not documented. A container has never been logged in, so the CLI runs its first-run
+ *
+ * <p>Measured, not documented. A container has never been logged in, so the CLI runs its first-run
  * wizard: it asks for a theme, then offers a login menu, then asks whether the workspace is
- * trusted. The login menu belongs to that wizard rather than to any check of the credential -
- * with the wizard marked done, the task's token is used without question, phantom or not.
- * <p>
- * <strong>This is the agent's own state, not the provider's.</strong> It would look the same
+ * trusted. The login menu belongs to that wizard rather than to any check of the credential - with
+ * the wizard marked done, the task's token is used without question, phantom or not.
+ *
+ * <p><strong>This is the agent's own state, not the provider's.</strong> It would look the same
  * whoever served the model, which is why it is kept apart from the settings beside it.
  */
 final class ClaudeFirstRun {

@@ -8,52 +8,52 @@ run-name: "${{ github.workflow }} · ${{ github.ref_name }}: ${{ github.event.he
 # Once a day, not on a push: every hand-over runs the same checks locally on its exact commit first, and a run per
 # push spent build minutes on what was already known. 03:17 UTC lies outside the hours the repositories are worked in.
 on:
-  schedule:
-    - cron: '17 3 * * *'
-  pull_request:
-  workflow_dispatch:
+    schedule:
+        - cron: '17 3 * * *'
+    pull_request:
+    workflow_dispatch:
 
 # Read by every Maven call, the pinned-jdk action's too: Maven asks for a newer snapshot once a day, and a
 # cache restored the day Porelo publishes would keep yesterday's. Never run on a tag.
 env:
-  MAVEN_ARGS: -U
+    MAVEN_ARGS: -U
 
 # Read-only: nothing in this workflow writes to the repository with its token.
 permissions:
-  contents: read
+    contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
 
-  check-shared:
-    name: Every shared rules block is unchanged
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    check-shared:
+        name: Every shared rules block is unchanged
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: The pinned GraalVM
-        uses: ./.github/actions/pinned-jdk
+            - name: The pinned GraalVM
+              uses: ./.github/actions/pinned-jdk
 
-      - name: Resolve the release tooling
-        run: |
-          ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
-              -Dmdep.outputFile=target/cp.txt
+            - name: Resolve the release tooling
+              run: |
+                  ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
+                      -Dmdep.outputFile=target/cp.txt
 
-      - name: Every shared rules block is unchanged
-        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-shared AGENTS.md
+            - name: Every shared rules block is unchanged
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-shared AGENTS.md .editorconfig
 
-      - name: No issue is cited by its file or by a number that is gone
-        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-citations .
+            - name: No issue is cited by its file or by a number that is gone
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-citations .
 
-      - name: Every page of the documentation chapter is in its navigation once
-        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-doc-site doc mkdocs.yml
+            - name: Every page of the documentation chapter is in its navigation once
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-doc-site doc mkdocs.yml
 
-      - name: Every module directory has a README that links its submodules
-        run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-readmes .
+            - name: Every module directory has a README that links its submodules
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-readmes .
 
-      - name: The tests that read a document
-        run: ./mvnw -B -s settings.xml -Pdocuments test
+            - name: The tests that read a document
+              run: ./mvnw -B -s settings.xml -Pdocuments test

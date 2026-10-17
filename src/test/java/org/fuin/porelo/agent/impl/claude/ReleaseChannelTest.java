@@ -13,19 +13,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Runs both "Which channel" steps of the build workflow as a tag's run would, against a pom that names a Porelo
- * snapshot and one that names a release. The step itself is what refuses a release built on a snapshot, so the step
- * is run, not looked for.
+ * Runs both "Which channel" steps of the build workflow as a tag's run would, against a pom that
+ * names a Porelo snapshot and one that names a release. The step itself is what refuses a release
+ * built on a snapshot, so the step is run, not looked for.
  */
 class ReleaseChannelTest {
 
-    private static final String REFUSAL = "is a snapshot; a release is built against a released Porelo";
+    private static final String REFUSAL =
+            "is a snapshot; a release is built against a released Porelo";
 
     @Test
     void aTagIsRefusedWhilePoreloIsASnapshot(@TempDir final Path dir) throws Exception {
 
         final List<String> steps = whichChannel();
-        assertThat(steps).as("\"Which channel\" steps in build.yml, the build job's and the release job's").hasSize(2);
+        assertThat(steps)
+                .as("\"Which channel\" steps in build.yml, the build job's and the release job's")
+                .hasSize(2);
         for (final String step : steps) {
             final Run run = run(step, dir, "0.4.2-SNAPSHOT");
             assertThat(run.exit()).as("exit of a tag on a Porelo snapshot").isNotZero();
@@ -36,38 +39,53 @@ class ReleaseChannelTest {
     @Test
     void aTagOnAReleasedPoreloIsAReleaseChannel(@TempDir final Path dir) throws Exception {
 
-        // The same steps let a released Porelo through, so the refusal above is the snapshot's and nothing else's.
+        // The same steps let a released Porelo through, so the refusal above is the snapshot's and
+        // nothing else's.
         for (final String step : whichChannel()) {
             final Run run = run(step, dir, "0.4.2");
-            assertThat(run.exit()).as("exit of a tag on a released Porelo:%n%s", run.output()).isZero();
+            assertThat(run.exit())
+                    .as("exit of a tag on a released Porelo:%n%s", run.output())
+                    .isZero();
             assertThat(Files.readString(dir.resolve("output"))).contains("channel=releases");
         }
     }
 
-    private record Run(int exit, String output) {
-    }
+    private record Run(int exit, String output) {}
 
-    /** Runs a step's script in a directory holding a pom with version 0.5.0 and the given porelo.version, as tag v0.5.0. */
-    private static Run run(final String script, final Path dir, final String porelo) throws IOException, InterruptedException {
-        Files.writeString(dir.resolve("pom.xml"), "<project>\n    <version>0.5.0</version>\n    <properties>\n"
-                + "        <porelo.version>" + porelo + "</porelo.version>\n    </properties>\n</project>\n");
+    /**
+     * Runs a step's script in a directory holding a pom with version 0.5.0 and the given
+     * porelo.version, as tag v0.5.0.
+     */
+    private static Run run(final String script, final Path dir, final String porelo)
+            throws IOException, InterruptedException {
+        Files.writeString(
+                dir.resolve("pom.xml"),
+                "<project>\n    <version>0.5.0</version>\n    <properties>\n"
+                        + "        <porelo.version>"
+                        + porelo
+                        + "</porelo.version>\n    </properties>\n</project>\n");
         Files.writeString(dir.resolve("output"), "");
         final Path file = dir.resolve("step.sh");
         Files.writeString(file, script);
-        final ProcessBuilder builder = new ProcessBuilder("bash", file.toString()).directory(dir.toFile())
-                .redirectErrorStream(true);
+        final ProcessBuilder builder =
+                new ProcessBuilder("bash", file.toString())
+                        .directory(dir.toFile())
+                        .redirectErrorStream(true);
         builder.environment().put("GITHUB_REF_TYPE", "tag");
         builder.environment().put("GITHUB_REF_NAME", "v0.5.0");
         builder.environment().put("GITHUB_OUTPUT", dir.resolve("output").toString());
         final Process process = builder.start();
-        final String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        final String output =
+                new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         assertThat(process.waitFor(30, TimeUnit.SECONDS)).as("the step ends").isTrue();
         return new Run(process.exitValue(), output);
     }
 
     /** The run block of each step named "Which channel" in build.yml, its indentation removed. */
     private static List<String> whichChannel() throws IOException {
-        final List<String> lines = Files.readAllLines(RepositoryDocuments.root().resolve(".github/workflows/build.yml"));
+        final List<String> lines =
+                Files.readAllLines(
+                        RepositoryDocuments.root().resolve(".github/workflows/build.yml"));
         final List<String> result = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             if (!lines.get(i).strip().equals("- name: Which channel")) {
@@ -80,7 +98,9 @@ class ReleaseChannelTest {
             final int key = indentOf(lines.get(j));
             final StringBuilder script = new StringBuilder();
             int body = -1;
-            for (int k = j + 1; k < lines.size() && (lines.get(k).isBlank() || indentOf(lines.get(k)) > key); k++) {
+            for (int k = j + 1;
+                    k < lines.size() && (lines.get(k).isBlank() || indentOf(lines.get(k)) > key);
+                    k++) {
                 if (lines.get(k).isBlank()) {
                     script.append('\n');
                     continue;

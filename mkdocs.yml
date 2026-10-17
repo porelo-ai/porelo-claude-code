@@ -3,5 +3,5 @@
 site_name: Claude Code for Porelo
 docs_dir: doc
 nav:
-  - Claude Code: index.md
-  - Decisions: decisions.md
+    - Claude Code: index.md
+    - Decisions: decisions.md

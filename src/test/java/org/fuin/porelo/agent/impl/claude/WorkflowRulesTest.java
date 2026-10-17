@@ -12,15 +12,17 @@ import org.junit.jupiter.api.Test;
 
 class WorkflowRulesTest {
 
-    private static final String STEP = "      - ";
+    private static final String STEP = "            - ";
 
     @Test
     void noWorkflowBuildsThePackagesWithoutTheirTests() throws IOException {
 
-        // -DskipTests also skips NativeLinkageCheck, so the packages would ship a binary nobody held to the floor.
+        // -DskipTests also skips NativeLinkageCheck, so the packages would ship a binary nobody
+        // held to the floor.
         final List<String> untested = new ArrayList<>();
         try (Stream<Path> files = Files.list(workflows())) {
-            for (final Path file : files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
+            for (final Path file :
+                    files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
                 for (final String line : joined(Files.readAllLines(file))) {
                     if (line.contains("-Pnative,dist") && line.contains("-DskipTests")) {
                         untested.add(file.getFileName() + ": " + line.strip());
@@ -34,7 +36,8 @@ class WorkflowRulesTest {
     @Test
     void noAcceptanceLegRunsWithoutTheKey() throws IOException {
 
-        // Without it the credential scenarios skip themselves, and a green leg proves less than it says.
+        // Without it the credential scenarios skip themselves, and a green leg proves less than it
+        // says.
         final List<String> unguarded = new ArrayList<>();
         int legs = 0;
         for (final String step : steps(workflows().resolve("build.yml"))) {
@@ -46,11 +49,16 @@ class WorkflowRulesTest {
             }
         }
         assertThat(legs).as("acceptance steps in build.yml").isPositive();
-        assertThat(unguarded).as("acceptance steps in build.yml that do not refuse an empty key").isEmpty();
+        assertThat(unguarded)
+                .as("acceptance steps in build.yml that do not refuse an empty key")
+                .isEmpty();
 
         assertThat(steps(workflows().resolve("update.yml")))
                 .as("a step in update.yml that stops on an empty key")
-                .anyMatch(step -> step.contains("secrets.OPEN_ROUTER_API_KEY") && step.contains("-n \"$KEY\""));
+                .anyMatch(
+                        step ->
+                                step.contains("secrets.OPEN_ROUTER_API_KEY")
+                                        && step.contains("-n \"$KEY\""));
     }
 
     private static Path workflows() {
@@ -99,17 +107,25 @@ class WorkflowRulesTest {
     @Test
     void noFoldedPackageBuildSkipsItsTests() throws IOException {
 
-        // A command folded onto more-indented lines, with or without a backslash, is still one command.
+        // A command folded onto more-indented lines, with or without a backslash, is still one
+        // command.
         final List<String> untested = new ArrayList<>();
-        try (Stream<Path> files = Files.list(RepositoryDocuments.root().resolve(".github/workflows"))) {
-            for (final Path file : files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
+        try (Stream<Path> files =
+                Files.list(RepositoryDocuments.root().resolve(".github/workflows"))) {
+            for (final Path file :
+                    files.filter(f -> f.toString().endsWith(".yml")).sorted().toList()) {
                 final List<String> lines = Files.readAllLines(file);
                 for (int i = 0; i < lines.size(); i++) {
                     if (!lines.get(i).contains("-Pnative,dist")) {
                         continue;
                     }
                     final int indent = indentOf(lines.get(i));
-                    for (int j = i; j < lines.size() && (j == i || !lines.get(j).isBlank() && indentOf(lines.get(j)) > indent); j++) {
+                    for (int j = i;
+                            j < lines.size()
+                                    && (j == i
+                                            || !lines.get(j).isBlank()
+                                                    && indentOf(lines.get(j)) > indent);
+                            j++) {
                         if (lines.get(j).contains("-DskipTests")) {
                             untested.add(file.getFileName() + ":" + (j + 1));
                         }

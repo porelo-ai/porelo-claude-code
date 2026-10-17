@@ -19,14 +19,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Whether the native binary needs no more than its packages declare.
- * <p>
- * The binary is linked dynamically, and neither jdeb nor the rpm plugin reads it to find out
+ *
+ * <p>The binary is linked dynamically, and neither jdeb nor the rpm plugin reads it to find out
  * against what - {@code dpkg-shlibdeps} and {@code rpmbuild} would, and neither runs here. So the
  * dependencies are written by hand in {@code pom.xml}, and this holds them to the binary: a library
  * nobody declared, or a symbol version newer than the floor, fails the build before anything is
  * packed.
- * <p>
- * Not a unit test: the binary exists only after native-image, which runs at {@code package}. The
+ *
+ * <p>Not a unit test: the binary exists only after native-image, which runs at {@code package}. The
  * {@code dist} profile runs this class through failsafe, by name, so neither the unit tests nor the
  * acceptance suite pick it up.
  */
@@ -35,17 +35,20 @@ class NativeLinkageCheck {
     /** Every library a package declares, with the prefix of its symbol versions. */
     static final Map<String, String> DECLARED = Map.of("libc.so.6", "GLIBC", "libz.so.1", "ZLIB");
 
-    private static final Pattern NEEDED = Pattern.compile("\\(NEEDED\\)\\s+Shared library: \\[([^\\]]+)\\]");
+    private static final Pattern NEEDED =
+            Pattern.compile("\\(NEEDED\\)\\s+Shared library: \\[([^\\]]+)\\]");
 
-    private static final Pattern VERSION = Pattern.compile("Name: ([A-Z]+)_([0-9]+(?:\\.[0-9]+)*)\\b");
+    private static final Pattern VERSION =
+            Pattern.compile("Name: ([A-Z]+)_([0-9]+(?:\\.[0-9]+)*)\\b");
 
     /** What native-image prints when a CPU lacks a feature the image was built for. */
-    private static final Pattern REQUIRED = Pattern.compile("required by the image: \\[([A-Z0-9_, ]+)\\]");
+    private static final Pattern REQUIRED =
+            Pattern.compile("required by the image: \\[([A-Z0-9_, ]+)\\]");
 
     /**
-     * The x86-64 baseline, and the whole of what the binary may need: every
-     * native image runs on any x86-64 CPU. native-image's default is v3, and a pre-Haswell CPU or a VM
-     * with a conservative CPU model would install the package and then not start it.
+     * The x86-64 baseline, and the whole of what the binary may need: every native image runs on
+     * any x86-64 CPU. native-image's default is v3, and a pre-Haswell CPU or a VM with a
+     * conservative CPU model would install the package and then not start it.
      */
     static final Set<String> BASELINE = Set.of("CMOV", "CX8", "FXSR", "MMX", "SSE", "SSE2");
 
@@ -55,9 +58,13 @@ class NativeLinkageCheck {
         final Path binary = Path.of(System.getProperty("porelo.native.binary", ""));
         assertThat(Files.isRegularFile(binary)).as("%s - built by -Pnative", binary).isTrue();
 
-        assertThat(problems(readelf(binary), Map.of(
-                "GLIBC", System.getProperty("package.glibc.floor"),
-                "ZLIB", System.getProperty("package.zlib.floor")))).isEmpty();
+        assertThat(
+                        problems(
+                                readelf(binary),
+                                Map.of(
+                                        "GLIBC", System.getProperty("package.glibc.floor"),
+                                        "ZLIB", System.getProperty("package.zlib.floor"))))
+                .isEmpty();
     }
 
     @Test
@@ -66,7 +73,8 @@ class NativeLinkageCheck {
         final Path binary = Path.of(System.getProperty("porelo.native.binary", ""));
         assertThat(Files.isRegularFile(binary)).as("%s - built by -Pnative", binary).isTrue();
 
-        assertThat(cpuProblems(new String(Files.readAllBytes(binary), StandardCharsets.ISO_8859_1))).isEmpty();
+        assertThat(cpuProblems(new String(Files.readAllBytes(binary), StandardCharsets.ISO_8859_1)))
+                .isEmpty();
     }
 
     /**
@@ -78,12 +86,15 @@ class NativeLinkageCheck {
     static List<String> cpuProblems(final String binary) {
         final Matcher required = REQUIRED.matcher(binary);
         if (!required.find()) {
-            return List.of("the binary names no CPU requirement - native-image's message was not found");
+            return List.of(
+                    "the binary names no CPU requirement - native-image's message was not found");
         }
         final List<String> problems = new ArrayList<>();
         for (final String feature : required.group(1).split(",\\s*")) {
             if (!BASELINE.contains(feature.strip())) {
-                problems.add(feature.strip() + " is required, so a CPU without it cannot start the agent");
+                problems.add(
+                        feature.strip()
+                                + " is required, so a CPU without it cannot start the agent");
             }
         }
         return problems;
@@ -123,8 +134,12 @@ class NativeLinkageCheck {
         for (final Map.Entry<String, String> floor : floors.entrySet()) {
             final String max = highest.get(floor.getKey());
             if (max != null && compare(max, floor.getValue()) > 0) {
-                problems.add(floor.getKey() + "_" + max + " is needed and the packages promise only "
-                        + floor.getValue());
+                problems.add(
+                        floor.getKey()
+                                + "_"
+                                + max
+                                + " is needed and the packages promise only "
+                                + floor.getValue());
             }
         }
         return problems;
@@ -151,11 +166,13 @@ class NativeLinkageCheck {
     }
 
     private static String readelf(final Path binary) throws IOException, InterruptedException {
-        final ProcessBuilder builder = new ProcessBuilder("readelf", "-d", "-V", "-W", binary.toString())
-                .redirectErrorStream(true);
+        final ProcessBuilder builder =
+                new ProcessBuilder("readelf", "-d", "-V", "-W", binary.toString())
+                        .redirectErrorStream(true);
         // The labels are translated otherwise, and the patterns above are the English ones.
         builder.environment().put("LC_ALL", "C");
-        // To a file rather than a pipe: reading a pipe to its end would wait out a hang, not the timeout.
+        // To a file rather than a pipe: reading a pipe to its end would wait out a hang, not the
+        // timeout.
         final Path out = Files.createTempFile("readelf", ".txt");
         try {
             final Process process = builder.redirectOutput(out.toFile()).start();

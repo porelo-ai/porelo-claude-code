@@ -7,15 +7,16 @@ import org.junit.jupiter.api.Test;
 
 /**
  * The waiting declaration read against the screens it was written from.
- * <p>
- * Each screen is what the attached agent drew on 2.1.267, captured at a terminal - so a
- * change to the declaration that stops fitting what was measured fails here. Whether the agent still
- * draws these at the version it pins is the acceptance suite's question, not this one's.
+ *
+ * <p>Each screen is what the attached agent drew on 2.1.267, captured at a terminal - so a change
+ * to the declaration that stops fitting what was measured fails here. Whether the agent still draws
+ * these at the version it pins is the acceptance suite's question, not this one's.
  */
 class WaitingDeclarationTest {
 
     /** Asked to put a question, it asked with its question tool: the list, and how to answer it. */
-    private static final String ASKING = """
+    private static final String ASKING =
+            """
              ▐▛███▛█   Claude Code v2.1.267
             ▝▜██████▀  Opus 5 (1M context) · API Usage Billing
               ▝▝ ▝▝    /workspace
@@ -34,7 +35,8 @@ class WaitingDeclarationTest {
             """;
 
     /** At its prompt, having asked nothing - what the ready marker waits for. */
-    private static final String AT_REST = """
+    private static final String AT_REST =
+            """
              ▐▛███▛█   Claude Code v2.1.267
             ▝▜██████▀  Opus 5 (1M context) · API Usage Billing
               ▝▝ ▝▝    /workspace
@@ -69,17 +71,25 @@ class WaitingDeclarationTest {
     @Test
     void readsTheWorkingLineAsNotWaiting() {
 
-        // At work its last lines say "esc to interrupt"; the rule is matched without regard to case, so
+        // At work its last lines say "esc to interrupt"; the rule is matched without regard to
+        // case, so
         // it must not be "esc to" alone.
-        assertThat(waiting().read(AT_REST.replace("⏵⏵ bypass permissions on (shift+tab to cycle)",
-                "✻ Thinking… (esc to interrupt)")).seen()).isEqualTo(Waiting.Seen.NOT_WAITING);
+        assertThat(
+                        waiting()
+                                .read(
+                                        AT_REST.replace(
+                                                "⏵⏵ bypass permissions on (shift+tab to cycle)",
+                                                "✻ Thinking… (esc to interrupt)"))
+                                .seen())
+                .isEqualTo(Waiting.Seen.NOT_WAITING);
     }
 
     @Test
     void readsAnAnswerQuotedHigherUpAsNotWaiting() {
 
         // The same words in the conversation, above the last lines, are not a question on screen.
-        final String quoted = "It said: Enter to select · ↑/↓ to navigate · Esc to cancel\n" + AT_REST;
+        final String quoted =
+                "It said: Enter to select · ↑/↓ to navigate · Esc to cancel\n" + AT_REST;
 
         assertThat(waiting().read(quoted).seen()).isEqualTo(Waiting.Seen.NOT_WAITING);
     }

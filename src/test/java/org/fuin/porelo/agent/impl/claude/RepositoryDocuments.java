@@ -2,9 +2,7 @@ package org.fuin.porelo.agent.impl.claude;
 
 import java.nio.file.Path;
 
-/**
- * Where the guards that read the repository's own files find them.
- */
+/** Where the guards that read the repository's own files find them. */
 final class RepositoryDocuments {
 
     private RepositoryDocuments() {

@@ -15,9 +15,7 @@ import org.fuin.porelo.agent.api.RunRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-/**
- * Tests for the Claude agent module.
- */
+/** Tests for the Claude agent module. */
 class ClaudeAgentTest {
 
     private final Agent agent = new ClaudeAgent();
@@ -25,7 +23,8 @@ class ClaudeAgentTest {
     @Test
     void declaresWhatItShowsOnceAtWork() {
 
-        // The kit's check waits for this text and types nothing; a dialog before the prompt hides it.
+        // The kit's check waits for this text and types nothing; a dialog before the prompt hides
+        // it.
         assertThat(agent.definition().ready()).isNotNull();
         assertThat(agent.definition().ready().text()).isEqualTo("bypass permissions on");
     }
@@ -36,13 +35,15 @@ class ClaudeAgentTest {
         // Read as text: the published agent API has no accessor for the field yet, and a reader
         // that knows nothing of a key ignores it, so nothing else would notice it going missing.
         final String definition;
-        try (var in = ClaudeAgentTest.class.getClassLoader().getResourceAsStream("agent/claude.yaml")) {
+        try (var in =
+                ClaudeAgentTest.class.getClassLoader().getResourceAsStream("agent/claude.yaml")) {
             assertThat(in).isNotNull();
             definition = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
         }
 
         assertThat(agent.definition().loginArguments()).isEmpty();
-        assertThat(definition).contains("documentation: \"https://code.claude.com/docs/en/authentication\"");
+        assertThat(definition)
+                .contains("documentation: \"https://code.claude.com/docs/en/authentication\"");
     }
 
     @Test
@@ -105,31 +106,52 @@ class ClaudeAgentTest {
     @Test
     void buildsAHeadlessCommandFromTheSharedBuilder() {
 
-        assertThat(agent.headlessCommand(
-                new RunRequest("fix the bug", "sonnet", Integer.valueOf(3), null, false, true)))
+        assertThat(
+                        agent.headlessCommand(
+                                new RunRequest(
+                                        "fix the bug",
+                                        "sonnet",
+                                        Integer.valueOf(3),
+                                        null,
+                                        false,
+                                        true)))
                 // No permission flag: the settings file puts the session in bypass mode, and
                 // the flag changed nothing beside it (measured).
-                .containsExactly("claude",
-                        "--model", "sonnet", "--max-turns", "3",
+                .containsExactly(
+                        "claude",
+                        "--model",
+                        "sonnet",
+                        "--max-turns",
+                        "3",
                         // --verbose is part of what machine-readable output costs for Claude:
                         // it refuses stream-json in print mode without it. Found by running it.
-                        "--output-format", "stream-json", "--verbose", "-p", "fix the bug");
+                        "--output-format",
+                        "stream-json",
+                        "--verbose",
+                        "-p",
+                        "fix the bug");
     }
 
     @Test
     void extractsAnOauthTokenWithItsRefreshAndExpiry(@TempDir Path dir) throws IOException {
 
-        Files.writeString(dir.resolve(".credentials.json"), """
+        Files.writeString(
+                dir.resolve(".credentials.json"),
+                """
                 {"claudeAiOauth":{"accessToken":"sk-ant-oat-xyz",
                  "refreshToken":"sk-ant-ort-abc","expiresAt":1788000000}}
                 """);
 
-        assertThat(agent.credentialExtractor().extract(dir)).hasValueSatisfying(credential -> {
-            assertThat(credential.type()).isEqualTo("oauth");
-            assertThat(credential.secret()).isEqualTo("sk-ant-oat-xyz");
-            assertThat(credential.attributes()).containsEntry("refreshToken", "sk-ant-ort-abc");
-            assertThat(credential.attributes()).containsEntry("expiresAt", "1788000000");
-        });
+        assertThat(agent.credentialExtractor().extract(dir))
+                .hasValueSatisfying(
+                        credential -> {
+                            assertThat(credential.type()).isEqualTo("oauth");
+                            assertThat(credential.secret()).isEqualTo("sk-ant-oat-xyz");
+                            assertThat(credential.attributes())
+                                    .containsEntry("refreshToken", "sk-ant-ort-abc");
+                            assertThat(credential.attributes())
+                                    .containsEntry("expiresAt", "1788000000");
+                        });
     }
 
     @Test
@@ -137,8 +159,9 @@ class ClaudeAgentTest {
 
         Files.writeString(dir.resolve(".credentials.json"), "{\"apiKey\":\"sk-ant-api-123\"}");
 
-        assertThat(agent.credentialExtractor().extract(dir)).hasValueSatisfying(credential ->
-                assertThat(credential.type()).isEqualTo("api-key"));
+        assertThat(agent.credentialExtractor().extract(dir))
+                .hasValueSatisfying(
+                        credential -> assertThat(credential.type()).isEqualTo("api-key"));
     }
 
     @Test
@@ -162,7 +185,8 @@ class ClaudeAgentTest {
     @Test
     void keepsTheCredentialOutOfItsOwnToString() {
 
-        // Porelo's type, tested here on purpose: this adapter hands it the token, and a toString that
+        // Porelo's type, tested here on purpose: this adapter hands it the token, and a toString
+        // that
         // printed it would put the credential in whatever log caught the object.
 
         assertThat(Credential.of("oauth", "sk-ant-secret").toString())
@@ -174,17 +198,23 @@ class ClaudeAgentTest {
 
         final var formatter = agent.logFormatter();
 
-        assertThat(formatter.format(
-                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"text\":\"Looking at it.\"}]}}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"text\":\"Looking at it.\"}]}}"))
                 .isEqualTo("Looking at it.");
-        assertThat(formatter.format(
-                "{\"type\":\"assistant\",\"message\":{\"content\":"
-                        + "[{\"type\":\"tool_use\",\"name\":\"Bash\"}]}}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":"
+                                        + "[{\"type\":\"tool_use\",\"name\":\"Bash\"}]}}"))
                 .isEqualTo("[Bash]");
-        assertThat(formatter.format("{\"type\":\"result\",\"num_turns\":4,\"total_cost_usd\":0.12}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"result\",\"num_turns\":4,\"total_cost_usd\":0.12}"))
                 .isEqualTo("-- done, 4 turns, about $0.12 at API prices");
         // What a real subscription run reported: a double's full expansion, and one turn.
-        assertThat(formatter.format("{\"type\":\"result\",\"num_turns\":1,\"total_cost_usd\":0.15322799999999998}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"result\",\"num_turns\":1,\"total_cost_usd\":0.15322799999999998}"))
                 .isEqualTo("-- done, 1 turn, about $0.1532 at API prices");
         // Every JSON number arrives as a double, which prints 0.0004 as 4.0E-4 and 2 as 2.0.
         assertThat(formatter.format("{\"type\":\"result\",\"total_cost_usd\":0.0004}"))
@@ -200,14 +230,21 @@ class ClaudeAgentTest {
         // A provider's refusal still ends the stream with a result line; read as "done" it hid why
         // nothing happened.
         final var formatter = agent.logFormatter();
-        assertThat(formatter.format("{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,"
-                + "\"num_turns\":1,\"result\":\"API Error: 402 This request requires more credits\"}"))
-                .isEqualTo("-- ended with an error: API Error: 402 This request requires more credits, 1 turn");
-        assertThat(formatter.format("{\"type\":\"result\",\"subtype\":\"error_max_turns\",\"is_error\":true,"
-                + "\"num_turns\":12}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,"
+                                        + "\"num_turns\":1,\"result\":\"API Error: 402 This request requires more credits\"}"))
+                .isEqualTo(
+                        "-- ended with an error: API Error: 402 This request requires more credits, 1 turn");
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"result\",\"subtype\":\"error_max_turns\",\"is_error\":true,"
+                                        + "\"num_turns\":12}"))
                 .isEqualTo("-- ended with an error (error_max_turns), 12 turns");
-        assertThat(formatter.format("{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,"
-                + "\"num_turns\":2}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,"
+                                        + "\"num_turns\":2}"))
                 .isEqualTo("-- done, 2 turns");
     }
 
@@ -218,9 +255,11 @@ class ClaudeAgentTest {
         // when something has gone wrong.
         final var formatter = agent.logFormatter();
 
-        assertThat(formatter.format("plain text from a crash")).isEqualTo("plain text from a crash");
+        assertThat(formatter.format("plain text from a crash"))
+                .isEqualTo("plain text from a crash");
         assertThat(formatter.format("{not valid json")).isEqualTo("{not valid json");
-        assertThat(formatter.format("{\"type\":\"something_new\"}")).isEqualTo("{\"type\":\"something_new\"}");
+        assertThat(formatter.format("{\"type\":\"something_new\"}"))
+                .isEqualTo("{\"type\":\"something_new\"}");
     }
 
     @Test
@@ -231,7 +270,8 @@ class ClaudeAgentTest {
         // subtype so that everything else stays visible.
         final var formatter = agent.logFormatter();
 
-        final String error = "{\"type\":\"system\",\"subtype\":\"error\",\"message\":\"no credit\"}";
+        final String error =
+                "{\"type\":\"system\",\"subtype\":\"error\",\"message\":\"no credit\"}";
         assertThat(formatter.format(error)).isEqualTo(error);
 
         final String unknown = "{\"type\":\"system\",\"subtype\":\"something_new\"}";
@@ -257,8 +297,10 @@ class ClaudeAgentTest {
         final String contentNotAList = "{\"type\":\"user\",\"message\":{\"content\":\"plain\"}}";
         assertThat(formatter.format(contentNotAList)).isEqualTo("[unreadable] " + contentNotAList);
 
-        final String blockWithoutType = "{\"type\":\"assistant\",\"message\":{\"content\":[{\"x\":1}]}}";
-        assertThat(formatter.format(blockWithoutType)).isEqualTo("[unreadable] " + blockWithoutType);
+        final String blockWithoutType =
+                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"x\":1}]}}";
+        assertThat(formatter.format(blockWithoutType))
+                .isEqualTo("[unreadable] " + blockWithoutType);
     }
 
     @Test
@@ -269,12 +311,14 @@ class ClaudeAgentTest {
         // should still leave a trace.
         final var formatter = agent.logFormatter();
 
-        assertThat(formatter.format(
-                "{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\"}]}}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\"}]}}"))
                 .isEqualTo("> [tool_result]");
-        assertThat(formatter.format(
-                "{\"type\":\"assistant\",\"message\":{\"content\":"
-                        + "[{\"text\":\"Here: \"},{\"type\":\"thinking\"}]}}"))
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":"
+                                        + "[{\"text\":\"Here: \"},{\"type\":\"thinking\"}]}}"))
                 .isEqualTo("Here: [thinking]");
     }
 
@@ -285,15 +329,20 @@ class ClaudeAgentTest {
         // and make "which version ran" answerable from the definition.
         final var definition = agent.definition();
 
-        // No literal version: written down here, it was a fourth place every bump had to be applied.
+        // No literal version: written down here, it was a fourth place every bump had to be
+        // applied.
         assertThat(definition.version()).matches("\\d+\\.\\d+\\.\\d+");
-        assertThat(definition.artifacts()).singleElement().satisfies(artifact -> {
-            assertThat(artifact.url()).startsWith("https://downloads.claude.ai/");
-            assertThat(artifact.url()).contains(definition.version());
-            assertThat(artifact.sha256()).matches("[a-f0-9]{64}");
-            assertThat(artifact.unverified()).isFalse();
-            assertThat(artifact.target()).isEqualTo("/home/agent/.local/bin/claude");
-        });
+        assertThat(definition.artifacts())
+                .singleElement()
+                .satisfies(
+                        artifact -> {
+                            assertThat(artifact.url()).startsWith("https://downloads.claude.ai/");
+                            assertThat(artifact.url()).contains(definition.version());
+                            assertThat(artifact.sha256()).matches("[a-f0-9]{64}");
+                            assertThat(artifact.unverified()).isFalse();
+                            assertThat(artifact.target())
+                                    .isEqualTo("/home/agent/.local/bin/claude");
+                        });
         assertThat(definition.unverifiedArtifacts()).isEmpty();
     }
 
@@ -326,7 +375,9 @@ class ClaudeAgentTest {
         // still be handed ANTHROPIC_API_KEY, because that is what it reads.
         final ProviderDefinition openrouter =
                 new ProviderDefinition(
-                        "openrouter", "OpenRouter", "https://openrouter.ai",
+                        "openrouter",
+                        "OpenRouter",
+                        "https://openrouter.ai",
                         java.util.Map.of("anthropic-messages", "/api"),
                         java.util.Map.of("_default", "Authorization"),
                         java.util.Map.of("_default", "Bearer "),
@@ -342,23 +393,36 @@ class ClaudeAgentTest {
     @Test
     void isToldWhatPoreloPutsInItsTaskThroughItsSystemPrompt() {
 
-        // Porelo puts these behind the sandboxed arguments in every task Porelo makes, {file} standing for the
-        // path of its guide to the task; the CLI reads the file, so the text never rides on the command line.
-        assertThat(agent.definition().instructionArguments()).containsExactly("--append-system-prompt-file", "{file}");
+        // Porelo puts these behind the sandboxed arguments in every task Porelo makes, {file}
+        // standing for the
+        // path of its guide to the task; the CLI reads the file, so the text never rides on the
+        // command line.
+        assertThat(agent.definition().instructionArguments())
+                .containsExactly("--append-system-prompt-file", "{file}");
     }
 
     @Test
     void saysWhenItIsAtRestAsMeasuredAtATerminal() {
 
-        // Porelo types its wake line only where this matches the last lines of the screen. The screens are
+        // Porelo types its wake line only where this matches the last lines of the screen. The
+        // screens are
         // cut from ones measured on the VM: after an answer, and during a 'sleep 90' tool call.
         final var atRest = agent.definition().atRest();
         assertThat(atRest).isNotNull();
         assertThat(atRest.shows()).containsExactly("bypass permissions on");
         assertThat(atRest.lacks()).containsExactly("esc to interrupt", "Esc to cancel");
-        assertThat(atRest.matches("● PONG\n\n✻ Baked for 3s · done 7:39 AM\n────\n❯ \n────\n⏵⏵ bypass permissions on (shift+tab to cycle) · ← for agents")).isTrue();
-        assertThat(atRest.matches("  Bash(sleep 90)\n  ⎿  Running…\n❯ \n────\n⏵⏵ bypass permissions on (shift+tab to cycle) · esc to interrupt · ← for agents")).isFalse();
+        assertThat(
+                        atRest.matches(
+                                "● PONG\n\n✻ Baked for 3s · done 7:39 AM\n────\n❯ \n────\n⏵⏵ bypass permissions on (shift+tab to cycle) · ← for agents"))
+                .isTrue();
+        assertThat(
+                        atRest.matches(
+                                "  Bash(sleep 90)\n  ⎿  Running…\n❯ \n────\n⏵⏵ bypass permissions on (shift+tab to cycle) · esc to interrupt · ← for agents"))
+                .isFalse();
         // A question open: Enter would answer it, so never at rest.
-        assertThat(atRest.matches("❯ 1. Yes\n  2. No\nEnter to select · ↑/↓ to navigate · Esc to cancel\n⏵⏵ bypass permissions on (shift+tab to cycle)")).isFalse();
+        assertThat(
+                        atRest.matches(
+                                "❯ 1. Yes\n  2. No\nEnter to select · ↑/↓ to navigate · Esc to cancel\n⏵⏵ bypass permissions on (shift+tab to cycle)"))
+                .isFalse();
     }
 }

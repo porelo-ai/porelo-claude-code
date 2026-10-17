@@ -17,9 +17,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that no tracked file of this repository says the product's old name, but where it must.
- * <p>
- * The repository was renamed by a script; a word it left behind, or one written later out of habit, names something
- * that is no longer there. The old name is spelled here in two pieces, so that this file does not say it.
+ *
+ * <p>The repository was renamed by a script; a word it left behind, or one written later out of
+ * habit, names something that is no longer there. The old name is spelled here in two pieces, so
+ * that this file does not say it.
  */
 @Tag("documents")
 class NoOldNameTest {
@@ -33,8 +34,11 @@ class NoOldNameTest {
     private static final Pattern RELEASED = Pattern.compile("## \\[\\d+\\.\\d+\\.\\d+\\].*");
 
     private static List<String> tracked() throws IOException, InterruptedException {
-        final Process git = new ProcessBuilder("git", "ls-files", "-z").directory(RepositoryDocuments.root().toFile())
-                .redirectErrorStream(true).start();
+        final Process git =
+                new ProcessBuilder("git", "ls-files", "-z")
+                        .directory(RepositoryDocuments.root().toFile())
+                        .redirectErrorStream(true)
+                        .start();
         final String out = new String(git.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         assertThat(git.waitFor()).as("git ls-files: %s", out).isZero();
         return List.of(out.split("\0"));
@@ -86,8 +90,12 @@ class NoOldNameTest {
         }
 
         // A guard that reads nothing passes forever: assert what it read, then what it checks.
-        assertThat(files).as("the tracked files read").contains("pom.xml", "AGENTS.md", "issues/README.md", CHANGELOG);
-        assertThat(changelogReleased).as("the changelog's released lines left as released").isPositive();
+        assertThat(files)
+                .as("the tracked files read")
+                .contains("pom.xml", "AGENTS.md", "issues/README.md", CHANGELOG);
+        assertThat(changelogReleased)
+                .as("the changelog's released lines left as released")
+                .isPositive();
         assertThat(found).as("tracked files that say the old name").isEmpty();
     }
 }

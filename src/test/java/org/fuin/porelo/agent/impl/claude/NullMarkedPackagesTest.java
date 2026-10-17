@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Every package holding main code is {@code @NullMarked}.
- * <p>
- * NullAway runs with {@code OnlyNullMarked}, so an unmarked package is not an error - it is
+ *
+ * <p>NullAway runs with {@code OnlyNullMarked}, so an unmarked package is not an error - it is
  * skipped, in silence, and its nullness is a promise nothing checks. This test is what makes a
  * missing {@code package-info.java} fail the build instead.
  */
@@ -28,8 +28,11 @@ class NullMarkedPackagesTest {
         final Set<String> packages = new TreeSet<>();
         try (Stream<Path> files = Files.walk(MAIN)) {
             files.filter(file -> file.toString().endsWith(".java"))
-                    .map(file -> MAIN.relativize(file.getParent()).toString()
-                            .replace(file.getFileSystem().getSeparator(), "."))
+                    .map(
+                            file ->
+                                    MAIN.relativize(file.getParent())
+                                            .toString()
+                                            .replace(file.getFileSystem().getSeparator(), "."))
                     .forEach(packages::add);
         }
         // A walk from the wrong root finds nothing, and nothing passes every check below.
@@ -44,7 +47,8 @@ class NullMarkedPackagesTest {
 
     private static boolean annotated(String packageName) {
         try {
-            return Class.forName(packageName + ".package-info").isAnnotationPresent(NullMarked.class);
+            return Class.forName(packageName + ".package-info")
+                    .isAnnotationPresent(NullMarked.class);
         } catch (ClassNotFoundException ex) {
             return false;
         }

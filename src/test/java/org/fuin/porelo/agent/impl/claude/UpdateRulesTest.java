@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * The update rules, kept where Porelo's release tool reads them.
- * <p>
- * The tool applies the rule; what can break here is the property that asks for it. Without it the
- * tool takes a release the hour it appears, and nothing fails.
+ *
+ * <p>The tool applies the rule; what can break here is the property that asks for it. Without it
+ * the tool takes a release the hour it appears, and nothing fails.
  */
 class UpdateRulesTest {
 
@@ -31,7 +31,10 @@ class UpdateRulesTest {
     void findsNoAgeInAPomThatSetsNone() {
 
         // The other half: a pom that sets no age must not read as one that does.
-        assertThat(minAge("<properties><porelo.release.channel>x</porelo.release.channel></properties>")).isEmpty();
+        assertThat(
+                        minAge(
+                                "<properties><porelo.release.channel>x</porelo.release.channel></properties>"))
+                .isEmpty();
     }
 
     /**

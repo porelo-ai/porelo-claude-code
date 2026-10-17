@@ -25,12 +25,12 @@ config_dir: "~/.claude"
 # Claude Code has such a verb, and must not guess: hardcoding one agent's would be wrong for
 # every other.
 login:
-  arguments: []
-  # What the person reads before starting it. Measured on 2.1.267: without BROWSER set, the login
-  # prints a link-and-code URL and waits at "Paste code here"; with BROWSER set, it hands that
-  # command a URL whose redirect_uri is http://localhost:<random port>/callback, a port it listens
-  # on at 127.0.0.1 - which is why a remote login needs that port forwarded.
-  documentation: "https://code.claude.com/docs/en/authentication"
+    arguments: []
+    # What the person reads before starting it. Measured on 2.1.267: without BROWSER set, the login
+    # prints a link-and-code URL and waits at "Paste code here"; with BROWSER set, it hands that
+    # command a URL whose redirect_uri is http://localhost:<random port>/callback, a port it listens
+    # on at 127.0.0.1 - which is why a remote login needs that port forwarded.
+    documentation: "https://code.claude.com/docs/en/authentication"
 
 # What turns this agent's own permission prompts off. Porelo adds these to every run inside a
 # task, attached or not - it never asks whether to, and there is no option for it: the container
@@ -41,7 +41,7 @@ login:
 # raises. With both, --dangerously-skip-permissions changed nothing - measured on 2.1.267 at a
 # terminal and headless - so it is not passed, rather than passed for no reason.
 sandboxed:
-  arguments: []
+    arguments: []
 
 # How the agent is told what Porelo puts in its task - the mailbox where there is one, /porelo/files and
 # what arrives there. Porelo writes this guide to a read-only file in every task Porelo makes and puts these
@@ -49,100 +49,100 @@ sandboxed:
 # one included. 'claude --help' on 2.1.267 names --append-system-prompt <text> and --append-system-prompt-file <path>; the file one
 # is taken, so the text is read from the task and never rides on the command line.
 instructions:
-  arguments: ["--append-system-prompt-file", "{file}"]
+    arguments: ["--append-system-prompt-file", "{file}"]
 
 git_identity:
-  name: Claude
-  email: noreply@anthropic.com
+    name: Claude
+    email: noreply@anthropic.com
 
 headless:
-  prompt_flag: "-p"
-  model_flag: "--model"
-  max_turns_flag: "--max-turns"
-  verbose_flag: "--verbose"
-  # --verbose is not optional here: Claude Code refuses stream-json in print mode without
-  # it ("--output-format=stream-json requires --verbose"). It belongs in this list rather
-  # than being requested separately, because it is part of what machine-readable output
-  # costs for THIS agent, and another agent's answer will differ.
-  output_format_flags: ["--output-format", "stream-json", "--verbose"]
+    prompt_flag: "-p"
+    model_flag: "--model"
+    max_turns_flag: "--max-turns"
+    verbose_flag: "--verbose"
+    # --verbose is not optional here: Claude Code refuses stream-json in print mode without
+    # it ("--output-format=stream-json requires --verbose"). It belongs in this list rather
+    # than being requested separately, because it is part of what machine-readable output
+    # costs for THIS agent, and another agent's answer will differ.
+    output_format_flags: ["--output-format", "stream-json", "--verbose"]
 
 session:
-  supports_resume: true
-  resume_flag: "--resume"
-  # Where it names the session it runs, so a task that comes back continues it. Measured on 2.1.267:
-  # an unattended run's first record, {"type":"system","subtype":"init"}, carries
-  # session_id, and the same id names its session file, ~/.claude/projects/-workspace/<id>.jsonl - the
-  # directory is the working directory with '/' as '-', and Porelo's is always /workspace. So one id serves
-  # both, and '--resume <id>' continues it: the resumed run reports the same session.
-  session_id:
-    record: { type: system }
-    key: session_id
-    directory: ".claude/projects/-workspace"
-    suffix: ".jsonl"
-  # What the agent shows once it is at work, attended, having asked nothing - the acceptance kit
-  # waits for it without typing. Measured at a terminal: on screen at the prompt, absent while
-  # the API-key dialog is up. The bound covers a first image build.
-  ready_marker: "bypass permissions on"
-  ready_within_seconds: 300
-  # When the agent is at rest at its prompt, for Porelo to type its one wake line into the session
-  # and only then; never where 'waiting' matches. Read from the last 20 lines of the screen, plain. Measured
-  # on the VM at a terminal: its footer says "bypass permissions on" at rest and at work, and adds "esc to interrupt" while it works - thinking
-  # and during a tool call alike (a 'sleep 90' through Bash); a question box ends "Esc to cancel".
-  at_rest:
-    shows: ["bypass permissions on"]
-    lacks: ["esc to interrupt", "Esc to cancel"]
-  # What waiting for a person looks like on the attached screen, for Porelo to read. Measured on
-  # 2.1.267 at a terminal: a question it puts ends with "Enter to select · ↑/↓ to
-  # navigate · Esc to cancel", and the first-run consents with "Enter to confirm · Esc to cancel".
-  # Both are gone once answered. At work its last lines say "esc to interrupt", never "cancel",
-  # and at rest neither. Unattended there is nothing to read: a run that asks ends like one that
-  # finished.
-  waiting:
-    screen:
-      - contains: "Esc to cancel"
-        in_last_lines: 5
-        for: "an answer to its question"
+    supports_resume: true
+    resume_flag: "--resume"
+    # Where it names the session it runs, so a task that comes back continues it. Measured on 2.1.267:
+    # an unattended run's first record, {"type":"system","subtype":"init"}, carries
+    # session_id, and the same id names its session file, ~/.claude/projects/-workspace/<id>.jsonl - the
+    # directory is the working directory with '/' as '-', and Porelo's is always /workspace. So one id serves
+    # both, and '--resume <id>' continues it: the resumed run reports the same session.
+    session_id:
+        record: { type: system }
+        key: session_id
+        directory: ".claude/projects/-workspace"
+        suffix: ".jsonl"
+    # What the agent shows once it is at work, attended, having asked nothing - the acceptance kit
+    # waits for it without typing. Measured at a terminal: on screen at the prompt, absent while
+    # the API-key dialog is up. The bound covers a first image build.
+    ready_marker: "bypass permissions on"
+    ready_within_seconds: 300
+    # When the agent is at rest at its prompt, for Porelo to type its one wake line into the session
+    # and only then; never where 'waiting' matches. Read from the last 20 lines of the screen, plain. Measured
+    # on the VM at a terminal: its footer says "bypass permissions on" at rest and at work, and adds "esc to interrupt" while it works - thinking
+    # and during a tool call alike (a 'sleep 90' through Bash); a question box ends "Esc to cancel".
+    at_rest:
+        shows: ["bypass permissions on"]
+        lacks: ["esc to interrupt", "Esc to cancel"]
+    # What waiting for a person looks like on the attached screen, for Porelo to read. Measured on
+    # 2.1.267 at a terminal: a question it puts ends with "Enter to select · ↑/↓ to
+    # navigate · Esc to cancel", and the first-run consents with "Enter to confirm · Esc to cancel".
+    # Both are gone once answered. At work its last lines say "esc to interrupt", never "cancel",
+    # and at rest neither. Unattended there is nothing to read: a run that asks ends like one that
+    # finished.
+    waiting:
+        screen:
+            - contains: "Esc to cancel"
+              in_last_lines: 5
+              for: "an answer to its question"
 
 provider:
-  # Anthropic's half - upstream, headers, prefixes - is declared once in
-  # providers/anthropic.yaml and not repeated here. What is left is only what belongs to this
-  # agent.
-  default: anthropic
+    # Anthropic's half - upstream, headers, prefixes - is declared once in
+    # providers/anthropic.yaml and not repeated here. What is left is only what belongs to this
+    # agent.
+    default: anthropic
 
-  # One wire format wherever it points, unlike a provider-agnostic agent that speaks whichever
-  # its provider does.
-  dialect: anthropic-messages
+    # One wire format wherever it points, unlike a provider-agnostic agent that speaks whichever
+    # its provider does.
+    dialect: anthropic-messages
 
-  # A socket: a file the container mounts, invisible to anything that cannot open it. It needs no
-  # firewall hole, no plaintext hop across the namespace boundary, and its 0600 permissions are
-  # the access control. An agent that can only be given a URL declares 'url' instead and is
-  # served by a relay in its own network namespace.
-  endpoint: socket
-  socket_env: ANTHROPIC_UNIX_SOCKET
+    # A socket: a file the container mounts, invisible to anything that cannot open it. It needs no
+    # firewall hole, no plaintext hop across the namespace boundary, and its 0600 permissions are
+    # the access control. An agent that can only be given a URL declares 'url' instead and is
+    # served by a relay in its own network namespace.
+    endpoint: socket
+    socket_env: ANTHROPIC_UNIX_SOCKET
 
-  # Both are set on purpose. The socket variable only selects the transport; without the base
-  # URL, Claude Code falls back to its compiled-in endpoint - measured, it then resolved
-  # api.anthropic.com 184 times in one run and never touched the socket.
-  base_url_env: ANTHROPIC_BASE_URL
+    # Both are set on purpose. The socket variable only selects the transport; without the base
+    # URL, Claude Code falls back to its compiled-in endpoint - measured, it then resolved
+    # api.anthropic.com 184 times in one run and never touched the socket.
+    base_url_env: ANTHROPIC_BASE_URL
 
-  # The variable the credential is read from is a fact about THIS CLI, not about whoever serves
-  # it: Claude Code reads ANTHROPIC_API_KEY whether the provider is Anthropic or OpenRouter.
-  # Porelo falls back to the provider's own variable when an agent names none, which is right for
-  # a provider-agnostic agent and wrong here - pointed at OpenRouter, this agent was handed
-  # OPENROUTER_API_KEY and reported 'Not logged in'. Found by the acceptance suite.
-  token_env:
-    _default: ANTHROPIC_API_KEY
-    oauth: CLAUDE_CODE_OAUTH_TOKEN
+    # The variable the credential is read from is a fact about THIS CLI, not about whoever serves
+    # it: Claude Code reads ANTHROPIC_API_KEY whether the provider is Anthropic or OpenRouter.
+    # Porelo falls back to the provider's own variable when an agent names none, which is right for
+    # a provider-agnostic agent and wrong here - pointed at OpenRouter, this agent was handed
+    # OPENROUTER_API_KEY and reported 'Not logged in'. Found by the acceptance suite.
+    token_env:
+        _default: ANTHROPIC_API_KEY
+        oauth: CLAUDE_CODE_OAUTH_TOKEN
 
 # api.anthropic.com is not listed: the provider declares its own host, and it is withheld from
 # the firewall while the proxy is in use so that an agent ignoring the redirect shows up as a
 # dropped connection rather than as an unexplained authentication error.
 allowed_domains:
-  # Contacted before an interactive session starts. Without it the CLI reports it cannot
-  # reach Anthropic and quits, whatever the credential is.
-  - platform.claude.com
-  - claude.ai
-  - statsig.anthropic.com
+    # Contacted before an interactive session starts. Without it the CLI reports it cannot
+    # reach Anthropic and quits, whatever the credential is.
+    - platform.claude.com
+    - claude.ai
+    - statsig.anthropic.com
 
 # Names Claude Code asks for that it does NOT get. Listed rather than simply left out of
 # allowed_domains, because the two cases look alike to the firewall and completely different to a
@@ -165,23 +165,23 @@ allowed_domains:
 # DISABLE_UPDATES in the settings file; this is the network layer behind it, since the pinned binary
 # is fetched when the package is built and the task needs nothing from that host.
 refused_domains:
-  - http-intake.logs.us5.datadoghq.com
-  - raw.githubusercontent.com
-  - downloads.claude.ai
+    - http-intake.logs.us5.datadoghq.com
+    - raw.githubusercontent.com
+    - downloads.claude.ai
 
 install:
-  # Pinned, not "latest". Anthropic publishes a per-version manifest.json carrying a
-  # SHA-256 per platform, so this is verifiable rather than trusted:
-  #   https://downloads.claude.ai/claude-code-releases/<version>/manifest.json
-  #
-  # Bumping it is a one-line change plus the new digest, and until it is bumped every
-  # image build installs the same bytes. `porelo agents --supply-chain` reports what is
-  # pinned here, so "which version ran" is answerable from the definition rather than
-  # from a build log that may no longer exist.
-  version: "${agent.cli.version}"
-  artifacts:
-    - url: https://downloads.claude.ai/claude-code-releases/${agent.cli.version}/linux-x64/claude
-      sha256: "0399c793ff571d5946ef923d80b4f330d05ac4b6842a6b0775468f5d389403c0"
-      license: "SEE LICENSE IN README.md"
-      target: /home/agent/.local/bin/claude
-      mode: "0755"
+    # Pinned, not "latest". Anthropic publishes a per-version manifest.json carrying a
+    # SHA-256 per platform, so this is verifiable rather than trusted:
+    #   https://downloads.claude.ai/claude-code-releases/<version>/manifest.json
+    #
+    # Bumping it is a one-line change plus the new digest, and until it is bumped every
+    # image build installs the same bytes. `porelo agents --supply-chain` reports what is
+    # pinned here, so "which version ran" is answerable from the definition rather than
+    # from a build log that may no longer exist.
+    version: "${agent.cli.version}"
+    artifacts:
+        - url: https://downloads.claude.ai/claude-code-releases/${agent.cli.version}/linux-x64/claude
+          sha256: "0399c793ff571d5946ef923d80b4f330d05ac4b6842a6b0775468f5d389403c0"
+          license: "SEE LICENSE IN README.md"
+          target: /home/agent/.local/bin/claude
+          mode: "0755"
