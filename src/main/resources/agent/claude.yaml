@@ -81,9 +81,11 @@ session:
         suffix: ".jsonl"
     # What the agent shows once it is at work, attended, having asked nothing - the acceptance kit
     # waits for it without typing. Measured at a terminal: on screen at the prompt, absent while
-    # the API-key dialog is up. The bound covers a first image build.
+    # the API-key dialog is up. The bound counts from the session
+    # existing, after any image build: about four times the 31 s measured on the leg's machine type,
+    # cpx12, on 2026-10-17.
     ready_marker: "bypass permissions on"
-    ready_within_seconds: 300
+    ready_within_seconds: 120
     # When the agent is at rest at its prompt, for Porelo to type its one wake line into the session
     # and only then; never where 'waiting' matches. Read from the last 20 lines of the screen, plain. Measured
     # on the VM at a terminal: its footer says "bypass permissions on" at rest and at work, and adds "esc to interrupt" while it works - thinking

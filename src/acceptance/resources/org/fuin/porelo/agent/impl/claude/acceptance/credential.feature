@@ -126,7 +126,7 @@ Feature: A task authenticates without ever holding the credential
         Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
         And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"
         And a project called "unwatched" of class "guarded" with a file in it
-        When a task nobody is watching is started in "unwatched" for the "claude" agent through "openrouter" and ends within 300 seconds
+        When a task nobody is watching is started in "unwatched" for the "claude" agent through "openrouter" and ends within 120 seconds
         And a script runs "porelo project unfollow unwatched --force"
         Then it exits zero
 

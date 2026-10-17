@@ -1,8 +1,7 @@
 # CC32 — Answer The Auto Mode Question At First Run
 
 **Status:** Estimated.
-**Size:** S - one more answer in the file the adapter already writes, one bound in the manifest, their unit
-tests; no contract another repository reads, and the acceptance on the VM with the new CLI.
+**Size:** S - one more answer in the file the adapter already writes and its unit test; no contract another repository reads, and the acceptance on the VM with the new CLI.
 
 **What must be true.** A task running a Claude Code version that asks at start "Make auto mode your default
 permission mode?" reaches work without being asked anything, as it does with the pinned version, so the update job
@@ -35,17 +34,17 @@ can move the pin past that version.
 - **`ClaudeFirstRun.document`** adds `hasSeenAutoDefaultNudge: true` beside `hasCompletedOnboarding`. Its comment
   says what the key answers and that the adapter keeps bypass mode, since the container is what makes that safe
   (`ClaudeSettings`).
-- **`claude.yaml`:** `ready_within_seconds` goes from 300 to 60, about four times the measured step. Its comment
-  says the bound counts from the session existing, so it no longer covers an image build.
+- **`claude.yaml`'s bound is no longer part of this issue:** it was set to 120 s on 2026-10-17 with the other
+  adapters', about four times the 31 s measured on the leg's machine type, `cpx12`. The 60 s first planned here
+  came from the local VM, which is the fast end.
 - **`doc/decisions.md`**, "A fresh container has never been logged in", names this answer with the wizard's.
 - **Red first:**
   - `ClaudeContainerSetupTest.answersTheQuestionsAFreshContainerWouldBeAsked` asserts the new key, seen red before
     `ClaudeFirstRun` changes.
-  - `ClaudeAgentTest` asserts the bound of 60 s, seen red before the manifest changes.
   - On the VM, the acceptance with the adapter built against 2.1.292 is seen stopping at the question before the
     change.
 - **Not in this issue:** stopping the suite after its first failure. That would be Porelo's acceptance kit or
-  `porelo-machines`. With the lower bound, five failures cost five minutes, not 25.
+  `porelo-machines`. With the bound at 120 s, five failures cost ten minutes, not 25.
 
 ## Acceptance
 
