@@ -18,7 +18,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - A tag's build takes nothing from Central's snapshots and asks for nothing again, and a tag on a Porelo snapshot is seen refused by the channel step itself, run in a test.
 - A model Claude Code's catalog does not describe, such as another vendor's over OpenRouter, keeps the window its provider gives it: no 200k-token cap and no notice at every start.
 - The wake scenarios read the model's answer rather than the typed line, and wait for the agent at rest, or for its tool at work, instead of fixed pauses.
-- Built against the snapshots of Porelo (0.5.0-SNAPSHOT) and `porelo-parent` (0.2.0-SNAPSHOT, with the release tooling 0.5.0-SNAPSHOT); a release moves them to released versions first.
+- Built against Porelo 0.5.0 and on `porelo-parent` 0.2.0, which brings the release tooling 0.5.0.
 - Every workflow run is titled by its workflow, the branch or tag and the commit; the shared rules run as `Shared rules check`, the weekly pin move as `Agent version update`.
 
 ## [0.4.1] - 2026-10-08
