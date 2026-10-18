@@ -112,6 +112,8 @@ class WorkflowRulesTest {
         WorkflowSteps.stub(bin, "java", "echo \"$*\" >> \"$HOME/java-calls\"\n");
         Files.createDirectories(dir.resolve("target"));
         Files.writeString(dir.resolve("target/cp.txt"), "tooling.jar");
+        // The leg reads the pin it tells the suite to expect from the pom it is run beside.
+        Files.writeString(dir.resolve("pom.xml"), "<agent.cli.version>1.0.0</agent.cli.version>\n");
 
         final WorkflowSteps.Run empty =
                 WorkflowSteps.run(
