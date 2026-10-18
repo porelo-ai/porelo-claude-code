@@ -12,6 +12,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
+- Claude Code pinned to 2.1.292 (was 2.1.267).
 - The code is in the shared style, google-java-format in its AOSP variant, with YAML and Gherkin at four spaces, and `validate` refuses code that is not; `.git-blame-ignore-revs` lets `git blame` skip the commit that reformatted it.
 - No checkout leaves the job's token in `.git/config`; the weekly update's push alone gets it, from its own environment in that one step.
 - The weekly update neither calls its pull request green nor merges it unless every step before succeeded, so a step ended by its time limit or a cancel stops it.
