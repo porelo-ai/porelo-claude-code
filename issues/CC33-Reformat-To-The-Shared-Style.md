@@ -1,6 +1,6 @@
 # CC33 — Reformat To The Shared Style
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - one commit of whitespace, line breaks and import order across 26 Java files, the plugin switched on in
 `pom.xml`, the shared `.editorconfig` and `.git-blame-ignore-revs`, the YAML and `.feature` files at 4 spaces; no contract another
 repository reads.

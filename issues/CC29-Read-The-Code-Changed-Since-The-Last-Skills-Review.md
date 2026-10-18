@@ -1,6 +1,6 @@
 # CC29 — Read The Code Changed Since The Last Skills Review
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** M - 33 files read against seven skills, each finding that can do harm fixed with its own
 test; no contract another repository reads.
 
