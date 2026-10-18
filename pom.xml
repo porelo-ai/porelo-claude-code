@@ -63,6 +63,11 @@
              classpath, and no checkout of the porelo repository is needed to build here. -->
         <porelo.version>0.5.0</porelo.version>
 
+        <!-- The acceptance kit, apart from the contract: it runs on the porelo-machines porelo-parent
+             manages, so it must be the kit built against that one, porelo's published snapshot. The
+             0.5.0 kit calls an Ssh.to that version no longer has. -->
+        <porelo.kit.version>0.5.1-SNAPSHOT</porelo.kit.version>
+
         <agent.install.dir>/usr/libexec/porelo/agents</agent.install.dir>
         <sbom.install.dir>/usr/share/porelo/sbom</sbom.install.dir>
         <!-- RPMs are unsigned everywhere for now, like Porelo's own; what is signed is the repository
@@ -552,6 +557,7 @@
                 <dependency>
                     <groupId>org.fuin.porelo</groupId>
                     <artifactId>porelo-acceptance-kit</artifactId>
+                    <version>${porelo.kit.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
