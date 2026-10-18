@@ -241,6 +241,11 @@ jobs:
               # '--cucumber' adds the suite in src/acceptance, run from this runner as a person at a terminal,.
               run: |
                   [ -n "${PORELO_E2E_OPENROUTER_API_KEY:-}" ] || { echo "::error::the secret OPEN_ROUTER_API_KEY is empty - the credential scenarios would be skipped and the leg would prove less"; exit 1; }
+                  # The version scenario asks the installed CLI for the pin; unset, it is skipped and a package
+                  # installing another version passes.
+                  PORELO_E2E_EXPECT_CLI="$(sed -n 's:.*<agent.cli.version>\(.*\)</agent.cli.version>.*:\1:p' pom.xml | head -n 1)"
+                  [ -n "$PORELO_E2E_EXPECT_CLI" ] || { echo "::error::pom.xml names no agent.cli.version"; exit 1; }
+                  export PORELO_E2E_EXPECT_CLI
                   if [ "$GITHUB_REF_TYPE" = tag ]; then FROM="--package porelo-agent-claude --candidate candidate"; else FROM="--package porelo-agent-claude"; fi
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main acceptance \
                       --os ${{ matrix.os }} $FROM --cucumber .
