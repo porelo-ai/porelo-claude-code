@@ -109,7 +109,7 @@ that goes stale first.
 
 ## Following Claude Code without watching it
 
-`.github/workflows/update.yml` runs **once a week**, on Monday. It asks what
+`.github/workflows/update.yml` runs **once a week**, on Monday at 05:17 UTC. It asks what
 upstream's `stable` channel points at and, if that is not what this module pins,
 does what a person would: the tool's `update`, rebuild, and prove the result on a real
 Ubuntu machine and a real Fedora one **before anything is published**.

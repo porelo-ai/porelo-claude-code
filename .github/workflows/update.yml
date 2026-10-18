@@ -4,7 +4,7 @@ run-name: "${{ github.workflow }} · ${{ github.ref_name }}: ${{ github.event.he
 
 on:
     schedule:
-        # Weekly, Monday morning UTC.
+        # Weekly, Monday 05:17 UTC: each agent repository has a weekday of its own.
         - cron: '17 5 * * 1'
     workflow_dispatch:
         inputs:
