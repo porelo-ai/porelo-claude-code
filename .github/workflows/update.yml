@@ -271,6 +271,26 @@ jobs:
                   BRANCH="update/claude-code-$TARGET"
                   git checkout -b "$BRANCH"
                   git commit -am "Pin Claude Code $TARGET"
+                  # A branch moves only from its own main: one left by a closed request, or under an open one made
+                  # on an older main, holds that main's workflows, and moving it would move them, which this job's
+                  # token may never do. Such a branch is deleted first; its open request is closed and named by the
+                  # fresh one.
+                  OPEN="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+                  REPLACES=""
+                  if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+                      BEHIND=""
+                      if [ -n "$OPEN" ]; then
+                          BEHIND="$(gh api "repos/$GITHUB_REPOSITORY/compare/$GITHUB_SHA...$BRANCH" --jq .behind_by)"
+                      fi
+                      if [ "$BEHIND" != 0 ]; then
+                          if [ -n "$OPEN" ]; then
+                              gh pr close "$OPEN" --comment "Made on an older main; run $GITHUB_RUN_NUMBER opens a fresh request."
+                              REPLACES="$OPEN"
+                              OPEN=""
+                          fi
+                          gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH" >/dev/null
+                      fi
+                  fi
                   # The checkout keeps no token, so only this push gets it: built here by printf, a builtin,
                   # into base64 on stdin, so it is in no argument list and in no later step.
                   (
@@ -309,7 +329,10 @@ jobs:
                     fi
                   } > target/pull-request.md
                   # A weekly job reaches the same version twice whenever the first attempt stopped.
-                  if gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
+                  if [ -n "$REPLACES" ]; then
+                      printf '\nReplaces #%s, made on an older `main`.\n' "$REPLACES" >> target/pull-request.md
+                  fi
+                  if [ -n "$OPEN" ]; then
                       gh pr comment "$BRANCH" --body-file target/pull-request.md
                       echo "the request for $TARGET was already open - re-verified, and said so on it"
                   else

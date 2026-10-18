@@ -108,6 +108,54 @@ class UpdatePullRequestTest {
                 .doesNotContain(basic);
     }
 
+    @Test
+    void aBranchLeftByAClosedRequestIsDeletedBeforeThePush(@TempDir final Path dir)
+            throws Exception {
+
+        // Measured on 2026-10-18: such a branch sits on an older main, so moving it moves the
+        // workflows it holds, which GitHub refuses the job's token, and the update opens no
+        // request at all.
+        leaveBranch(dir);
+        final WorkflowSteps.Run opened = open(dir, "success");
+
+        assertThat(opened.exit()).as("exit of opening the request:%n%s", opened.output()).isZero();
+        assertThat(Files.readAllLines(dir.resolve("gh-calls")))
+                .as("gh calls with a branch left by a closed request")
+                .contains(
+                        "api -X DELETE repos/porelo-ai/porelo-claude-code/git/refs/heads/update/claude-code-"
+                                + TARGET)
+                .anyMatch(call -> call.startsWith("pr create"));
+    }
+
+    @Test
+    void anOpenRequestOnAnOlderMainIsClosedAndReplaced(@TempDir final Path dir) throws Exception {
+
+        // The same refusal under an open request: its branch cannot be moved to this main, so a
+        // comment on it would report a run whose pin nobody could see there.
+        leaveBranch(dir);
+        final Path repo = repository(dir);
+        final Map<String, String> env = env(dir, "success");
+        env.put("TARGET", TARGET);
+        env.put("WAS", "2.1.267");
+        env.put("OPEN_PR", "7");
+        env.put("BEHIND_BY", "3");
+        final WorkflowSteps.Run opened =
+                WorkflowSteps.run(step("Open the pull request"), repo, env);
+
+        assertThat(opened.exit()).as("exit of opening the request:%n%s", opened.output()).isZero();
+        assertThat(Files.readAllLines(dir.resolve("gh-calls")))
+                .as("gh calls with a request open on an older main")
+                .anyMatch(call -> call.startsWith("pr close 7"))
+                .contains(
+                        "api -X DELETE repos/porelo-ai/porelo-claude-code/git/refs/heads/update/claude-code-"
+                                + TARGET)
+                .anyMatch(call -> call.startsWith("pr create"))
+                .noneMatch(call -> call.startsWith("pr comment"));
+        assertThat(Files.readString(dir.resolve("body-1")))
+                .as("the fresh request names the one it replaces")
+                .contains("#7");
+    }
+
     /**
      * Opens the request in a fresh clone whose pom the pin changed, as the job does after a run
      * that ended as given.
@@ -146,6 +194,9 @@ class UpdatePullRequestTest {
                     fi
                     previous="$arg"
                 done
+                # The request open on the branch, if any, and how far its branch is behind main.
+                if [ "$1 $2" = "pr list" ]; then echo "${OPEN_PR:-}"; fi
+                if [ "$1" = api ] && [ "$2" != -X ]; then echo "${BEHIND_BY:-0}"; fi
                 # No request is open yet.
                 [ "$1 $2" != "pr view" ]
                 """);
@@ -155,6 +206,9 @@ class UpdatePullRequestTest {
         env.put("GH_TOKEN", "the-workflow-token");
         env.put("GITHUB_OUTPUT", dir.resolve("github-output").toString());
         env.put("JOB_STATUS", status);
+        env.put("GITHUB_REPOSITORY", "porelo-ai/porelo-claude-code");
+        env.put("GITHUB_SHA", "the-checked-out-commit");
+        env.put("GITHUB_RUN_NUMBER", "42");
         return env;
     }
 
@@ -181,6 +235,25 @@ class UpdatePullRequestTest {
                         Map.of("ORIGIN", origin.toString()));
         assertThat(setup.exit()).as("setting up the repository:%n%s", setup.output()).isZero();
         return repo;
+    }
+
+    /** Leaves the update's branch in the origin, as a closed request's run left it. */
+    private static void leaveBranch(final Path dir) throws IOException, InterruptedException {
+        final Path origin = dir.resolve("origin.git");
+        final WorkflowSteps.Run left =
+                WorkflowSteps.run(
+                        "git init -q --bare -b main \"$ORIGIN\"\n"
+                                + "git init -q -b main old\n"
+                                + "cd old\n"
+                                + "echo old > pom.xml\n"
+                                + "git add pom.xml\n"
+                                + "git -c user.name=t -c user.email=t@example.invalid commit -q -m old\n"
+                                + "git push -q \"$ORIGIN\" main:refs/heads/update/claude-code-"
+                                + TARGET
+                                + "\n",
+                        dir,
+                        Map.of("ORIGIN", origin.toString()));
+        assertThat(left.exit()).as("leaving the branch:%n%s", left.output()).isZero();
     }
 
     /** The lines a stand-in wrote, none when it wrote nothing. */
