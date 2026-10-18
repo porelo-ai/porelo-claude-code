@@ -191,12 +191,53 @@ jobs:
                   exit 1
 
     # The last step, and the only one that installs what an operator installs.
+    # A Build on main whose tree a run of this repository already proved within a day - both legs of a Build,
+    # or the update job that verified it - takes those legs instead of renting again. A tag always runs its own.
+    proof:
+        name: Legs already proven
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Reads this repository's runs, jobs and artifact names; nothing more.
+        permissions:
+            contents: read
+            actions: read
+        outputs:
+            proven: ${{ steps.ask.outputs.proven }}
+
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: The pinned GraalVM
+              uses: ./.github/actions/pinned-jdk
+
+            - name: Resolve the release tooling
+              run: |
+                  ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
+                      -Dmdep.outputFile=target/cp.txt
+
+            # It never fails the job: not knowing means the legs run.
+            - name: Ask for a run that proved this tree
+              id: ask
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: |
+                  java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main proven-legs \
+                      --repository "$GITHUB_REPOSITORY" --tree "$(git rev-parse 'HEAD^{tree}')" \
+                      --jobs "Acceptance - ubuntu,Acceptance - fedora;Follow Claude Code"
+
     acceptance:
         name: Acceptance - ${{ matrix.os }}
         runs-on: ubuntu-24.04
         timeout-minutes: 40
-        needs: build
-        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))
+        needs: [build, proof]
+        # The proof is skipped on a tag and a dispatch, and a failed one proves nothing: the legs run then.
+        if: >-
+            !cancelled() && needs.build.result == 'success' && needs.proof.outputs.proven != 'yes'
+            && (github.event_name == 'workflow_dispatch'
+            || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))))
 
         strategy:
             fail-fast: false

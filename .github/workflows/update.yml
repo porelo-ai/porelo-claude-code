@@ -192,6 +192,29 @@ jobs:
                   echo "A major release changes flags, configuration or an extension API by definition."
 
             # Without the key the credential scenarios skip themselves, and both legs pass having proved less.
+            # The tree these legs verify, named by an artifact only this run can make, so the Build of the same
+            # tree on main takes these legs (porelo-release proven-legs) instead of renting them again.
+            - name: Name the tree this run verifies
+              id: tree
+              if: steps.plan.outputs.proceed == 'yes' && !env.STOP
+              run: |
+                  set -eu
+                  # A scratch index, so the pin stays unstaged for the request below, which commits exactly this.
+                  export GIT_INDEX_FILE="$RUNNER_TEMP/verified.index"
+                  git read-tree HEAD
+                  git add -u
+                  TREE="$(git write-tree)"
+                  rm -f "$GIT_INDEX_FILE"
+                  echo "$TREE" > "$RUNNER_TEMP/verified-tree"
+                  echo "tree=$TREE" >> "$GITHUB_OUTPUT"
+
+            - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              if: steps.tree.outputs.tree
+              with:
+                  name: porelo-verified-tree-${{ steps.tree.outputs.tree }}
+                  path: ${{ runner.temp }}/verified-tree
+                  retention-days: 2
+
             - name: The acceptance key is there
               if: steps.plan.outputs.proceed == 'yes' && !env.STOP
               env:

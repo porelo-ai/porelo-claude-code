@@ -8,6 +8,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc34"></a>[CC34](CC34-Take-The-Legs-From-A-Run-That-Proved-The-Same-Tree.md) | S | — | a Build on `main` takes its legs from a run that proved the same tree within a day |
 | <a id="cc32"></a>[CC32](CC32-Answer-The-Auto-Mode-Question-At-First-Run.md) | S | — | the new first-run question about auto mode answered, so the pin can move |
 
 ## Accepted
