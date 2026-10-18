@@ -81,8 +81,9 @@ Feature: An agent at rest is woken by a message for it
         And a terminal on the machine
         When I run "porelo task start busy --project busy --repository busy --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --clearance deny"
         Then the "claude" agent in task "busy" of "busy" reaches work without being asked anything
-        # Long enough that the message below comes while the tool still runs, however slow the steps before it.
-        When I type "Run the shell command 'sleep 90' with your shell tool, then reply with the single word DONE."
+        # Long enough that the message below comes while the tool still runs, however slow the steps before it. In the
+        # foreground, since a sleep in the background ends the turn at once, as GLM 5.3 Flash once chose.
+        When I type "Run the shell command 'sleep 90' with your shell tool in the foreground, not in the background, then reply with the single word DONE."
         And I press Enter
         # Working, seen rather than assumed: its sleep runs in the task, or its tool shows it running, so the message
         # below comes while it works. A line still standing in the input box gets Enter again, as above. A try that sees
