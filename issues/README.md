@@ -4,13 +4,6 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Review
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc33"></a>[CC33](CC33-Reformat-To-The-Shared-Style.md) | S | — | the code reformatted to the shared style, which the build then checks |
-| <a id="cc29"></a>[CC29](CC29-Read-The-Code-Changed-Since-The-Last-Skills-Review.md) | M | — | the code changed since 2026-09-27 read against the seven skills |
-
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
@@ -30,6 +23,8 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Title | What was built |
 |---|---|---|
+| <a id="cc33"></a>[CC33](README.md#cc33) | Reformat To The Shared Style | The code is in the shared style, google-java-format in its AOSP variant with YAML and Gherkin at four spaces; `validate` refuses code that is not, and `git blame` with `.git-blame-ignore-revs` skips the reformatting. |
+| <a id="cc29"></a>[CC29](README.md#cc29) | Read The Code Changed Since The Last Skills Review | The code changed since 2026-09-27 read against seven skills, each finding fixed, with a test where it could do harm: no terminal control character reaches a log, and no checkout keeps the job's token. |
 | <a id="cc31"></a>[CC31](README.md#cc31) | Rename The Adapter Porelo | The repository, its artifact, its packages, its Java packages and its documents say Porelo; a documents test keeps the old name to the released part of `CHANGELOG.md`. |
 
 ## Where an agent's requirements live
