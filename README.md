@@ -28,6 +28,7 @@ How to sign in, start a task, what the task reaches and what to read when it doe
 ## More
 
 - [build.md](build.md) - building the package, and moving the pinned Claude Code version.
+- [CONTRIBUTING.md](CONTRIBUTING.md) - how to change it, and [SECURITY.md](SECURITY.md) - how to report a vulnerability.
 - [doc/decisions.md](doc/decisions.md) - why it works the way it does.
 
 ## Licence
