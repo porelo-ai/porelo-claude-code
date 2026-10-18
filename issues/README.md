@@ -4,6 +4,12 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc32"></a>[CC32](CC32-Answer-The-Auto-Mode-Question-At-First-Run.md) | S | — | the new first-run question about auto mode answered, so the pin can move |
+
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
@@ -14,7 +20,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc32"></a>[CC32](CC32-Answer-The-Auto-Mode-Question-At-First-Run.md) | S | — | the new first-run question about auto mode answered, so the pin can move |
 | <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | porelo [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | Porelo (to be opened) | the agent contract named at install time |

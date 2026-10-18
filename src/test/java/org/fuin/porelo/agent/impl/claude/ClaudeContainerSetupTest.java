@@ -50,6 +50,11 @@ class ClaudeContainerSetupTest {
                         ((Map<?, ?>) ((Map<?, ?>) config.get("projects")).get("/workspace"))
                                 .get("hasTrustDialogAccepted"))
                 .isEqualTo(Boolean.TRUE);
+        // Measured on 2.1.292: unanswered, the CLI opens by offering to make auto mode the
+        // default, and a task's agent waits at that question instead of reaching work.
+        assertThat(config.get("hasSeenAutoDefaultNudge"))
+                .as("the auto mode question is answered, so the task's agent is not stopped at it")
+                .isEqualTo(Boolean.TRUE);
     }
 
     @Test

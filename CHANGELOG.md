@@ -22,6 +22,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Fixed
 
+- A task's agent no longer stops at the question Claude Code 2.1.292 asks at its first start, whether to make auto mode the default; the adapter answers it as seen and the task keeps bypass mode.
 - The log and the error a run ends with carry no terminal control characters but the line break and the tab, so nothing the model writes can clear or rewrite the screen that shows it.
 - A failed run whose result line gives no reason ends with an error saying so, never with "success" or "null", and what it said is cut at 300 characters without splitting one.
 

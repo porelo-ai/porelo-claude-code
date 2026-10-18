@@ -43,7 +43,9 @@ installed and started.
   which is why `claude.yaml` lists `platform.claude.com`, `claude.ai` and `statsig.anthropic.com`
   in `allowed_domains` rather than relying on the provider's host alone.
 - **A fresh container has never been logged in**, so the first-run wizard must be answered for it
-  or the session stops waiting for input nobody will type. That is what `ClaudeFirstRun` writes.
+  or the session stops waiting for input nobody will type. That is what `ClaudeFirstRun` writes,
+  with the answer to the question 2.1.292 added, whether to make auto mode the default: it is marked
+  seen, so the task stays in bypass mode, which the container is what makes safe.
   The file is readable by others unless it approves an API key, which puts part of the key in it.
 
 ## What was actually proven about brokering this agent

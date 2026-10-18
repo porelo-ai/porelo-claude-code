@@ -45,6 +45,10 @@ final class ClaudeFirstRun {
 
         final Map<String, Object> root = new LinkedHashMap<>();
         root.put("hasCompletedOnboarding", true);
+        // From 2.1.292 the CLI offers once to make auto mode the default, and a task's agent would
+        // wait at that question. Seen, it is not asked again; the task keeps bypass mode, which
+        // the container makes safe (ClaudeSettings).
+        root.put("hasSeenAutoDefaultNudge", true);
         root.put("theme", "dark");
         root.put("projects", Map.of(workspace, project));
         if (!apiKey.isBlank()) {

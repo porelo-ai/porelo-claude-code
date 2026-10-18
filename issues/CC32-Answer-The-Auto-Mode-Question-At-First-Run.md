@@ -1,6 +1,6 @@
 # CC32 — Answer The Auto Mode Question At First Run
 
-**Status:** Estimated.
+**Status:** Implementing.
 **Size:** S - one more answer in the file the adapter already writes and its unit test; no contract another repository reads, and the acceptance on the VM with the new CLI.
 
 **What must be true.** A task running a Claude Code version that asks at start "Make auto mode your default
