@@ -128,15 +128,6 @@ jobs:
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-releases target/effective-pom.xml \
                       --requires org.fuin.porelo:porelo-release
 
-            # The action publishes build-info by itself at the end of the workflow.
-            - uses: jfrog/setup-jfrog-cli@1e584506871998c267b7c100c02628a5b9c81db6 # v5.3.0
-              with:
-                  disable-auto-build-publish: true
-              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-              env:
-                  JF_URL: ${{ vars.JF_URL }}
-                  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
-
             # The same two repositories Porelo itself publishes to.
             - name: Publish the packages
               if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -146,6 +137,8 @@ jobs:
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eux
+                  . .github/scripts/artifactory.sh
+                  art_login
                   # A published release is never replaced, as on Central. Fetched to a file, so an index that
                   # cannot be read stops the release rather than reading as "not published".
                   if [ "$CHANNEL" = releases ]; then
@@ -155,22 +148,21 @@ jobs:
                           echo "::error::this release is published already"; exit 1
                       fi
                   fi
-                  # --flat, or the source directory travels and the package lands away from its siblings.
-                  jf rt upload "target/*.deb" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \
-                      --flat=true \
-                      --target-props="deb.distribution=${CHANNEL};deb.component=main;deb.architecture=amd64"
-                  jf rt upload "target/*.rpm" "porelo-dist-rpm/${CHANNEL}/" --flat=true
+                  for p in target/*.deb; do
+                      art_put "$p" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \
+                          "deb.distribution=${CHANNEL};deb.component=main;deb.architecture=amd64"
+                  done
+                  for p in target/*.rpm; do art_put "$p" "porelo-dist-rpm/${CHANNEL}/"; done
 
                   # The bill beside the package, readable without installing.
-                  jf rt upload "target/*.cdx.json" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" --flat=true
-                  jf rt upload "target/*.cdx.json" "porelo-dist-rpm/${CHANNEL}/" --flat=true
+                  for p in target/*.cdx.json; do art_put "$p" "porelo-dist-deb/pool/main/p/porelo-agent-claude/"; done
+                  for p in target/*.cdx.json; do art_put "$p" "porelo-dist-rpm/${CHANNEL}/"; done
 
             # Uploaded is not installable.
             - name: The package is indexed, not merely stored
               if: github.event_name == 'push' && github.ref == 'refs/heads/main'
               env:
                   JF_URL: ${{ vars.JF_URL }}
-                  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eu
@@ -178,8 +170,7 @@ jobs:
                   # -L: Artifactory answers a file with a redirect to its cloud storage, and without it the
                   # body is empty - every package then reads as "not indexed" although it is.
                   while [ "$tries" -lt 20 ]; do
-                      if jf rt curl -sL -XGET \
-                          "/porelo-dist-deb/dists/${CHANNEL}/main/binary-amd64/Packages" 2>/dev/null \
+                      if curl -sfL "${JF_URL}/artifactory/porelo-dist-deb/dists/${CHANNEL}/main/binary-amd64/Packages" \
                           | grep -q "Package: porelo-agent-claude"; then
                           echo "  OK    the Debian index lists porelo-agent-claude"
                           exit 0
@@ -346,14 +337,6 @@ jobs:
                   name: packages
                   path: target
 
-            # The action publishes build-info by itself at the end of the workflow.
-            - uses: jfrog/setup-jfrog-cli@1e584506871998c267b7c100c02628a5b9c81db6 # v5.3.0
-              with:
-                  disable-auto-build-publish: true
-              env:
-                  JF_URL: ${{ vars.JF_URL }}
-                  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
-
             # The same two repositories Porelo itself publishes to.
             - name: Publish the packages
               env:
@@ -362,6 +345,8 @@ jobs:
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eux
+                  . .github/scripts/artifactory.sh
+                  art_login
                   # A published release is never replaced, as on Central. Fetched to a file, so an index that
                   # cannot be read stops the release rather than reading as "not published".
                   if [ "$CHANNEL" = releases ]; then
@@ -371,21 +356,20 @@ jobs:
                           echo "::error::this release is published already"; exit 1
                       fi
                   fi
-                  # --flat, or the source directory travels and the package lands away from its siblings.
-                  jf rt upload "target/*.deb" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \
-                      --flat=true \
-                      --target-props="deb.distribution=${CHANNEL};deb.component=main;deb.architecture=amd64"
-                  jf rt upload "target/*.rpm" "porelo-dist-rpm/${CHANNEL}/" --flat=true
+                  for p in target/*.deb; do
+                      art_put "$p" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" \
+                          "deb.distribution=${CHANNEL};deb.component=main;deb.architecture=amd64"
+                  done
+                  for p in target/*.rpm; do art_put "$p" "porelo-dist-rpm/${CHANNEL}/"; done
 
                   # The bill beside the package, readable without installing.
-                  jf rt upload "target/*.cdx.json" "porelo-dist-deb/pool/main/p/porelo-agent-claude/" --flat=true
-                  jf rt upload "target/*.cdx.json" "porelo-dist-rpm/${CHANNEL}/" --flat=true
+                  for p in target/*.cdx.json; do art_put "$p" "porelo-dist-deb/pool/main/p/porelo-agent-claude/"; done
+                  for p in target/*.cdx.json; do art_put "$p" "porelo-dist-rpm/${CHANNEL}/"; done
 
             # Uploaded is not installable.
             - name: The package is indexed, not merely stored
               env:
                   JF_URL: ${{ vars.JF_URL }}
-                  JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
                   CHANNEL: ${{ steps.channel.outputs.channel }}
               run: |
                   set -eu
@@ -393,8 +377,7 @@ jobs:
                   # -L: Artifactory answers a file with a redirect to its cloud storage, and without it the
                   # body is empty - every package then reads as "not indexed" although it is.
                   while [ "$tries" -lt 20 ]; do
-                      if jf rt curl -sL -XGET \
-                          "/porelo-dist-deb/dists/${CHANNEL}/main/binary-amd64/Packages" 2>/dev/null \
+                      if curl -sfL "${JF_URL}/artifactory/porelo-dist-deb/dists/${CHANNEL}/main/binary-amd64/Packages" \
                           | grep -q "Package: porelo-agent-claude"; then
                           echo "  OK    the Debian index lists porelo-agent-claude"
                           exit 0

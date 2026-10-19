@@ -11,9 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Runs both "Publish the packages" steps of the build workflow for a release, with stand-ins for
- * {@code curl} and {@code jf}. A release that is published already is never uploaded again, and
- * when the index cannot be read nobody knows whether it is, so nothing is uploaded either.
+ * Runs both "Publish the packages" steps of the build workflow for a release, with a stand-in for
+ * {@code curl} and the repository's own {@code artifactory.sh} beside them. A release that is
+ * published already is never uploaded again, and when the index cannot be read nobody knows whether
+ * it is, so nothing is uploaded either.
  */
 class ReleaseNeverReplacedTest {
 
@@ -28,7 +29,7 @@ class ReleaseNeverReplacedTest {
             assertThat(run.exit())
                     .as("exit of the publish when the index cannot be read:%n%s", run.output())
                     .isNotZero();
-            assertThat(work.resolve("jf-calls"))
+            assertThat(work.resolve("uploads"))
                     .as("uploads when the index cannot be read")
                     .doesNotExist();
         }
@@ -51,9 +52,7 @@ class ReleaseNeverReplacedTest {
             assertThat(run.exit())
                     .as("exit of the publish of a published release:%n%s", run.output())
                     .isNotZero();
-            assertThat(work.resolve("jf-calls"))
-                    .as("uploads of a published release")
-                    .doesNotExist();
+            assertThat(work.resolve("uploads")).as("uploads of a published release").doesNotExist();
         }
     }
 
@@ -75,10 +74,12 @@ class ReleaseNeverReplacedTest {
             assertThat(run.exit())
                     .as("exit of the publish of a new release:%n%s", run.output())
                     .isZero();
-            assertThat(Files.readString(work.resolve("jf-calls")))
+            assertThat(Files.readString(work.resolve("uploads")))
                     .as("uploads of a new release")
                     .contains(
-                            "rt upload target/*.deb porelo-dist-deb/pool/main/p/porelo-agent-claude/");
+                            "porelo-dist-deb/pool/main/p/porelo-agent-claude/"
+                                    + DEB
+                                    + ";deb.distribution=releases");
         }
     }
 
@@ -92,8 +93,9 @@ class ReleaseNeverReplacedTest {
     }
 
     /**
-     * Runs a publish step for the releases channel in a directory holding the packages, with a
-     * {@code curl} that exits so and answers with that index.
+     * Runs a publish step for the releases channel in a directory holding the packages and {@code
+     * artifactory.sh}, with a {@code curl} that exits so, answers with that index, and writes each
+     * upload's address to {@code uploads}.
      */
     private static WorkflowSteps.Run publish(
             final String step, final Path dir, final String curlExit, final String index)
@@ -109,14 +111,22 @@ class ReleaseNeverReplacedTest {
                 "curl",
                 """
                 out=""
+                upload=""
+                url=""
                 while [ $# -gt 0 ]; do
-                    if [ "$1" = -o ]; then out="$2"; shift; fi
+                    case "$1" in
+                        -o) out="$2"; shift ;;
+                        -T) upload="$2"; shift ;;
+                        http*) url="$1" ;;
+                    esac
                     shift
                 done
                 [ "$CURL_EXIT" = 0 ] || exit "$CURL_EXIT"
+                if [ -n "$upload" ]; then echo "$url" >> "$HOME/uploads"; exit 0; fi
                 if [ -n "$out" ]; then cat "$HOME/index" > "$out"; else cat "$HOME/index"; fi
                 """);
-        WorkflowSteps.stub(bin, "jf", "echo \"$*\" >> \"$HOME/jf-calls\"\n");
+        final Path scripts = Files.createDirectories(dir.resolve(".github/scripts"));
+        Files.copy(Path.of(".github/scripts/artifactory.sh"), scripts.resolve("artifactory.sh"));
         return WorkflowSteps.run(
                 step,
                 dir,
@@ -127,6 +137,8 @@ class ReleaseNeverReplacedTest {
                         "releases",
                         "JF_URL",
                         "https://artifactory.invalid",
+                        "JF_ACCESS_TOKEN",
+                        "not-a-token",
                         "CURL_EXIT",
                         curlExit));
     }

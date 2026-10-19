@@ -300,14 +300,14 @@ actions are not watched.
 **`mvnw` checks the Maven it downloads**: `distributionSha256Sum` in `.mvn/wrapper/maven-wrapper.properties`,
 for 3.9.15 the digest Apache's own SHA-512 confirms. A wrong one stops the wrapper before Maven runs.
 
-**Nothing else in these workflows is fetched by a name**: `curl` reads this product's own Artifactory -
-through `jf rt curl`, and plainly for the Debian index a release is checked against before it is
-published - and, in the update job, the Claude Code binary the pin names, checked against the pinned
-SHA-256 before it is read. The setup actions download their tools themselves, and there the two differ:
+**Nothing else in these workflows is fetched by a name**: `curl` reads and writes this product's own
+Artifactory through `artifactory.sh`, and reads plainly the Debian index a release is checked against
+before it is published - and, in the update job, the Claude Code binary the pin names, checked against the pinned
+SHA-256 before it is read. The setup actions download their tools themselves:
 
-- **The JFrog CLI is fixed by the action's commit.** `setup-jfrog-cli` 5.2.0 defaults to `jf` 2.124.0
-  and asks for the newest only when told to, so a Dependabot bump moves both together, under review. It
-  checks no digest, which is the same publisher's trust as the action.
+- **Publishing downloads no client.** `.github/scripts/artifactory.sh`, taken byte for byte from porelo,
+  speaks to Artifactory's REST interface with `curl`; the token goes into a curl config file of mode
+  600, so neither `set -x` nor a process listing shows it. The JFrog CLI and its setup action are gone.
 - **GraalVM is the one Porelo pins, checked against its digest.** `setup-graalvm` with `'25'` resolves
   the newest 25.x at run time and checks nothing for community builds - and that JDK compiles the
   native binary this repository publishes. So every job uses `./.github/actions/pinned-jdk`: the
