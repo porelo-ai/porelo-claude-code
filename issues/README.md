@@ -4,12 +4,17 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
+## Review
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc35"></a>[CC35](CC35-Publish-Without-A-Downloaded-Client.md) | S | — | the Build publishes with curl and porelo's script, with no client downloaded beside the token |
+
 ## Implementing
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc34"></a>[CC34](CC34-Take-The-Legs-From-A-Run-That-Proved-The-Same-Tree.md) | S | — | a Build on `main` takes its legs from a run that proved the same tree within a day |
-| <a id="cc35"></a>[CC35](CC35-Publish-Without-A-Downloaded-Client.md) | S | — | the Build publishes with curl and porelo's script, with no client downloaded beside the token |
 
 ## Accepted
 

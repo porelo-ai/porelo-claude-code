@@ -1,6 +1,6 @@
 # CC35 — Publish Without A Downloaded Client
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - the two Publish steps of `build.yml` and the smoke workflow move from the JFrog CLI to porelo's
 `artifactory.sh`; the packages, their channels and the index read-back stay as they are.
 
