@@ -1,0 +1,23 @@
+# What this repository's whole local build needs: the image a Porelo task on this repository is built from.
+# A draft: no Porelo reads this file yet. Tools only, never a rule.
+#
+# The pins are those the Build takes: the GraalVM and the Ubuntu image from porelo-machines' own pins
+# (machines.properties), shfmt from build.yml. A move there is not followed here by itself.
+image:
+    base_image: "docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    snippet: |
+        RUN apt-get update \
+            && apt-get install -y --no-install-recommends build-essential zlib1g-dev ca-certificates curl git unzip \
+            && rm -rf /var/lib/apt/lists/*
+        RUN curl -fsSL -o /tmp/graalvm.tar.gz \
+                https://github.com/graalvm/graalvm-ce-builds/releases/download/graal-25.4.4.1.1/graalvm-community-jdk-25i4-25.0.4.1.1_linux-x64_bin.tar.gz \
+            && echo "05ccbbe783210b6886ff7b08fcd0b061c5dce4852b05db87284fc0e24abb08e2  /tmp/graalvm.tar.gz" | sha256sum -c - \
+            && mkdir -p /opt/graalvm && tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1 \
+            && rm /tmp/graalvm.tar.gz \
+            && for tool in java javac jar native-image; do ln -s /opt/graalvm/bin/$tool /usr/local/bin/$tool; done
+        RUN curl -fsSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64 \
+            && echo "d9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea  /usr/local/bin/shfmt" | sha256sum -c - \
+            && chmod 0755 /usr/local/bin/shfmt
+    env:
+        JAVA_HOME: /opt/graalvm
+        GRAALVM_HOME: /opt/graalvm

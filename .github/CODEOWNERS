@@ -12,4 +12,5 @@
 /mkdocs.yml      @michael-schnell
 
 # What a task may reach and run.
+/porelo.yml      @michael-schnell
 /src/main/resources/agent/  @michael-schnell
