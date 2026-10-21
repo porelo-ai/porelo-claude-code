@@ -58,8 +58,10 @@ work goes; `porelo project default list` shows the name `-r` takes. Started insi
 - **Reachable:** the provider (`api.anthropic.com`, or OpenRouter with `--provider openrouter`) and
   the hosts Claude Code needs to start: `platform.claude.com`, `claude.ai`, `statsig.anthropic.com`.
   Nothing else resolves.
-- **Refused on purpose:** a Datadog log intake, `raw.githubusercontent.com` and the CLI's own
-  downloads. Claude Code works without them.
+- **Refused on purpose:** a Datadog log intake and the CLI's own downloads. Claude Code works
+  without them.
+- **Only where the project grants it:** `raw.githubusercontent.com`, which the CLI asks for and does
+  not need. A project that grants it, by `git-hosting` or by name, opens it to the agent too.
 
 `porelo agents --verbose` shows all of it for the installed version.
 

@@ -22,7 +22,7 @@ Feature: What a person sees with this agent, before there is any credential
         When I run "porelo agents --verbose"
         Then the terminal shows "platform.claude.com"
         And the terminal shows "refused:"
-        And the terminal shows "raw.githubusercontent.com"
+        And the terminal shows "http-intake.logs.us5.datadoghq.com"
 
     Scenario: starting a task without a credential says what is missing, before anything is built
         Given a project called "nocred" of class "guarded" with a file in it

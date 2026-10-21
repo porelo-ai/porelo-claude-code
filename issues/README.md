@@ -14,6 +14,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc37"></a>[CC37](CC37-Let-The-Project-Grant-What-Its-Build-Needs.md) | S | — | `raw.githubusercontent.com` reachable in a Claude Code task where the project grants it, so `check-citations` runs there; the CLI's update host stays refused |
 | <a id="cc34"></a>[CC34](CC34-Take-The-Legs-From-A-Run-That-Proved-The-Same-Tree.md) | S | — | a Build on `main` takes its legs from a run that proved the same tree within a day |
 
 ## Analyzed

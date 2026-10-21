@@ -159,16 +159,18 @@ allowed_domains:
 #
 # Found by measurement, not from documentation, and on the version named: 2.1.236 resolved the
 # Datadog intake below during a normal run. The pin moves weekly now; this note does not.
-# The CLI works without it. It also asks for raw.githubusercontent.com, which is not
-# granted either: allowing it opens every file on that host to the agent, and
-# nothing needed to start a session comes from there.
+# The CLI works without it.
+#
+# raw.githubusercontent.com, which the CLI also asks for, is left undeclared rather than refused:
+# no allowed name admits it, so it resolves only where the project grants it, and a project's own
+# build needs it - check-citations reads other repositories' indexes from there. A task is one
+# network, so where the project grants it the agent reaches every file there too.
 #
 # downloads.claude.ai is where the CLI updates itself from. The update is already stopped by
 # DISABLE_UPDATES in the settings file; this is the network layer behind it, since the pinned binary
 # is fetched when the package is built and the task needs nothing from that host.
 refused_domains:
     - http-intake.logs.us5.datadoghq.com
-    - raw.githubusercontent.com
     - downloads.claude.ai
 
 install:
