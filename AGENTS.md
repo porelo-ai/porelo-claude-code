@@ -339,10 +339,10 @@ and the UTC time that text last changed; change it in the channel first, never i
 
 ## Shared by the agent adapter repositories
 
-> **BEGIN Agent Adapter Area** · sha256 `15c9936fc15e8e60` · changed 2026-10-17T04:13Z
+> **BEGIN Agent Adapter Area** · sha256 `2ec064a5e30c988c` · changed 2026-10-21T07:51Z
 
-Identical in `porelo-claude-code`, `porelo-pi` and `porelo-omp`, marked and changed like the shared block;
-what is one adapter's alone stays outside.
+Identical in `porelo-claude-code`, `porelo-pi`, `porelo-omp` and `porelo-codex`, marked and changed
+like the shared block; what is one adapter's alone stays outside.
 
 ### Building an adapter
 
@@ -372,7 +372,7 @@ what is one adapter's alone stays outside.
 - **Porelo's acceptance suite runs a stub agent without dialogs**, so what a real agent asks is checked
   only in the adapter's repository.
 
-> **END Agent Adapter Area** · sha256 `15c9936fc15e8e60`
+> **END Agent Adapter Area** · sha256 `2ec064a5e30c988c`
 
 ## Work in this repository
 
