@@ -7,7 +7,7 @@ image:
     base_image: "docker.io/library/ubuntu:24.04@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
     snippet: |
         RUN apt-get update \
-            && apt-get install -y --no-install-recommends build-essential zlib1g-dev ca-certificates curl git unzip \
+            && apt-get install -y --no-install-recommends build-essential zlib1g-dev ca-certificates curl git unzip rpm \
             && rm -rf /var/lib/apt/lists/*
         RUN curl -fsSL -o /tmp/graalvm.tar.gz \
                 https://github.com/graalvm/graalvm-ce-builds/releases/download/graal-25.4.4.1.1/graalvm-community-jdk-25i4-25.0.4.1.1_linux-x64_bin.tar.gz \
