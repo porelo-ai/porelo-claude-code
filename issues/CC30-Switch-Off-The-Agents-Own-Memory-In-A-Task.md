@@ -1,6 +1,6 @@
 # CC30 — Switch Off The Agent's Own Memory In A Task
 
-**Status:** Analyzed.
+**Status:** Estimated.
 **Size:** S - one key in the settings file the adapter already writes, its unit test, and one attended
 measurement on the VM.
 

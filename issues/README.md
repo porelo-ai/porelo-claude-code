@@ -21,13 +21,13 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | S | — | Claude Code's own memory off in a task; what holds across tasks only in the repository's `AGENTS.md` | 0 |
 | <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | porelo [B224](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b224), [B225](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b225) | Claude Code's sign-in on the host reported by kind, provider and path, never by value, for [PJ53](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj53) | 0 |
 
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | S | — | Claude Code's own memory off in a task; what holds across tasks only in the repository's `AGENTS.md` |
 | <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | porelo [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | porelo [B224](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b224), [B230](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b230) | the agent contract named at install time |
