@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Estimated; blocked by porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173).
+**Status:** Backlog; blocked by porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173).
 **Size:** M - one acceptance scenario and a stand-in token endpoint in the kit, no change to the
 adapter's code.
 

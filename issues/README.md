@@ -18,6 +18,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc37"></a>[CC37](CC37-Let-The-Project-Grant-What-Its-Build-Needs.md) | S | — | `raw.githubusercontent.com` reachable in a Claude Code task where the project grants it, so `check-citations` runs there; the CLI's update host stays refused |
 | <a id="cc34"></a>[CC34](CC34-Take-The-Legs-From-A-Run-That-Proved-The-Same-Tree.md) | S | — | a Build on `main` takes its legs from a run that proved the same tree within a day |
 
+## Backlog
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
+
 ## Analyzed
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -28,7 +34,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc24"></a>[CC24](CC24-Prove-OAuth-Isolation-End-To-End.md) | M | porelo [B173](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b173) | a subscription's refresh token never in a task |
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | porelo [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) | package-level signatures on the published RPMs |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | porelo [B224](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b224), [B230](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b230) | the agent contract named at install time |
 
