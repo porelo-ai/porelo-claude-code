@@ -21,13 +21,8 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
+| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | S | — | Claude Code's own memory off in a task; what holds across tasks only in the repository's `AGENTS.md` | 0 |
 | <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | porelo [B224](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b224), [B225](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b225) | Claude Code's sign-in on the host reported by kind, provider and path, never by value, for [PJ53](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj53) | 0 |
-
-## Accepted
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc30"></a>[CC30](CC30-Switch-Off-The-Agents-Own-Memory-In-A-Task.md) | — | porelo [B194](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b194) | Claude Code's own memory off in a task; `.AGENTS.md` in its place |
 
 ## Estimated
 
