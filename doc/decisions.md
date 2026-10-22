@@ -21,6 +21,7 @@ repository is built.
 | [Reaching work is checked by what the screen shows, not by the dialogs known](#reaching-work-is-checked-by-what-the-screen-shows-not-by-the-dialogs-known) | a declared marker, waited for attended; proven to fail against the dialog put back |
 | [Waiting for a person is read from the question's own last line](#waiting-for-a-person-is-read-from-the-questions-own-last-line) | the line only a question draws, in the last lines of the screen |
 | [A task that comes back continues its conversation](#a-task-that-comes-back-continues-its-conversation) | the session id read from Claude Code's own record, unattended or attached |
+| [The agent keeps no memory of its own in a task](#the-agent-keeps-no-memory-of-its-own-in-a-task) | what holds across tasks is the repository's reviewed `AGENTS.md` |
 | **The pinned CLI** | |
 | [The CLI does not update itself in a task](#the-cli-does-not-update-itself-in-a-task) | the pinned version is the one that runs |
 | [A model the CLI does not know keeps its own window](#a-model-the-cli-does-not-know-keeps-its-own-window) | the provider says when the context is full, not a window the CLI assumes |
@@ -115,6 +116,22 @@ exits - so only an attended start tells the two apart.
 
 **What would change the answer:** the environment carrying a real payment credential instead of a
 task-scoped token. Then this would be a billing decision again, and it would be asked.
+
+## The agent keeps no memory of its own in a task
+
+What holds across tasks reaches the agent only through the repository's `AGENTS.md`, changed by a
+commit that is reviewed like any other. A memory the agent writes for itself would reach a later run
+unseen.
+
+**Measured on Claude Code 2.1.292** in a task: as shipped before, `/memory` shows *"Auto-memory
+true"*. With `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` in the `env` of the container's `settings.json` it
+shows *"false"*, and Enter on that menu entry leaves it false and the file unchanged.
+
+- **Not `autoMemoryEnabled: false`**, which turns it off too, but is the setting the `/memory` menu
+  writes, so the agent could switch it back on.
+- **Nothing in a task's home reaches the next task today:** a file left in one task's `/home/agent`
+  was gone in the next, `~/.claude/projects` with it. So the switch matters within a task stopped and
+  started again, and for whatever a later change keeps or mounts.
 
 ## The CLI does not update itself in a task
 

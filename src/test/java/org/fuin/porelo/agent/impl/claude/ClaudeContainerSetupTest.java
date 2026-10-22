@@ -81,6 +81,19 @@ class ClaudeContainerSetupTest {
     }
 
     @Test
+    void keepsNoMemoryOfItsOwnInATask() {
+
+        // Measured on 2.1.292: before, /memory said "Auto-memory true"; with this in the
+        // settings' env it says false, and Enter on that menu entry leaves it false.
+        final Map<?, ?> settings = parse(named(ClaudeSettings.FILE, "oauth"));
+
+        assertThat(((Map<?, ?>) settings.get("env")).get("CLAUDE_CODE_DISABLE_AUTO_MEMORY"))
+                .as(
+                        "what holds across tasks reaches the agent only through reviewed repository rules")
+                .isEqualTo("1");
+    }
+
+    @Test
     void letsAModelTheCliDoesNotKnowUseItsOwnWindow() {
 
         // Measured on 2.1.267 with z-ai/glm-5.3-flash over OpenRouter: the CLI says the model

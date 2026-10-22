@@ -33,6 +33,7 @@ jobs:
 
     update:
         name: Follow Claude Code
+        # It builds the native binary the legs test, so on the build job's glibc.
         runs-on: ubuntu-24.04
         timeout-minutes: 90
         # Pushes the pin's branch and opens its pull request: these two, for this job only.

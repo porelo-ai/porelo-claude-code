@@ -37,3 +37,26 @@ Feature: What a person sees with this agent, before there is any credential
         When a script asks what a task in "noask" for the "claude" agent would do
         Then its output does not contain "[Y/n]"
         And its output contains no escape sequences
+
+    Scenario: the agent keeps no memory of its own in a task
+        # What holds across tasks is the repository's reviewed AGENTS.md, never a note the agent wrote for
+        # itself. Measured on 2.1.292: without the adapter's switch the menu says "Auto-memory  true". It is read
+        # without asking a model, so a key that opens nothing is enough.
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        When a script runs "printf sk-ant-opens-nothing | porelo vault put anthropic --type api-key"
+        Then it exits zero
+        Given a project called "nomem" of class "guarded" with a file in it
+        And a terminal on the machine
+        When I run "porelo task start nomem --project nomem --repository nomem --agent claude --clearance deny"
+        Then the "claude" agent in task "nomem" of "nomem" reaches work without being asked anything
+        When I type "/memory"
+        And I press Enter
+        Then within 30 seconds this script exits zero:
+            """
+            screen=$(podman exec porelo-nomem-nomem tmux capture-pane -p -t porelo)
+            printf '%s\n' "$screen" | grep -qE 'Auto-memory +false' && exit 0
+            printf 'screen, last lines:\n'; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
+            exit 1
+            """
+        When a script runs "porelo project unfollow nomem --force"
+        Then it exits zero

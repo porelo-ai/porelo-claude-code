@@ -33,7 +33,7 @@ jobs:
 
     build:
         name: Build and unit tests
-        # Pinned, not 'ubuntu-latest'.
+        # Pinned to the oldest glibc it must run against, because a native image links it dynamically.
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         steps:
@@ -186,7 +186,7 @@ jobs:
     # or the update job that verified it - takes those legs instead of renting again. A tag always runs its own.
     proof:
         name: Legs already proven
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         timeout-minutes: 10
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         # Reads this repository's runs, jobs and artifact names; nothing more.
@@ -221,7 +221,7 @@ jobs:
 
     acceptance:
         name: Acceptance - ${{ matrix.os }}
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         timeout-minutes: 40
         needs: [build, proof]
         # The proof is skipped on a tag and a dispatch, and a failed one proves nothing: the legs run then.
@@ -293,7 +293,7 @@ jobs:
     # on rented machines included. A snapshot publishes from the build job, beside a leg still running.
     release:
         name: Publish the release
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         timeout-minutes: 15
         needs: [build, acceptance]
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

@@ -76,6 +76,9 @@ final class ClaudeSettings {
         // is full, as before 2.1.267. By the CLI's own check it applies only to a model outside its
         // catalog.
         env.put("CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT", "1");
+        // No memory of its own: what holds across tasks is the repository's reviewed AGENTS.md.
+        // The variable, not 'autoMemoryEnabled': the /memory menu cannot switch it back on.
+        env.put("CLAUDE_CODE_DISABLE_AUTO_MEMORY", "1");
         root.put("env", env);
         return Json.write(root);
     }
