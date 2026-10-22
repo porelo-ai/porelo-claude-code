@@ -1,6 +1,6 @@
 # CC37 — Let The Project Grant What Its Build Needs
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - one entry leaves the definition's `refused_domains`, with its comment, the documentation, the
 changelog and one acceptance step; no code and no contract changes.
 
@@ -59,3 +59,8 @@ On porelo 0.5.1~snapshot.307, with this change's adapter installed account-local
 - In a task with agent `claude`, the unit tests and the shared checks pass. `check-pin` cannot, since it reads
   the published manifest's digest from `downloads.claude.ai`. So the pin check, like the package build, runs
   where the agent is not Claude Code.
+
+## Measured after the push
+
+- Build 142 on `11413ef`, the first that built this change, was green on both legs, and `0.5.2~snapshot.142` is in
+  the published index.

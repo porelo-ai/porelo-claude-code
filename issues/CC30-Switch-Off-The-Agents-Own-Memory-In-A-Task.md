@@ -1,6 +1,6 @@
 # CC30 — Switch Off The Agent's Own Memory In A Task
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - one key in the settings file the adapter already writes, its unit test, and one attended
 measurement on the VM.
 
@@ -41,3 +41,8 @@ On Claude Code 2.1.292, in tasks of porelo 0.5.1~snapshot.307, with no model ask
   memory outlives only a stop and start of the same task.
 - The new scenario in `terminal.feature` failed against the adapter installed before, showing "Auto-memory true",
   and passed with this change's adapter installed.
+
+## Measured after the push
+
+- Build 142 on `11413ef` was green in every job, its proof, acceptance and `shared-rules` jobs on `ubuntu-26.04`,
+  and `0.5.2~snapshot.142` is in the published index.
