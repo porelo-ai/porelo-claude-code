@@ -75,7 +75,10 @@ container, only the reachability of that one name differing:
 
 What a deny would keep inside is the task's token, which is random, ends with the task and is worth
 nothing to Anthropic. The real credential never enters the container. `platform.claude.com` is the
-same case: it is contacted before an interactive session starts, and the CLI quits without it.
+same case: it is contacted before an interactive session starts, and the CLI quits without it. Its
+token endpoint is reachable from a task, so what keeps a renewal out of the task is that the task holds
+no refresh token; `subscription.feature` signs in a subscription against a stand-in endpoint, searches
+the task for every token, and sees only the host renew.
 
 **A Datadog log intake is refused, not left out.** Measured on 2.1.236, the CLI resolves
 `http-intake.logs.us5.datadoghq.com` during a normal run and works without it. It is declared under
