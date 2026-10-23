@@ -1,6 +1,6 @@
 # CC24 — Prove OAuth isolation end to end
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** M - one acceptance scenario and an embedded stand-in token endpoint, no change to the
 adapter's code.
 
@@ -50,6 +50,9 @@ token.
 - A renewal from inside the task is seen to be refused, and the host renews.
 
 ## Measured
+
+On the test VM, Porelo 0.5.1~snapshot.319.1 per account, the adapter built from the pushed head,
+2026-10-23: the whole acceptance suite green, 28 scenarios with this one, none skipped, in 12 minutes 42 s.
 
 On the test VM, Porelo 0.5.1~snapshot.933 per account, 2026-10-22:
 
