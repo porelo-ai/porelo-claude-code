@@ -1,6 +1,7 @@
 # CC34 — Take The Legs From A Run That Proved The Same Tree
 
-**Status:** Implementing.
+**Status:** Review; taken on the measurement of the identical change in porelo-omp, whose merged update request
+#6 gave a Build that said `proven=yes`, took the update run's legs and rented nothing.
 **Size:** S - a job in `build.yml` that asks porelo's `proven-legs`, the legs' condition, and one step in
 `update.yml` that names the tree it verifies; no contract another repository reads.
 
