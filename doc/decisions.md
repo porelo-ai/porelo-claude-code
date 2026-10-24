@@ -326,8 +326,9 @@ before it is published - and, in the update job, the Claude Code binary the pin 
 SHA-256 before it is read. The setup actions download their tools themselves:
 
 - **Publishing downloads no client.** `.github/scripts/artifactory.sh`, taken byte for byte from porelo,
-  speaks to Artifactory's REST interface with `curl`; the token goes into a curl config file of mode
-  600, so neither `set -x` nor a process listing shows it. The JFrog CLI and its setup action are gone.
+  speaks to Artifactory's REST interface with `curl`; the token reaches each call as its config on standard
+  input, so neither `set -x` nor a process listing shows it and nothing is left on the runner's disk. The JFrog CLI
+  and its setup action are gone.
 - **GraalVM is the one Porelo pins, checked against its digest.** `setup-graalvm` with `'25'` resolves
   the newest 25.x at run time and checks nothing for community builds - and that JDK compiles the
   native binary this repository publishes. So every job uses `./.github/actions/pinned-jdk`: the
