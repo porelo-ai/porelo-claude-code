@@ -4,12 +4,6 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Review
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc34"></a>[CC34](CC34-Take-The-Legs-From-A-Run-That-Proved-The-Same-Tree.md) | S | — | a Build on `main` takes its legs from a run that proved the same tree within a day |
-
 ## Analyzed
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -27,6 +21,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Title | What was built |
 |---|---|---|
+| <a id="cc34"></a>[CC34](README.md#cc34) | Take The Legs From A Run That Proved The Same Tree | A Build on `main` asks `porelo-release proven-legs` whether a Build or an update run already proved the pushed tree on both legs within a day and takes those legs instead of renting again, while a tag always runs its own. |
 | <a id="cc37"></a>[CC37](README.md#cc37) | Let The Project Grant What Its Build Needs | A task's Claude Code no longer refuses `raw.githubusercontent.com`, so it resolves where the project grants it and `check-citations` runs there, while the Datadog log intake and `downloads.claude.ai` stay refused. |
 | <a id="cc35"></a>[CC35](README.md#cc35) | Publish Without A Downloaded Client | The Build and the smoke workflow talk to Artifactory with `curl` through `.github/scripts/artifactory.sh`, with the JFrog CLI and its setup action removed. |
 | <a id="cc24"></a>[CC24](README.md#cc24) | Prove OAuth Isolation End To End | An acceptance scenario signs in with a subscription against a stand-in token endpoint and shows the refresh token never reaches the task: only the host renews, and the broker refuses a renewal from inside it. |
