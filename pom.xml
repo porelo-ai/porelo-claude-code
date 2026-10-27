@@ -15,7 +15,7 @@
 
     <groupId>org.fuin.porelo</groupId>
     <artifactId>porelo-agent-claude</artifactId>
-    <version>0.5.3-SNAPSHOT</version>
+    <version>0.5.4-SNAPSHOT</version>
     <name>Porelo Agent Claude Code</name>
     <description>Porelo agent for Claude Code</description>
 
@@ -47,7 +47,7 @@
         <!-- The Claude Code version this agent installs. Filtered into claude.yaml and carried
              in the package description, so 'dpkg -s' and 'rpm -qi' answer which CLI an image
              build installs. Deliberately not part of the package version. -->
-        <agent.cli.version>2.1.308</agent.cli.version>
+        <agent.cli.version>2.1.311</agent.cli.version>
 
         <!-- What this agent's update differs in, read by Porelo's release tool beside the pin. -->
         <porelo.release.agent>Claude Code</porelo.release.agent>

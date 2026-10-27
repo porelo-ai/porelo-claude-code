@@ -12,7 +12,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
-- Claude Code pinned to 2.1.308 (was 2.1.267).
+- Claude Code pinned to 2.1.311 (was 2.1.267).
 - A task's agent keeps no memory of its own: Claude Code's auto memory is off, so what holds across tasks is only what the repository's `AGENTS.md` says.
 - A task's agent no longer refuses `raw.githubusercontent.com`; it resolves where the project grants it, so `check-citations` runs in a Claude Code task.
 - The code is in the shared style, google-java-format in its AOSP variant, with YAML and Gherkin at four spaces, and `validate` refuses code that is not; `.git-blame-ignore-revs` lets `git blame` skip the commit that reformatted it.
