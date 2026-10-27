@@ -42,6 +42,8 @@ class WorkflowCommitsTest {
         "--outside"
     };
     private static final String RESOLVE_STEP = "Resolve the release and machine tooling";
+    private static final String GITHUB = "https://github.com";
+    private static final String FORGE = "https://10.73.0.1:3000";
 
     @TempDir Path dir;
 
@@ -237,7 +239,8 @@ class WorkflowCommitsTest {
                 .containsEntry(
                         "PR_REPOSITORY", "${{ github.event.pull_request.head.repo.full_name }}")
                 .containsEntry(
-                        "PR_ASSOCIATION", "${{ github.event.pull_request.author_association }}");
+                        "PR_ASSOCIATION", "${{ github.event.pull_request.author_association }}")
+                .containsEntry("PR_SERVER", "${{ github.server_url }}");
         assertThat((String) step.get("run"))
                 .as("the script reads its environment alone")
                 .doesNotContain("${{");
@@ -281,6 +284,24 @@ class WorkflowCommitsTest {
                 "a member's pull request from another repository");
     }
 
+    // Prevents the host's forge, which names no author association, from refusing every pull
+    // request of the repository's own branches for want of a sign-off.
+    @Test
+    void aForgePullRequestFromTheSameRepositoryIsFromInside() throws Exception {
+        final Result run = pullRequest(REPOSITORY, "", "agent-machines", FORGE);
+        assertThat(run.exit()).as("the forge's own pull request: %s", run.output()).isZero();
+        assertThat(run.java()).as("its commits need no sign-off").containsExactly(INSIDE);
+    }
+
+    // Prevents code from another repository on the forge from passing without its author's
+    // sign-off.
+    @Test
+    void aForgePullRequestFromElsewhereStaysFromOutside() throws Exception {
+        assertOutside(
+                pullRequest("someone/" + NAME, "", "someone", FORGE),
+                "a forge pull request from another repository");
+    }
+
     private static void assertOutside(final Result run, final String which) {
         assertThat(run.exit()).as("%s: %s", which, run.output()).isZero();
         assertThat(run.java()).as("%s needs its author's sign-off", which).containsExactly(OUTSIDE);
@@ -307,6 +328,25 @@ class WorkflowCommitsTest {
             final String author,
             final int checkExit)
             throws Exception {
+        return pullRequest(repository, association, author, GITHUB, checkExit);
+    }
+
+    private Result pullRequest(
+            final String repository,
+            final String association,
+            final String author,
+            final String server)
+            throws Exception {
+        return pullRequest(repository, association, author, server, 0);
+    }
+
+    private Result pullRequest(
+            final String repository,
+            final String association,
+            final String author,
+            final String server,
+            final int checkExit)
+            throws Exception {
         return execute(
                 PULL_REQUEST_STEP,
                 Map.of(
@@ -315,7 +355,8 @@ class WorkflowCommitsTest {
                         "PR_REPOSITORY", repository,
                         "GITHUB_REPOSITORY", REPOSITORY,
                         "PR_ASSOCIATION", association,
-                        "PR_AUTHOR", author),
+                        "PR_AUTHOR", author,
+                        "PR_SERVER", server),
                 checkExit);
     }
 
