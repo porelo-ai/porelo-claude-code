@@ -81,21 +81,22 @@ Feature: An agent at rest is woken by a message for it
         And a terminal on the machine
         When I run "porelo task start busy --project busy --repository busy --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --clearance deny"
         Then the "claude" agent in task "busy" of "busy" reaches work without being asked anything
-        # Long enough that the message below comes while the tool still runs, however slow the steps before it. In the
-        # foreground, since a sleep in the background ends the turn at once, as GLM 5.3 Flash once chose. One line in the
-        # input box, so the try below finds it there.
-        When I type "Run 'sleep 90' in the foreground with your shell tool, then reply with the single word DONE."
+        # A wait that ends when the scenario says, so the message below comes while the tool still runs, however slow
+        # the steps before it. A loop on a check: measured on 2.1.311, Claude Code refuses a long foreground sleep and
+        # names this very form instead. In the foreground, since a wait in the background ends the turn at once, as
+        # GLM 5.3 Flash once chose. The path is on the input box's first line, so the try below finds it there.
+        When I type "Run 'until [ -e /tmp/porelo-busy-done ]; do sleep 2; done' in the foreground with your shell tool, then reply with the single word DONE."
         And I press Enter
-        # Working, seen rather than assumed: its sleep runs in the task, or its tool shows it running, so the message
+        # Working, seen rather than assumed: its loop runs in the task, or its tool shows it running, so the message
         # below comes while it works. A line still standing in the input box gets Enter again, as above. A try that sees
         # neither says what it saw.
         Then within 120 seconds this script exits zero:
             """
             top=$(podman top porelo-busy-busy args 2>&1)
             screen=$(podman exec porelo-busy-busy tmux capture-pane -p -t porelo 2>&1)
-            printf '%s\n' "$top" | grep -qE '(^|/)sleep 90' && exit 0
-            printf '%s\n' "$screen" | grep -qF 'Bash(sleep 90)' && printf '%s\n' "$screen" | grep -qF 'Running…' && exit 0
-            if printf '%s\n' "$screen" | grep -A1 '^──' | grep '^❯' | grep -qF "Run 'sleep 90'"; then
+            printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done' && exit 0
+            printf '%s\n' "$screen" | grep -qF 'Bash(until [ -e /tmp/porelo-busy-done ]' && printf '%s\n' "$screen" | grep -qF 'Running…' && exit 0
+            if printf '%s\n' "$screen" | grep -A1 '^──' | grep '^❯' | grep -qF "porelo-busy-done"; then
               podman exec porelo-busy-busy tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
             fi
             printf 'podman top:\n%s\nscreen, last lines:\n' "$top"; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
@@ -104,15 +105,21 @@ Feature: An agent at rest is woken by a message for it
         When a script runs "echo 'What is 1234 plus 4321? Reply with the digits only.' | porelo talk tell porelo-busy-busy"
         Then it exits zero
         # Still at work once the message is in, seen rather than assumed: a turn that had ended before it would make
-        # this the wake at rest the scenario above proves.
+        # this the wake at rest the scenario above proves. Its loop in the foreground, so a loop sent to the background
+        # does not pass for work, and the message not yet announced, since the agent is not at rest.
         Then within 5 seconds this script exits zero:
             """
             top=$(podman top porelo-busy-busy args 2>&1)
             screen=$(podman exec porelo-busy-busy tmux capture-pane -p -t porelo 2>&1)
-            printf '%s\n' "$top" | grep -qE '(^|/)sleep 90' && printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel' && exit 0
+            printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done' && printf '%s\n' "$screen" | grep -qF 'Running…' \
+              && printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel' \
+              && ! printf '%s\n' "$screen" | grep -qF 'A message for you waits' && exit 0
             printf 'podman top:\n%s\nscreen, last lines:\n' "$top"; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
             exit 1
             """
+        # Its wait ends now, so its turn does, and the message is announced to an agent at rest.
+        When a script runs "podman exec porelo-busy-busy touch /tmp/porelo-busy-done"
+        Then it exits zero
         And within 240 seconds the terminal shows "A message for you waits"
         # The guide has a message answered with a message, so the answer counts either way the agent gives it:
         # as its reply, held because this project cannot address the person, or on its screen. The kit stops
