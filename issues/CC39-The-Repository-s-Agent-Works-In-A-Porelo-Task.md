@@ -2,8 +2,7 @@
 
 **Status:** Analyzed; blocked by [CC38](README.md#cc38), porelo-project
 [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59) (the move's procedure and check)
-porelo [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298), and for the registry
-porelo-project [PJ75](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj75).
+and porelo [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298).
 **Size:** S - no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
 work, plus the operator's attended start of the task.
 
@@ -28,8 +27,9 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 - **What the task reaches while it runs:** Maven Central, Sonatype or the forge's registry, `fuinorg.jfrog.io` for
   the skills, `github.com` for `check-citations`, and the forge's address as a host service. That egress is the
   project's, in porelo-project's `project.yml`; the image, the agent's CLI with it, is built on the host outside the
-  task's firewall. The forge's registry refuses a task today (the organization is private, porelo-project [PJ75](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj75)), so
-  until then the task's build reads Sonatype's snapshots.
+  task's firewall. The task's build reads Sonatype's snapshots: the forge's registry refuses a task today (the
+  organization is private, porelo-project [PJ75](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj75)), and nothing sets
+  `MAVEN_SNAPSHOTS_URL` in a task yet, so the `forge` profile stays off there until both are in.
 - **The sub-agent reading:** no sub-agent CLI is in the task's image, since a project file names one
   agent per repository and porelo describes no second sign-in inside a task. Until porelo
   [B172](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b172)'s reviewer task is built, an agent
@@ -59,8 +59,10 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 - Its build runs on the local forge as on the central one, [CC38](README.md#cc38).
 - The room shows it as `Agent Claude`, from the nickname `Claude` in porelo-project's `project.yml`, set once porelo
   [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298) is published.
-- The build in the task takes porelo's snapshots from the local forge's registry, once porelo-project [PJ75](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj75) is in; Claude Code
-  works with the operator's subscription from the vault.
+- The build in the task passes on Sonatype's snapshots; it takes them from the local forge's registry only once
+  porelo-project [PJ75](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj75) is in and the
+  task sets `MAVEN_SNAPSHOTS_URL`, which is not this move's. Claude Code works with the operator's subscription from
+  the vault.
 - [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59)'s move check is red for `porelo-claude-code` before the move and green after it; the agent's session on this machine and its
   VM accounts are no longer used, and the way back [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59) describes is open.
 
