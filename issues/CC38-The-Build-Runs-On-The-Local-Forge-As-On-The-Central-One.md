@@ -46,9 +46,12 @@ porelo-project [PJ60](https://github.com/porelo-ai/porelo-project/blob/main/issu
 - **Steps:**
   1. `settings.xml` gains the `forge` profile and the `porelo-forge` server as porelo-message-sluice has them
      (activated by `MAVEN_SNAPSHOTS_URL`, the token from `PORELO_PUBLISHER_TOKEN`), and `standard` stays off where
-     `MAVEN_SNAPSHOTS_URL` is set, while a tag's `-Dporelo.release` still turns every snapshot repository off. Every
-     Maven call passes both values, the `pinned-jdk` action's too, in `build.yml`, `update.yml`, `workflows.yml` and
-     `shared-rules.yml`, through the step's `env`, since a workflow's `env` cannot read a secret.
+     `MAVEN_SNAPSHOTS_URL` is set. A profile's activation takes one property only, so `-Dporelo.release` no longer
+     turns the snapshot repositories off: a tag's `MAVEN_ARGS` adds `-P!standard,!forge`. Every Maven call passes
+     both values through the step's `env`, since a workflow's `env` cannot read a secret: the `pinned-jdk` action's,
+     those in `build.yml`, `update.yml`, `workflows.yml` and `shared-rules.yml`, and the `./mvnw verify` that
+     `porelo-machines acceptance` starts on the runner for a leg's suite (its `acceptance` profile resolves
+     `porelo-acceptance-kit`).
   2. `vars.PORELO_PUBLISH`, checked at the start to be `true` or `false`, switches what only the central forge does:
      Publish and its index check, the `release` job, `artifactory-smoke.yml`, `delete-runs.yml`, the `proof` job, and
      the whole of `update.yml`, which updates the central forge only. Where it is `false`, the legs install the packages
@@ -77,3 +80,7 @@ porelo-project [PJ60](https://github.com/porelo-ai/porelo-project/blob/main/issu
 - That a pool VM reaches the package and CLI download hosts a leg installs from.
 - That `OPEN_ROUTER_API_KEY` is set on the forge, verified by the operator, as the shared rule on separate access
   lists asks.
+- That the runner reaches GitHub where the checks still read it: `check-citations` fetches the other repositories'
+  indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
+  `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
+- That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
