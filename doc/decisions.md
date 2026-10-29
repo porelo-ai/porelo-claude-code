@@ -289,10 +289,10 @@ tooling. A tag's build takes none of them.
   job and in the release job. `ReleaseChannelTest` runs both steps as a tag's run would, sees the refusal, and sees
   a released Porelo let through; it was seen to fail with the refusal taken out. `check-releases` then refuses any
   snapshot left in the effective pom.
-- **Secrets only where a tool needs them.** The tooling is resolved and the channel decided in steps that hold no
-  secret. The steps that hold one run only what needs it: the acceptance legs and their clean-up the cloud's key and
-  the provider's, publishing the repository's token, and each step that calls Maven the token that reads the forge's
-  snapshots.
+- **Secrets only where a tool needs them.** The channel is decided in a step that holds no secret, and the tooling
+  is resolved in steps that hold only the token that reads the forge's snapshots, as every step that calls Maven
+  does. The other steps that hold one run only what needs it: the acceptance legs and their clean-up the cloud's key
+  and the provider's, publishing the repository's token.
 ## Actions run from a commit, and Dependabot moves them
 
 Every `uses:` names a full commit with its release beside it, `@<commit> # vX.Y.Z`. A tag is a name its
