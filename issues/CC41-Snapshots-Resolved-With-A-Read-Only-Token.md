@@ -1,6 +1,8 @@
 # CC41 — Snapshots Resolved With A Read-Only Token, A Forge Without Its Registry Refused
 
-**Status:** Accepted.
+**Status:** Implementing.
+**Size:** S - the workflows and `settings.xml` of this one repository, no contract another
+repository reads.
 
 **What must be true.** On a forge other than the central one, no step of `porelo-claude-code`'s workflows that builds or tests
 holds a token that can write the forge's package registry: Maven resolves snapshots with the read-only package token
