@@ -4,7 +4,8 @@
 
 **What must be true.** On a forge other than the central one, no step of `porelo-claude-code`'s workflows that builds or tests
 holds a token that can write the forge's package registry: Maven resolves snapshots with the read-only package token
-the forge's runner hands to builds, and the publisher's token stays in the one step that deploys, on `main`. And a
+the forge's organization holds for builds, the secret `PORELO_PACKAGES_READ_TOKEN` of scope `read:package` (a
+placeholder under the same name on the central forge), and the publisher's token stays in the one step that deploys, on `main`. And a
 Build on a forge other than the central one whose `MAVEN_SNAPSHOTS_URL` is empty fails at its start and says so,
 instead of falling back to Central's snapshots.
 
@@ -17,5 +18,5 @@ instead of falling back to Central's snapshots.
 
 ## To be checked
 
-- The name and the scope of the read-only token the forge's runner hands to builds, and that it reads the
-  registry's snapshots where the organization there is private.
+- That the read-only token reads the registry's snapshots where the organization there is private, with the user
+  name Maven sends today.
