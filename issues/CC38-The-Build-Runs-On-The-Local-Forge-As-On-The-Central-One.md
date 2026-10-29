@@ -24,8 +24,8 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   - Publish and its index check, in the `build` and the `release` job of `build.yml`, take `vars.JF_URL` and
     `secrets.JF_ACCESS_TOKEN` unconditionally; so does `artifactory-smoke.yml`.
   - The `proof` job asks GitHub's API for a run that proved the tree (`proven-legs`, `github.token`).
-  - The acceptance legs (`build.yml`'s *Acceptance on …*, `update.yml`'s two legs) pass `HETZNER_API` and `HETZNER_SSH`
-    to `porelo-machines acceptance` and `sweep --mine`, and on `main` install the package last published to Artifactory,
+  - The acceptance legs (`build.yml`'s *Acceptance on …*, `update.yml`'s two legs) pass the cloud provider's token and key
+    secrets to `porelo-machines acceptance` and `sweep --mine`, and on `main` install the package last published to Artifactory,
     not the one the run built.
   - `delete-runs.yml` calls `gh api`. In `update.yml`, *Open the pull request* pushes with GitHub's extra header and
     runs `gh pr` and `gh api`, *Merge, or say why not* runs `gh pr merge`, and *What else changed in the shipped tree*
@@ -75,3 +75,5 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
   `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
 - That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
+- That the operator has set `vars.PORELO_PUBLISH` to `true` on the central forge before the commit is pushed there,
+  since the Build stops on any other value.
