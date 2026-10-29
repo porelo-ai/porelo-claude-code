@@ -88,5 +88,3 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
   `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
 - That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
-- That this repository reads the organization's secrets `PORELO_MACHINES_API`, `PORELO_MACHINES_SSH` and
-  `PORELO_PUBLISHER_TOKEN` and its variable `MAVEN_SNAPSHOTS_URL` on the central forge, before the push.
