@@ -1,8 +1,9 @@
 # CC23 — Sign the RPMs, together with Porelo's
 
-**Status:** Estimated; blocked by porelo [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99).
+**Status:** Estimated; waits for Porelo's packaging key, the CI secret that carries it and the day every
+repository switches to signed RPMs.
 **Size:** S - here one pom property and a key step in the release job; the key, its CI secret, the day
-every repository switches and the legs that install with `gpgcheck=1` are [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99)'s.
+every repository switches and the legs that install with `gpgcheck=1` are Porelo's signing change.
 
 **What must be true.** A Fedora user installs this adapter with `gpgcheck=1`, and a package whose
 signature does not fit is refused.
@@ -16,16 +17,16 @@ changes nothing for a user, because both share one repository and one `.repo` fi
 
 ## Plan
 
-- **Nothing here moves before [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99)** has named the packaging key, the CI secret that carries it and the
+- **Nothing here moves before Porelo's signing change** has named the packaging key, the CI secret that carries it and the
   day `porelo`, the transport, the filter and the three agents switch together.
 - **`pom.xml`:** `rpm.sign.skip` to `false`, and the rpm plugin's `<signature>` block given the key
-  name [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) sets.
+  name that change sets.
 - **`.github/workflows/build.yml`:** the job that builds `-Pnative,dist` imports the key from that
   secret first, for snapshots and releases alike, and removes it in an `always()` step.
 - **The acceptance legs** (`AgentLeg` in `porelo-buildtools`) set `gpgcheck=1`, `repo_gpgcheck=1` and
-  `gpgkey=` as part of [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99), and this repository's acceptance runs with them.
+  `gpgkey=` as part of that change, and this repository's acceptance runs with them.
 - **Before the upload:** the publish job runs the release tools' shared `check-signed`, which refuses an
-  unsigned package, as [B99](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b99) plans for every repository.
+  unsigned package, as that change plans for every repository.
 - **Red first:** `rpm -K` on the built `.rpm` says it is unsigned; green once it is signed by that key.
 
 ## Acceptance

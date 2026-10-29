@@ -1,7 +1,7 @@
 # CC36 — Report What Claude Code Finds Of Itself On The Host
 
-**Status:** Analyzed; blocked by porelo [B224](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b224)
-and [B225](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b225).
+**Status:** Analyzed; waits for the agent API's method that asks an agent what it finds of itself on the
+host.
 **Size:** S - one class beside `ClaudeCredentialExtractor` and its tests, in this module only; the contract it
 answers is porelo's.
 
@@ -11,8 +11,8 @@ it came from, and never a credential's value. Where it cannot tell, it says "can
 
 ## Why
 
-[PJ53](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj53) makes the agent already on the
-machine the default: each packaged agent reports what it finds of itself, and `porelo` chooses. This is Claude Code's
+Porelo makes the agent already on the machine the default: each packaged agent reports what it finds of
+itself, and `porelo` chooses. This is Claude Code's
 part. Its sign-in is already read for `vault import` by `ClaudeCredentialExtractor`, so the place is known.
 
 ## Plan
