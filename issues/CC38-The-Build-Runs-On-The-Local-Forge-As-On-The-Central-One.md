@@ -61,6 +61,17 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
      `build.md` and the machine type in `claude.yaml`'s comment too.
 - **Red first:** today's `build.yml` on the host's Forgejo, which stops at the snapshot resolution or at Publish; and
   `check-providers` on today's tree, which names the workflows and `build.md` and the machine type in `claude.yaml`'s comment.
+- **Built on the central forge's side:** steps 1, 2 and 4 and step 3's GitHub half; `check-providers` was seen red on
+  the tree before and green after, and a tag's `-P!standard,!forge` was measured to resolve no snapshot parent from an
+  empty local repository, with `MAVEN_SNAPSHOTS_URL` set and without.
+- **The reading against `security-audit`, `clean-code` and `java-code-review` (2026.906.3)** declined three findings:
+  the `release` job needs no `acceptance` result in its condition, since a job whose needed job was skipped is
+  skipped itself; a missing `PORELO_PUBLISH` that leaves `update.yml` skipped is seen first in the Build, which fails
+  on it with every push of content; and `PORELO_PUBLISH` rather than the forge's address switches the jobs that call
+  GitHub's API, as the plan and the sluice's workflows have it. Two findings concern the shape every repository on the
+  forge shares and wait on it: the snapshots are read with the publisher's token, so a branch's tests hold a token that
+  writes the forge's registry; and a forge without `MAVEN_SNAPSHOTS_URL` falls back to Central's snapshots without a
+  word.
 
 ## Acceptance
 
@@ -77,3 +88,5 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
   `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
 - That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
+- That this repository reads the organization's secrets `PORELO_MACHINES_API`, `PORELO_MACHINES_SSH` and
+  `PORELO_PUBLISHER_TOKEN` and its variable `MAVEN_SNAPSHOTS_URL` on the central forge, before the push.

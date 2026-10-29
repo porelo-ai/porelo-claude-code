@@ -22,6 +22,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|---|
 | <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | — | Claude Code's sign-in on the host reported by kind, provider and path, never by value | 0 |
 
+## Accepted
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) |  | — | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token only where `main` deploys, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
+
 ## Idea
 
 | # | Size | Blocked by | What it covers |
