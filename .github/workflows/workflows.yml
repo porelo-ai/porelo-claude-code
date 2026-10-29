@@ -27,12 +27,12 @@ jobs:
 
             - name: The pinned GraalVM
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
             - name: Resolve the release tooling
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               run: |
                   ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
                       -Dmdep.outputFile=target/cp.txt

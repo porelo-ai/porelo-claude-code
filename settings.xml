@@ -18,13 +18,14 @@
             <password>${env.OSS_SONATYPE_TOKEN}</password>
         </server>
 
-        <!-- The id porelo-parent's settings give the forge's registry. Its token reads the snapshots too, since the
-             organisation there is private; where none is needed it is a placeholder, sent only when a server asks. -->
+        <!-- The id porelo-parent's settings give the forge's registry, read with the publisher account's token of scope
+             read:package, since the organisation there is private and a branch's code runs where it is held; nothing
+             here deploys to it. Where none is needed it is a placeholder, sent only when a server asks. -->
 
         <server>
             <id>porelo-forge</id>
             <username>porelo-publisher</username>
-            <password>${env.PORELO_PUBLISHER_TOKEN}</password>
+            <password>${env.PORELO_PACKAGES_READ_TOKEN}</password>
         </server>
 
     </servers>

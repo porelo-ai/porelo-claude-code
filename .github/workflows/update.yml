@@ -56,12 +56,12 @@ jobs:
             # cleanup below always has something to run.
             - name: The pinned GraalVM
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
             - name: Resolve the release and machine tooling
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               run: |
                   ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
                       -Dmdep.outputFile=target/cp.txt
@@ -128,7 +128,7 @@ jobs:
             # Gates write STOP rather than failing, so the run can still clean up after itself.
             - name: Unit tests
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               if: steps.plan.outputs.proceed == 'yes'
               run: |
                   ./mvnw -B -s settings.xml verify || echo "STOP=the unit suite failed" >> "$GITHUB_ENV"
@@ -175,7 +175,7 @@ jobs:
             # Not -DskipTests: that also skips NativeLinkageCheck, the one test that needs the binary.
             - name: Native binary and packages
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               if: steps.plan.outputs.proceed == 'yes' && !env.STOP
               run: |
                   ./mvnw -B -s settings.xml -Pnative,dist verify \
@@ -240,7 +240,7 @@ jobs:
               timeout-minutes: 30
               if: steps.plan.outputs.proceed == 'yes' && !env.STOP
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
                   PORELO_MACHINES_API: ${{ secrets.PORELO_MACHINES_API }}
                   PORELO_MACHINES_SSH: ${{ secrets.PORELO_MACHINES_SSH }}
                   PORELO_CI_LEG: upd-ubuntu
@@ -257,7 +257,7 @@ jobs:
               timeout-minutes: 30
               if: steps.plan.outputs.proceed == 'yes' && !env.STOP
               env:
-                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
                   PORELO_MACHINES_API: ${{ secrets.PORELO_MACHINES_API }}
                   PORELO_MACHINES_SSH: ${{ secrets.PORELO_MACHINES_SSH }}
                   PORELO_CI_LEG: upd-fedora
