@@ -16,6 +16,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) |  | [CC38](#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
 
 ## Estimated
 

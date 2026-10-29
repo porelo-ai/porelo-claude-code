@@ -1,7 +1,6 @@
 # CC38 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Analyzed; waits for the build tools asking for a machine by kind, the host's pool file and a
-forge job learning where that pool is, and Porelo's snapshots in the forge's registry.
+**Status:** Analyzed; waits for Porelo's and the build tools' snapshots in the forge's registry.
 **Size:** S - the workflows and `settings.xml` of this one repository, no contract another repository reads; about
 3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the
 runs on the host's forge.
@@ -53,7 +52,9 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
      Today the host's pool answers only to `--pool <file>` with `PORELO_POOL_SSH`, and `sweep --mine` asks the cloud
      provider alone; the job learns where the pool is from the forge's runner (`PORELO_MACHINES_POOL`, as porelo-host
      proposes it), so the same lines take a pool
-     account on the forge and rent on GitHub.
+     account on the forge and rent on GitHub. **On the host's forge the `acceptance` job is off while the
+     repository moves:** it runs only where `github.server_url` is GitHub's, until the host's pool lends a
+     forge job a machine by kind; [CC40](README.md#cc40) switches it on there.
   4. `porelo-release check-providers` joins the Build's checks in the same commit; the provider's names leave
      `build.md` and the machine type in `claude.yaml`'s comment too.
 - **Red first:** today's `build.yml` on the host's Forgejo, which stops at the snapshot resolution or at Publish; and
@@ -62,7 +63,7 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
 ## Acceptance
 
 - Seen to fail first: today's `build.yml` on the local Forgejo.
-- The same commit's Build green on the local Forgejo (legs on the host's pool, nothing published) and on GitHub (legs
+- The same commit's Build green on the local Forgejo (the `acceptance` job skipped, nothing published) and on GitHub (legs
   rented, published as today).
 - The kinds' check finds no provider's name in this repository's workflows.
 
@@ -70,10 +71,6 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
 
 - That the host's Forgejo runner serves `actions/upload-artifact` v7, `actions/download-artifact` v8 and
   `actions/cache` v6, and that the `pinned-jdk` action (`JAVA_HOME_25_X64`, `porelo-machines jdk --github`) works there.
-- That the host's VM pool is larger than none: a rented server once reported a pool of 0 KiB.
-- That a pool VM reaches the package and CLI download hosts a leg installs from.
-- That `OPEN_ROUTER_API_KEY` is set on the forge, verified by the operator, as the shared rule on separate access
-  lists asks.
 - That the runner reaches GitHub where the checks still read it: `check-citations` fetches the other repositories'
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
   `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
