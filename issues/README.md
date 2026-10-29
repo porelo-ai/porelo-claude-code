@@ -4,16 +4,11 @@ What is open in this repository, grouped by state in the order Review, Rework, I
 Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind; the GitHub side first, the Forgejo half once a host exists |
-
 ## Backlog
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind; the GitHub side built, the Forgejo half once a host exists |
 | <a id="cc39"></a>[CC39](CC39-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CC38](#cc38) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
 ## Analyzed
