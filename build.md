@@ -185,14 +185,14 @@ publish failed.
 
 The scenarios in `src/acceptance` are the last step, and the only one that installs what an
 operator installs. Everything before it proves the code is right; this proves the
-**package** is. It runs on a stock Hetzner image that has never seen this project -
+**package** is. It runs on a stock cloud image that has never seen this project -
 never a prepared snapshot - so it exercises the package repository itself: the
 signature, the index, and `Depends: porelo` resolving from the same place.
 
 `org.fuin.porelo.machines.Main acceptance` provisions the machine, installs from Artifactory
 the way [the README](README.md#install) says, creates an unprivileged user (a task runs
 rootless, so running the suite as root would prove less - and the scenarios refuse it), runs the
-scenarios from the runner and destroys the server in a `finally`. A `cpx12` is enough - one core and 2 GB, because this installs
+scenarios from the runner and destroys the server in a `finally`. The smallest kind, `amd64`, is enough - one core and 2 GB, because this installs
 packages and runs a single prompt.
 
 Both distributions, because they differ where packaging breaks: the `.deb`
@@ -231,9 +231,9 @@ it has failed quietly, and only a real credential makes the leak searchable.
 Run it by hand with `workflow_dispatch`, or locally:
 
 ```
-HETZNER_API=... HETZNER_SSH="$(cat key)" PORELO_E2E_OPENROUTER_API_KEY=... \
+PORELO_MACHINES_API=... PORELO_MACHINES_SSH="$(cat key)" PORELO_E2E_OPENROUTER_API_KEY=... \
   java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main acceptance \
-      --os fedora --package porelo-agent-claude --cucumber .
+      --os fedora --kind amd64 --package porelo-agent-claude --cucumber .
 ```
 
 `--candidate <dir>` in place of `--package` installs packages built locally rather than the

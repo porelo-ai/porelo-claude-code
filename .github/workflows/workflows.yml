@@ -1,6 +1,6 @@
 # The light check of a pull request that changes only workflows, Dependabot's action moves above all: every step pinned,
-# and every workflow a file GitHub can read. It builds nothing, rents nothing, publishes nothing and holds no secret, so
-# the operator can merge an action move on it alone. The Build leaves such a pull request to it.
+# and every workflow a file GitHub can read. It builds nothing, rents nothing, publishes nothing and holds only the token
+# that reads snapshots, so the operator can merge an action move on it alone. The Build leaves such a pull request to it.
 name: Workflow check
 
 on:
@@ -10,6 +10,10 @@ on:
 
 permissions:
     contents: read
+
+# As in the Build workflow: the snapshot repository Maven reads, a variable present on GitHub and the local Forgejo.
+env:
+    MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
 
 jobs:
     check:
@@ -22,9 +26,13 @@ jobs:
                   persist-credentials: false
 
             - name: The pinned GraalVM
+              env:
+                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
             - name: Resolve the release tooling
+              env:
+                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
               run: |
                   ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
                       -Dmdep.outputFile=target/cp.txt
@@ -32,9 +40,20 @@ jobs:
             - name: Every step pinned to a commit
               run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-actions
 
+            # A leg asks for a machine by kind, so no workflow names the provider that lends it or its server types.
+            - name: No provider named outside its implementation
+              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-providers .
+
             # A file that does not load, or names no trigger or no job, is a workflow GitHub would not run.
+            # PyYAML, where the runner's image lacks it, from the distribution's signed archive.
             - name: Every workflow loads, with its triggers and jobs
               run: |
+                  if ! python3 -c 'import yaml' 2> /dev/null; then
+                      sudo=
+                      [ "$(id -u)" -eq 0 ] || sudo=sudo
+                      $sudo apt-get update -qq
+                      $sudo apt-get install -y -qq --no-install-recommends python3-yaml
+                  fi
                   python3 - <<'PY'
                   import pathlib, sys, yaml
                   bad = []

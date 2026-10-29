@@ -1,6 +1,7 @@
 # CC38 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Analyzed; waits for Porelo's and the build tools' snapshots in the forge's registry.
+**Status:** Implementing; the GitHub side first, the Forgejo half waits for a host and for Porelo's and the build
+tools' snapshots in the forge's registry.
 **Size:** S - the workflows and `settings.xml` of this one repository, no contract another repository reads; about
 3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the
 runs on the host's forge.
@@ -44,7 +45,8 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
      those in `build.yml`, `update.yml`, `workflows.yml` and `shared-rules.yml`, and the `./mvnw verify` that
      `porelo-machines acceptance` starts on the runner for a leg's suite (its `acceptance` profile resolves
      `porelo-acceptance-kit`).
-  2. `vars.PORELO_PUBLISH`, checked at the start to be `true` or `false`, switches what only the central forge does:
+  2. `vars.PORELO_PUBLISH`, a variable of the organization already in place on the central forge, checked at the
+     start to be `true` or `false`, switches what only the central forge does:
      Publish and its index check, the `release` job, `artifactory-smoke.yml`, `delete-runs.yml`, the `proof` job, and
      the whole of `update.yml`, which updates the central forge only. Where it is `false`, the legs install the packages
      this run built (the `packages` artifact, as a tag does today), so a leg never tests what Artifactory held before.
@@ -75,5 +77,3 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
   `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
 - That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
-- That the operator has set `vars.PORELO_PUBLISH` to `true` on the central forge before the commit is pushed there,
-  since the Build stops on any other value.

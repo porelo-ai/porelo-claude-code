@@ -13,9 +13,11 @@ on:
     workflow_dispatch:
 
 # Read by every Maven call, the pinned-jdk action's too: Maven asks for a newer snapshot once a day, and a
-# cache restored the day Porelo publishes would keep yesterday's. Never run on a tag.
+# cache restored the day Porelo publishes would keep yesterday's. Never run on a tag. As in the Build workflow:
+# the snapshot repository Maven reads, a variable present on GitHub and the local Forgejo.
 env:
     MAVEN_ARGS: -U
+    MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
 
 # Read-only: nothing in this workflow writes to the repository with its token.
 permissions:
@@ -39,9 +41,13 @@ jobs:
                   fetch-depth: 0
 
             - name: The pinned GraalVM
+              env:
+                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
             - name: Resolve the release tooling
+              env:
+                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
               run: |
                   ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath \
                       -Dmdep.outputFile=target/cp.txt
@@ -59,6 +65,8 @@ jobs:
               run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-readmes .
 
             - name: The tests that read a document
+              env:
+                  PORELO_PUBLISHER_TOKEN: ${{ secrets.PORELO_PUBLISHER_TOKEN }}
               run: ./mvnw -B -s settings.xml -Pdocuments test
 
             # A pull request's own commits held to the shared rule on commit messages. One from outside - from another

@@ -21,6 +21,8 @@ jobs:
         # The only permission this needs, and it is the one that lets it delete.
         permissions:
             actions: write
+        # It calls GitHub's API, so it runs only where PORELO_PUBLISH is true, which is GitHub; on the local Forgejo it is skipped.
+        if: vars.PORELO_PUBLISH == 'true'
         runs-on: ubuntu-26.04
         timeout-minutes: 10
         steps:

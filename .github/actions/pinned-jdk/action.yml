@@ -26,6 +26,7 @@ runs:
                   exit 1
               fi
               export JAVA_HOME="$JAVA_HOME_25_X64"
-              # MAVEN_ARGS, from the workflow, says -U or -Dporelo.release: the cache above is keyed on pom.xml alone.
+              # MAVEN_ARGS, from the workflow, says -U or -P!standard,!forge: the cache above is keyed on pom.xml alone.
+              # MAVEN_SNAPSHOTS_URL and PORELO_PUBLISHER_TOKEN, from the workflow and the job, say where snapshots come from.
               ./mvnw -B -q -Pci-tools -s settings.xml dependency:build-classpath -Dmdep.outputFile=target/jdk-cp.txt
               "$JAVA_HOME/bin/java" -cp "$(cat target/jdk-cp.txt)" org.fuin.porelo.machines.Main jdk --github

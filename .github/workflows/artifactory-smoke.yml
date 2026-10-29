@@ -14,6 +14,8 @@ jobs:
         name: Reachable, authorized, writable
         runs-on: ubuntu-26.04
         timeout-minutes: 15
+        # Artifactory is where the central forge publishes, so it runs only where PORELO_PUBLISH is true.
+        if: vars.PORELO_PUBLISH == 'true'
 
         env:
             JF_URL: ${{ vars.JF_URL }}
