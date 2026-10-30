@@ -23,6 +23,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|---|
 | <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | — | Claude Code's sign-in on the host reported by kind, provider and path, never by value | 0 |
 
+## Accepted
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc43"></a>[CC43](CC43-The-Sign-In-Says-How-It-Is-Answered.md) | XS | — | the definition names its sign-in's flow, `paste-code`, so the person is told to paste a code or confirm a device page; waits for Porelo's agent API with `login.flow` |
+
 ## Idea
 
 | # | Size | Blocked by | What it covers |
