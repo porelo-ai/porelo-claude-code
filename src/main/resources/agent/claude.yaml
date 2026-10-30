@@ -26,10 +26,11 @@ config_dir: "~/.claude"
 # every other.
 login:
     arguments: []
-    # What the person reads before starting it. Measured on 2.1.267: without BROWSER set, the login
-    # prints a link-and-code URL and waits at "Paste code here"; with BROWSER set, it hands that
-    # command a URL whose redirect_uri is http://localhost:<random port>/callback, a port it listens
-    # on at 127.0.0.1 - which is why a remote login needs that port forwarded.
+    # Measured on 2.1.267: without BROWSER set, the login prints a link and waits at "Paste code
+    # here"; with BROWSER set, it waits on a loopback callback instead, which no browser on another
+    # machine reaches. The Porelo that reads this key leaves BROWSER unset for a sign-in over SSH.
+    flow: paste-code
+    # What the person reads before starting it.
     documentation: "https://code.claude.com/docs/en/authentication"
 
 # What turns this agent's own permission prompts off. Porelo adds these to every run inside a

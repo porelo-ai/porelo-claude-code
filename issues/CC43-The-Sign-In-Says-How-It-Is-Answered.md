@@ -13,8 +13,9 @@ link and paste the code it shows.
   a login on a host; the agent listing it gives the frontend names the flow.
 - **`src/main/resources/agent/claude.yaml`** gains `login.flow: paste-code`.
   With `BROWSER` unset, its login shows a link and waits at "Paste code here" (measured on 2.1.267).
-- **The comment above `login`** loses its note that a remote login needs the callback port forwarded: Porelo never
-  sets a browser opener on a host, so the login there always takes the pasted code.
+- **The comment inside `login`** loses its note that a remote login needs the callback port forwarded, and says
+  instead why the flow is `paste-code`: without `BROWSER` the login takes the pasted code, and the Porelo that reads
+  the key leaves `BROWSER` unset for a sign-in over SSH.
 - **The key lands first:** Porelo 0.5.0's `AgentDefinitionReader` reads `login` key by key and ignores one it
   does not know, so the key is added now and the unit suite stays green.
 - **`pom.xml`:** `porelo.version` then moves to the Porelo version whose agent API reads the key; that is when the

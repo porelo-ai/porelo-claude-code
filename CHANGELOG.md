@@ -10,6 +10,10 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ## [Unreleased]
 
+### Added
+
+- The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; Porelo 0.5.0, which this builds against, ignores the key, and a later Porelo reads it.
+
 ### Changed
 
 - Claude Code pinned to 2.1.311 (was 2.1.267).
