@@ -1,10 +1,10 @@
 # CC43 — The Sign-In Says How It Is Answered
 
-**Status:** Accepted; waits for a Porelo release whose agent API takes `login.flow`.
-**Size:** XS - one key in `claude.yaml` and the comment above it, no contract another repository reads.
+**Status:** Accepted.
+**Size:** XS - the key in `claude.yaml` and the comment above it, and the Porelo version in `pom.xml`, under an hour.
 
-**What must be true.** A person signing in to Claude Code from a host is told whether to paste a code or to confirm a
-device page, because the agent definition names its sign-in's flow, `login.flow: paste-code`.
+**What must be true.** A person signing in to Claude Code from a host, at a terminal or in the GUI, is told to open the
+link and paste the code it shows.
 
 ## Plan
 
@@ -15,9 +15,11 @@ device page, because the agent definition names its sign-in's flow, `login.flow:
   With `BROWSER` unset, its login shows a link and waits at "Paste code here" (measured on 2.1.267).
 - **The comment above `login`** loses its note that a remote login needs the callback port forwarded: Porelo never
   sets a browser opener on a host, so the login there always takes the pasted code.
-- **`porelo.version`** moves to the release that has the key.
-- No test: a wrong flow only shows the wrong hint, which reads wrong and is fixed.
+- **`pom.xml`:** `porelo.version` moves to the Porelo version whose agent API takes the key.
+- No test: a wrong value either shows the wrong hint, which only reads wrong, or, as `loopback`, is refused by name
+  at once; neither does harm.
 
 ## Acceptance
 
-- The definition loads with the new Porelo release, and the agent listing names `paste-code` for Claude Code.
+- Seen to fail first: the agent listing for today's definition names no flow.
+- With the change, the definition loads and the agent listing names `paste-code`.
