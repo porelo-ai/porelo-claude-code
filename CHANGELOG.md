@@ -12,7 +12,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Added
 
-- The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; Porelo 0.5.0, which this builds against, ignores the key, and a later Porelo reads it.
+- The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; the Porelo it builds against reads the key, and its agent listing names the flow.
 
 ### Changed
 
@@ -26,7 +26,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - The Build passes the event and the ref into its shell through the environment, so a branch's name is never run as a command.
 - An acceptance scenario holds a subscription's refresh token out of its task: kept through `vault login --credentials-from` against a stand-in token endpoint, renewed once by the host, and found in neither the task's environment, its files nor its logs.
 - The acceptance suite allows the agent 120 seconds to reach work and an unattended run 120 seconds to end, about four times what the adapters' rented test machine measured, so a run stuck at a question fails in minutes, not half an hour.
-- Built on the snapshot of `porelo-parent` (0.2.1-SNAPSHOT, with the release tooling 0.5.1-SNAPSHOT), against Porelo 0.5.0.
+- Built on the snapshot of `porelo-parent` (0.2.1-SNAPSHOT, with the release tooling 0.5.1-SNAPSHOT), against Porelo 0.5.1-SNAPSHOT.
 
 ### Fixed
 

@@ -61,7 +61,7 @@
 
         <!-- The published contract this builds against. Nothing else of Porelo's is on the
              classpath, and no checkout of the porelo repository is needed to build here. -->
-        <porelo.version>0.5.0</porelo.version>
+        <porelo.version>0.5.1-SNAPSHOT</porelo.version>
 
         <!-- The acceptance kit, apart from the contract: it runs on the porelo-machines porelo-parent
              manages, so it must be the kit built against that one, porelo's published snapshot. The
