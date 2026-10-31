@@ -11,10 +11,17 @@ no more at once and no deeper than the task says.
   start inside a task, 0 (none) by default; each agent definition declares what it can enforce - off, a
   concurrent count, a depth - and Porelo refuses a value the definition cannot enforce instead of
   enforcing less.
-- Read in 2.1.316, not yet at the pin: the subagent tool is `Agent`, denied through `permissions.deny` in
-  the settings file `ClaudeSettings` writes; the binary's own error texts name
-  `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` and
-  `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`, which look undocumented.
+- Measured headless at the pin 2.1.311, on the VM through OpenRouter: by default a subagent starts, and
+  one it starts can start another.
+  - **Off:** `permissions.deny: ["Agent"]` in the settings file `ClaudeSettings` writes takes the tool out of
+    the session entirely - the init record lists it as `Task`, and it is gone from that list.
+  - **Concurrent count:** `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=1` holds - of three asked at once, one
+    ran and two were refused with "Concurrent subagent limit reached".
+  - **Depth:** `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` holds - the subagent gets no subagent tool; at 2
+    and unset, the nested start works.
+  - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=1` did not hold: three at once and two in a row all ran. The
+    definition does not declare a per-session count.
+  - The three variables are not documented; they are named only in the binary's own error texts.
 
 ## Acceptance
 
@@ -24,7 +31,6 @@ no more at once and no deeper than the task says.
 
 ## To be checked
 
-- On the VM, at the pinned version: that denying `Agent` stops every subagent, attended and headless,
-  and that each limit variable holds, or what it does instead.
+- The same three switches attended, at a terminal.
 - Whether an undocumented variable is safe to rely on across the weekly pin bumps, or needs a check in
   the update job.

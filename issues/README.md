@@ -28,7 +28,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) |  | — | no subagent in a task unless the task allows it, then at most as many and as deep as it says; read, not yet measured at the pin |
+| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) |  | — | no subagent in a task unless the task allows it, then at most as many and as deep as it says; off, count and depth measured to hold at the pin |
 
 ## Idea
 
