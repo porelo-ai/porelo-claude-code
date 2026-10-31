@@ -23,12 +23,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
 | <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | — | Claude Code's sign-in on the host reported by kind, provider and path, never by value | 0 |
-
-## Accepted
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) |  | — | no subagent in a task unless the task allows it, then at most as many and as deep as it says; off, count and depth measured to hold at the pin |
+| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | — | no subagent in a task unless the task allows it, then at most as many and as deep as it says; off, count and depth measured to hold at the pin | 0 |
 
 ## Idea
 
