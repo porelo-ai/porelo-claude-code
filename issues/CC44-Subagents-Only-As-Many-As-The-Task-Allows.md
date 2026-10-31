@@ -1,17 +1,19 @@
 # CC44 — Subagents Only As Many As The Task Allows
 
 **Status:** Estimated (operator, 2026-10-31).
-**Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of 24.5, raised by the scenario on the VM, the attended check of the three switches and the move to the Porelo snapshot that carries the value.
+**Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of
+24.5, raised by the scenario on the VM, the attended check of the three switches and the move to the Porelo
+snapshot that carries the value.
 
-**What must be true.** Claude Code in a Porelo task starts no subagent unless the task allows it, and then
-no more at once and no deeper than the task says.
+**What must be true.** Claude Code in a Porelo task starts no subagent unless the task allows it, and then no
+more at once than the task says.
 
 ## Plan
 
-- **The contract built against:** Porelo's agent interface carries the number of subagents an agent may
-  start inside a task, 0 (none) by default; each agent definition declares what it can enforce - off, a
-  concurrent count, a depth - and Porelo refuses a value the definition cannot enforce instead of
-  enforcing less.
+- **The contract built against:** Porelo's agent interface carries one number, the most subagents an agent may
+  start inside a task, 0 (none) by default, and no depth; each agent definition declares what it can enforce
+  of it - off only, or a count - and Porelo refuses a value the definition cannot enforce with exit code 64
+  instead of enforcing less. Where a CLI needs a depth to make the count hold, the adapter sets it itself.
 - Measured headless at the pin 2.1.311, on the VM through OpenRouter with `z-ai/glm-5.3-flash` (the same
   model for subagents, through `CLAUDE_CODE_SUBAGENT_MODEL`), in bypass mode: by default a subagent starts, and
   one it starts can start another.
@@ -24,14 +26,13 @@ no more at once and no deeper than the task says.
   - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=1` did not hold: three at once and two in a row all ran. The
     definition does not declare a per-session count.
   - The three variables are not documented; they are named only in the binary's own error texts.
-- **`claude.yaml`** declares what this agent enforces: off, a concurrent count, a depth - not a
-  per-session count.
-- **`ClaudeSettings.document`** takes the allowed number and depth from the context `ClaudeContainerSetup`
-  receives: at 0 it adds `"Agent"` to `permissions.deny`; above 0 it sets
-  `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` in the file's `env`,
-  beside `DISABLE_UPDATES`.
+- **`claude.yaml`** declares off and a count.
+- **`ClaudeSettings.document`** takes the allowed number from the context `ClaudeContainerSetup` receives: at
+  0 it adds `"Agent"` to `permissions.deny`; above 0 it sets `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` to it and
+  `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` to 1 in the file's `env`, beside `DISABLE_UPDATES`. The depth is the
+  adapter's own: a subagent then starts none of its own, so the count holds for the whole task.
 - **Red first:** `ClaudeContainerSetupTest` - a context with the default yields a settings file that denies
-  `Agent`, and one allowing 2 at depth 1 yields both variables; today neither is written.
+  `Agent`, and one allowing 2 yields the count 2 and the depth 1; today neither is written.
 - **On the VM:** a `session.feature` scenario asks the agent for a subagent in a task with the default and
   sees it refused, so a pin bump that drops the variables or renames the tool fails the update job.
 - **A soft switch:** the agent has a shell and can start another copy of its CLI; this issue governs only
