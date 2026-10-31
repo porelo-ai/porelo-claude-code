@@ -11,9 +11,10 @@ more at once than the task says.
 ## Plan
 
 - **The contract built against:** Porelo's agent interface carries one number, the most subagents an agent may
-  start inside a task, 0 (none) by default, and no depth; each agent definition declares what it can enforce
-  of it - off only, or a count - and Porelo refuses a value the definition cannot enforce with exit code 64
-  instead of enforcing less. Where a CLI needs a depth to make the count hold, the adapter sets it itself.
+  run at the same time inside a task (not a total over the task), 0 (none) by default, and no depth; each
+  agent definition declares what it can enforce of it - off only, or a count - and Porelo refuses a value the
+  definition cannot enforce with exit code 64 instead of enforcing less. Where a CLI needs a depth to make the
+  count hold, the adapter sets it itself.
 - Measured headless at the pin 2.1.311, on the VM through OpenRouter with `z-ai/glm-5.3-flash` (the same
   model for subagents, through `CLAUDE_CODE_SUBAGENT_MODEL`), in bypass mode: by default a subagent starts, and
   one it starts can start another.
