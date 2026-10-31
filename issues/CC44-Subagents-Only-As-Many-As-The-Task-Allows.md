@@ -1,7 +1,7 @@
 # CC44 — Subagents Only As Many As The Task Allows
 
 **Status:** Analyzed; Accepted (operator, 2026-10-31).
-**Size:** S - one module and its tests, no contract other repositories read; about three hours.
+**Size:** S - one module and its tests, no contract other repositories read; about 45 minutes.
 
 **What must be true.** Claude Code in a Porelo task starts no subagent unless the task allows it, and then
 no more at once and no deeper than the task says.
