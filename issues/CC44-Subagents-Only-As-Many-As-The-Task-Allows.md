@@ -1,6 +1,6 @@
 # CC44 — Subagents Only As Many As The Task Allows
 
-**Status:** Estimated (operator, 2026-10-31).
+**Status:** Estimated.
 **Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of
 24.5, raised by the scenario on the VM, the attended check of the three switches and the move to the Porelo
 snapshot that carries the value.
