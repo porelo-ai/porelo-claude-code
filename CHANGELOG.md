@@ -55,13 +55,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
-- Built against Sokar 0.4.1 and on `sokar-parent` 0.1.2, which brings the release tooling 0.4.3.
-- NullAway's compiler configuration and the plugin versions come from `sokar-parent`; `exec-maven-plugin` moves to 3.6.3.
-- The build takes `org.fuin.sokar:sokar-parent` as its parent instead of `org.fuin:pom`; the packages are unchanged.
-- The `shared-rules` workflow also runs `sokar-release check-readmes`.
-- A release tag is refused while anything the build resolves is a snapshot, checked by `sokar-release` 0.4.2.
 - A push that changes only documents - Markdown, `mkdocs.yml`, `doc/` or `issues/` - no longer starts the build.
-- The release tooling is `sokar-release` 0.4.1, whose shared checks of issue citations and the documentation chapter replace this repository's own tests.
 
 ## [0.4.0] - 2026-10-05
 
