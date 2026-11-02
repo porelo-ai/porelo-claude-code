@@ -255,7 +255,7 @@ off unless a host is named, so an ordinary build neither resolves the kit nor co
 ./mvnw -s settings.xml verify \
     -Dporelo.acceptance.host=<machine with porelo and this agent's package installed> \
     -Dporelo.acceptance.user=acceptance \
-    -Dporelo.acceptance.key=$HOME/.ssh/id_ed25519
+    -Dporelo.acceptance.key=<a private key in your SSH folder>
 ```
 
 The report lands in `target/acceptance.html`. The scenarios tagged `@credential` need
@@ -268,7 +268,7 @@ this repository free of test code that knows about ssh.
 vault brings its own - a temporary file and a passphrase the scenario states - and the kit then checks
 the passphrase never appears on screen. The rented machine's account is named `acceptance`, and
 Ubuntu 26.04's shell integration prints `user=acceptance` in its escape sequences, so a passphrase of
-`acceptance` reads as echoed there - and not on a VM whose account is `claude`, which is why a
+`acceptance` reads as echoed there - and not on a machine whose account has another name, which is why a
 passphrase can pass locally and fail on a rented machine.
 
 In CI the same suite runs from the runner against the rented machine on every push to `main`.

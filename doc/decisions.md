@@ -133,14 +133,14 @@ shows *"false"*, and Enter on that menu entry leaves it false and the file uncha
 - **Not `autoMemoryEnabled: false`**, which turns it off too, but is the setting the `/memory` menu
   writes, so the agent could switch it back on.
 - **Nothing in a task's home reaches the next task today:** a file left in one task's `/home/agent`
-  was gone in the next, `~/.claude/projects` with it. So the switch matters within a task stopped and
+  was gone in the next, `.claude/projects` in the home with it. So the switch matters within a task stopped and
   started again, and for whatever a later change keeps or mounts.
 
 ## The CLI does not update itself in a task
 
 **Measured on Claude Code 2.1.267**, in a home laid out like the container's: within 90 seconds of
 starting, the CLI asks `downloads.claude.ai/claude-code-releases/latest`, downloads a newer version
-into `~/.local/share/claude/versions/` and shows *"Update installed · Restart to update"*. The next
+into `.local/share/claude/versions/` in the home and shows *"Update installed · Restart to update"*. The next
 start would run a version nobody pinned and whose digest nobody compared.
 
 **How it is stopped:** `DISABLE_UPDATES=1` in the `env` of the container's `settings.json`. With it,
@@ -238,7 +238,7 @@ there to catch.
 Porelo records the session a task's agent ran and passes it back with `--resume` when the task starts
 again. Where the id is, `claude.yaml` declares under `session.session_id`. Measured on 2.1.267: an
 unattended run's first record, `{"type":"system","subtype":"init"}`, carries `session_id`, and the same id
-names the session file of any run, `~/.claude/projects/-workspace/<id>.jsonl` - the working directory with
+names the session file of any run, `.claude/projects/-workspace/<id>.jsonl` in the home - the working directory with
 `/` as `-`, and Porelo's is always `/workspace`. So one id serves an unattended and an attached task alike.
 
 **Proven at the version it pins.** `SessionIdDeclarationTest` reads the declaration against the measured
