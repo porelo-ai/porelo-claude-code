@@ -17,6 +17,8 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
+- The package says that the `porelo-wire` classes in its executable are under Apache-2.0, in its
+  Debian copyright and its RPM license, with the license's text beside the GPL's in the RPM.
 - `vault import` takes the API key a Console sign-in keeps in `.claude.json` in the home.
 - Claude Code pinned to 2.1.311 (was 2.1.267).
 - A task's agent keeps no memory of its own: Claude Code's auto memory is off, so what holds across tasks is only what the repository's `AGENTS.md` says.
