@@ -1,7 +1,7 @@
 # CC36 — Report What Claude Code Finds Of Itself On The Host
 
-**Status:** Analyzed; waits for the agent API's method that asks an agent what it finds of itself on the
-host.
+**Status:** Implementing; its adapter part waits for the agent API's method that asks an agent what it finds of
+itself on the host.
 **Size:** S - one class beside `ClaudeCredentialExtractor` and its tests, in this module only; the contract it
 answers is porelo's.
 
