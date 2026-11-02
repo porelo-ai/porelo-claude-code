@@ -1,10 +1,9 @@
 # CC38 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Backlog; the GitHub side is built, the Forgejo half waits for a host and for Porelo's and the build
-tools' snapshots in the forge's registry, and moves to Implementing when it starts.
+**Status:** Backlog; the GitHub side is built, and the Forgejo half moves to Implementing when it starts.
 **Size:** S - the workflows and `settings.xml` of this one repository, no contract another repository reads; about
-3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the
-runs on the host's forge.
+3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the runs on the
+local Forgejo.
 
 **What must be true.** `porelo-claude-code`'s workflows run green on the local Forgejo and on the central forge on the same
 commit, with no edit between them: the machines its legs rent are asked for by kind, and the registry and the
@@ -36,6 +35,11 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   `porelo`'s Build on the host's forge deploys them there (`forge-release`, as porelo-parent and
   porelo-buildtools do), its legs not moved yet, so a Porelo change made in a task can be built against before it
   reaches GitHub. Here only `porelo-acceptance-kit` is concerned, as `porelo.version` is a release.
+- **How it is tested:** locally against a Forgejo started in podman, with a Forgejo Actions runner and Forgejo's own
+  package registry as `MAVEN_SNAPSHOTS_URL`, and against GitHub by the push. The pattern is the live check of
+  porelo-forge-clients' `forgejo` client: the server and the runner images pinned by digest, the runner in the server's
+  network, and only what the run created removed, after a failure too. That check uses no registry, so this run adds
+  it; the registry starts empty, so the snapshots this Build resolves are deployed there first.
 - **Steps:**
   1. `settings.xml` gains the `forge` profile and the `porelo-forge` server as porelo-message-sluice has them
      (activated by `MAVEN_SNAPSHOTS_URL`, the token from `PORELO_PUBLISHER_TOKEN`), and `standard` stays off where
@@ -59,7 +63,7 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
      forge job a machine by kind; [CC40](README.md#cc40) switches it on there.
   4. `porelo-release check-providers` joins the Build's checks in the same commit; the provider's names leave
      `build.md` and the machine type in `claude.yaml`'s comment too.
-- **Red first:** today's `build.yml` on the host's Forgejo, which stops at the snapshot resolution or at Publish; and
+- **Red first:** today's `build.yml` on the local Forgejo, which stops at the snapshot resolution or at Publish; and
   `check-providers` on today's tree, which names the workflows and `build.md` and the machine type in `claude.yaml`'s comment.
 - **Built on the central forge's side:** steps 1, 2 and 4 and step 3's GitHub half; `check-providers` was seen red on
   the tree before and green after, and a tag's `-P!standard,!forge` was measured to resolve no snapshot parent from an
@@ -82,7 +86,10 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
 
 ## To be checked
 
-- That the host's Forgejo runner serves `actions/upload-artifact` v7, `actions/download-artifact` v8 and
+- That the runner of that pattern, which offers only the label `host`, runs these workflows: what `runs-on` must name,
+  and what the job needs beside it that the runner's image does not hold.
+- That Forgejo's package registry takes and serves the Maven snapshots with a token of the test forge's own.
+- That the Forgejo runner serves `actions/upload-artifact` v7, `actions/download-artifact` v8 and
   `actions/cache` v6, and that the `pinned-jdk` action (`JAVA_HOME_25_X64`, `porelo-machines jdk --github`) works there.
 - That the runner reaches GitHub where the checks still read it: `check-citations` fetches the other repositories'
   indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
