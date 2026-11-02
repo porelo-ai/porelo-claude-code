@@ -12,10 +12,12 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Added
 
+- The adapter says what it finds of Claude Code on the host: how it is signed in and to which provider, each finding with its path and never a value.
 - The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; the Porelo it builds against reads the key, and its agent listing names the flow.
 
 ### Changed
 
+- `vault import` takes the API key a Console sign-in keeps in `.claude.json` in the home.
 - Claude Code pinned to 2.1.311 (was 2.1.267).
 - A task's agent keeps no memory of its own: Claude Code's auto memory is off, so what holds across tasks is only what the repository's `AGENTS.md` says.
 - A task's agent no longer refuses `raw.githubusercontent.com`; it resolves where the project grants it, so `check-citations` runs in a Claude Code task.

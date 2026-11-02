@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.fuin.porelo.agent.api.AgentException;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ClaudeCredentialExtractorTest {
 
@@ -38,6 +41,33 @@ class ClaudeCredentialExtractorTest {
 
         assertThat(credential.type()).isEqualTo(kind);
         assertThat(credential.secret()).isEqualTo(TOKEN);
+    }
+
+    @Test
+    void answersForAnthropicWhenAnthropicIsAsked() throws IOException {
+
+        // Prevents the import a start offers being refused: Porelo stores nothing from an answer
+        // that names no provider when one was asked for.
+        Files.writeString(
+                home.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE),
+                "{\"apiKey\":\"%s\"}".formatted(TOKEN));
+
+        final Credential credential =
+                new ClaudeCredentialExtractor().extract(home, "anthropic").orElseThrow();
+
+        assertThat(credential.provider()).isEqualTo("anthropic");
+        assertThat(credential.secret()).isEqualTo(TOKEN);
+    }
+
+    @Test
+    void holdsNothingForAnotherProvider() throws IOException {
+
+        // Prevents a subscription's token reaching a provider it is not for.
+        Files.writeString(
+                home.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE),
+                "{\"apiKey\":\"%s\"}".formatted(TOKEN));
+
+        assertThat(new ClaudeCredentialExtractor().extract(home, "openrouter")).isEmpty();
     }
 
     @ParameterizedTest
@@ -102,5 +132,144 @@ class ClaudeCredentialExtractorTest {
 
         assertThat(new ClaudeCredentialExtractor().extract(home).orElseThrow().attributes())
                 .doesNotContainKey("expiresAt");
+    }
+
+    // Prevents a Console sign-in, found and offered for import, from failing as "not signed in".
+    @Test
+    void importsAConsoleKeyFromBesideTheDirectory() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"" + TOKEN + "\"}");
+
+        final Credential credential = new ClaudeCredentialExtractor().extract(config).orElseThrow();
+
+        assertThat(credential.type()).as("a Console key is an API key").isEqualTo("api-key");
+        assertThat(credential.secret()).as("the key itself").isEqualTo(TOKEN);
+    }
+
+    // Prevents importing another account's key when the person moved the directory.
+    @Test
+    void aMovedDirectoryReadsOnlyItsOwnAccountFile() throws IOException {
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"other\"}");
+        final Path moved = Files.createDirectory(home.resolve("work"));
+
+        assertThat(new ClaudeCredentialExtractor().extract(moved))
+                .as("the home's file does not count for a moved directory")
+                .isEmpty();
+
+        Files.writeString(moved.resolve(".claude.json"), "{\"primaryApiKey\":\"" + TOKEN + "\"}");
+
+        assertThat(new ClaudeCredentialExtractor().extract(moved).orElseThrow().secret())
+                .as("the file inside it does")
+                .isEqualTo(TOKEN);
+    }
+
+    // Prevents importing a key Claude Code itself would not use over the subscription it does.
+    @Test
+    void aSubscriptionWinsOverAConsoleKey() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"other\"}");
+        Files.writeString(
+                config.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE),
+                "{\"claudeAiOauth\":{\"accessToken\":\""
+                        + TOKEN
+                        + "\",\"scopes\":[\"user:inference\"]}}");
+
+        assertThat(new ClaudeCredentialExtractor().extract(config).orElseThrow().secret())
+                .as("the subscription, as Claude Code prefers it")
+                .isEqualTo(TOKEN);
+    }
+
+    // Prevents a key that works from failing the import over a credentials file that holds nothing.
+    @Test
+    void aFileHoldingNeitherLeavesAConsoleKeyImportable() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(config.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE), "{}");
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"" + TOKEN + "\"}");
+
+        assertThat(new ClaudeCredentialExtractor().extract(config).orElseThrow().secret())
+                .as("the key Claude Code would use")
+                .isEqualTo(TOKEN);
+    }
+
+    // Prevents an import from reading "not signed in" when the file that may hold the key is
+    // broken.
+    @Test
+    void aBrokenAccountFileIsAnError() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(home.resolve(".claude.json"), "not json");
+
+        assertThatThrownBy(() -> new ClaudeCredentialExtractor().extract(config))
+                .as("said, rather than reported as nothing there")
+                .isInstanceOf(AgentException.class)
+                .hasMessageContaining(".claude.json");
+    }
+
+    // Prevents an import offered for a Console key from failing or taking what Claude Code ignores.
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "not json",
+                "[1]",
+                "{\"apiKey\":\"ignored\"}",
+                "{\"claudeAiOauth\":{\"refreshToken\":\"r\"}}",
+                "{\"claudeAiOauth\":{\"accessToken\":\"ignored\"}}",
+                "{\"claudeAiOauth\":{\"accessToken\":\"ignored\",\"scopes\":[\"user:profile\"]}}"
+            })
+    void aFileClaudeCannotUseGivesWayToAConsoleKey(final String content) throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(config.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE), content);
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"" + TOKEN + "\"}");
+
+        final Credential credential = new ClaudeCredentialExtractor().extract(config).orElseThrow();
+
+        assertThat(credential.secret()).as("the key Claude Code would use").isEqualTo(TOKEN);
+        assertThat(credential.type()).as("an API key").isEqualTo("api-key");
+    }
+
+    // Prevents a broken account file from costing an import that worked before it was read at all.
+    @Test
+    void aBrokenAccountFileLeavesWhatTheCredentialsFileHolds() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(
+                config.resolve(ClaudeCredentialExtractor.CREDENTIALS_FILE),
+                "{\"apiKey\":\"" + TOKEN + "\"}");
+        Files.writeString(home.resolve(".claude.json"), "not json");
+
+        assertThat(new ClaudeCredentialExtractor().extract(config).orElseThrow().secret())
+                .as("what the file holds, as before")
+                .isEqualTo(TOKEN);
+    }
+
+    // Prevents a path written with a trailing dot from reading another account file.
+    @Test
+    void theDefaultDirectoryIsKnownHoweverItIsWritten() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"" + TOKEN + "\"}");
+
+        assertThat(
+                        new ClaudeCredentialExtractor()
+                                .extract(config.resolve("."))
+                                .orElseThrow()
+                                .secret())
+                .as("the file beside the directory")
+                .isEqualTo(TOKEN);
+    }
+
+    // Prevents part of a key reaching an error message: the parser quotes what it stumbles over.
+    @Test
+    void aParseErrorQuotesNothingOfTheFile() throws IOException {
+        final Path config = Files.createDirectory(home.resolve(".claude"));
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"\\uSECR\"}");
+
+        assertThatThrownBy(() -> new ClaudeCredentialExtractor().extract(config))
+                .isInstanceOf(AgentException.class)
+                .as("the file is named, its content is not, in the message or its cause")
+                .hasStackTraceContaining(".claude.json")
+                .satisfies(
+                        thrown -> {
+                            final StringWriter trace = new StringWriter();
+                            thrown.printStackTrace(new PrintWriter(trace));
+                            assertThat(trace.toString()).doesNotContain("SECR");
+                        });
     }
 }
