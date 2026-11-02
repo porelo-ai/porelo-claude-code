@@ -24,8 +24,8 @@ Feature: A task authenticates without ever holding the credential
         When I type "porelo-acceptance-passphrase"
         Then the terminal shows "created "
         When I run "porelo vault unlock --forget"
-        # Not "locked": everything seen so far is searched, and the init's "unlocked" contains it.
-        Then the terminal shows "the next command asks for the passphrase again"
+        # Not "locked" alone: everything seen so far is searched, and the init's "unlocked" contains it.
+        Then the terminal shows "locked    use"
         When I run "porelo vault unlock"
         Then the terminal shows "Vault passphrase:"
         When I type "porelo-acceptance-passphrase"
