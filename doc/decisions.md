@@ -22,6 +22,8 @@ repository is built.
 | [Waiting for a person is read from the question's own last line](#waiting-for-a-person-is-read-from-the-questions-own-last-line) | the line only a question draws, in the last lines of the screen |
 | [A task that comes back continues its conversation](#a-task-that-comes-back-continues-its-conversation) | the session id read from Claude Code's own record, unattended or attached |
 | [The agent keeps no memory of its own in a task](#the-agent-keeps-no-memory-of-its-own-in-a-task) | what holds across tasks is the repository's reviewed `AGENTS.md` |
+| **On the host** | |
+| [What the adapter finds of Claude Code on the host](#what-the-adapter-finds-of-claude-code-on-the-host) | files only, never a value; "cannot say" where the shell or a project could change the answer |
 | **The pinned CLI** | |
 | [The CLI does not update itself in a task](#the-cli-does-not-update-itself-in-a-task) | the pinned version is the one that runs |
 | [A model the CLI does not know keeps its own window](#a-model-the-cli-does-not-know-keeps-its-own-window) | the provider says when the context is full, not a window the CLI assumes |
@@ -247,6 +249,54 @@ the task started again, Porelo reporting that it continues the session, and the 
 the second prompt never names it.
 The attached half is proven the same way: a message, the task stopped and started
 again, and the earlier message back on its screen.
+
+## What the adapter finds of Claude Code on the host
+
+The adapter says what it finds by reading files only: it runs no helper, reads no environment, and only names and
+kinds go out, never a value. Where it cannot tell it says "cannot say", never "not signed in", because the person's
+shell and a project's own settings are out of its sight. Each route is taken in the order Claude Code takes it, so the
+table below is what the code is held to.
+
+Measured on 2.1.311 with `claude auth status --json`, in an empty home with made-up values, and read in its binary
+where noted. That command reports `apiProvider` and `authMethod`, but not a base URL.
+
+| In the files or the environment | Claude Code says |
+|---|---|
+| nothing; a `.credentials.json` with neither block, or broken | not signed in |
+| `claudeAiOauth` with a token and `user:inference` | signed in, subscription; also when `expiresAt` has passed |
+| `claudeAiOauth` with no or an empty token, without that scope, or with no `scopes` | not signed in |
+| `apiKey` alone in `.credentials.json` | not signed in |
+| `primaryApiKey` in `.claude.json`; beside a subscription | signed in, API key; the subscription wins |
+| `oauthAccount` alone in `.claude.json` | not signed in |
+| `ANTHROPIC_API_KEY` in the shell or in `settings.json`'s `env`; beside a subscription | signed in, API key; the key wins |
+| `ANTHROPIC_AUTH_TOKEN` or `CLAUDE_CODE_OAUTH_TOKEN`, either place | signed in, `oauth_token` |
+| `apiKeyHelper` in `settings.json`; beside a subscription | signed in, `api_key_helper`, command not run; the helper wins |
+| a provider switch in the shell or in `settings.json`'s `env` | that provider, `third_party`; wins over a subscription |
+| the switch as `0`, `false`, `no`, `off`, `2`, `x` or empty | no switch |
+| `CLAUDE_CODE_USE_GATEWAY=1`, or `ANTHROPIC_BEDROCK_BASE_URL` alone | no switch |
+| `settings.json` broken, or `env` not an object | ignored |
+| `ANTHROPIC_BASE_URL`, either place | `firstParty`, yet the requests go there: one reached a listener named in `settings.json` |
+| `settings.local.json` in the config directory | ignored |
+| `.claude/settings.json` in the working directory | applied |
+| `CLAUDE_CONFIG_DIR` | moves `.credentials.json`, `settings.json` and `.claude.json` inside it; `.claude` and `.claude.json` in the home are then ignored. Set to `.claude` in the home it reads `.claude.json` inside as well |
+
+Not run here: the Keychain (the binary reads it with `security find-generic-password -w`; a fallback file is used only
+when the Keychain refuses the write); managed settings, which need root to write; a profile in `.config/anthropic` in the home,
+which the login without a key writes and which ranks below a working subscription.
+
+Declined, so the answer stands:
+
+- **A directory named `.claude` elsewhere** counts as the default, so its account file is read beside it, and
+  `CLAUDE_CONFIG_DIR=<home>/.claude` reads inside where this looks beside it. Only the environment tells them apart, and
+  the adapter reads none; Porelo passes the definition's directory.
+- **`importable: true` while a file that may redirect could not be read:** the import can still take the route, which is
+  all the field says, and `provider` stays open beside a "cannot say".
+- **A login in the Keychain outranks a Console key this reports first:** the Keychain is never read, a "cannot say" stands
+  beside it, and no package is built for macOS today.
+- **A file that is not UTF-8 is "cannot say"**, not broken: Claude Code's answer to one was not measured, and "cannot say"
+  claims nothing.
+- **`isRegularFile` in the extractor reads an unsearchable directory as absent**, as it did before; `Find` says "cannot
+  say" there, so no import is offered on a wrong premise.
 
 ## The release tooling is Porelo's, configured from the pom
 

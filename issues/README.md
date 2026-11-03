@@ -9,7 +9,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | — | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
-| <a id="cc36"></a>[CC36](CC36-Report-What-Claude-Code-Finds-Of-Itself-On-The-Host.md) | S | — | Claude Code's sign-in on the host reported by kind, provider and path, never by value |
 
 ## Implementing
 
@@ -48,6 +47,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Title | What was built |
 |---|---|---|
+| <a id="cc36"></a>[CC36](README.md#cc36) | Report What Claude Code Finds Of Itself On The Host | The adapter reports Claude Code's sign-in on the host by kind, provider and path, never by value, and says "cannot say" where it cannot tell; `vault import` also takes a `primaryApiKey`. |
 | <a id="cc43"></a>[CC43](README.md#cc43) | The Sign-In Says How It Is Answered | `claude.yaml` declares `login.flow: paste-code`, so a person signing in to Claude Code from a host is told to open the link and paste the code it shows; tested in sprint 6m: passed. |
 | <a id="cc34"></a>[CC34](README.md#cc34) | Take The Legs From A Run That Proved The Same Tree | A Build on `main` asks `porelo-release proven-legs` whether a Build or an update run already proved the pushed tree on both legs within a day and takes those legs instead of renting again, while a tag always runs its own. |
 | <a id="cc37"></a>[CC37](README.md#cc37) | Let The Project Grant What Its Build Needs | A task's Claude Code no longer refuses `raw.githubusercontent.com`, so it resolves where the project grants it and `check-citations` runs there, while the Datadog log intake and `downloads.claude.ai` stay refused. |
