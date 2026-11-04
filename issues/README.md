@@ -11,6 +11,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind, green on a local Forgejo |
 | <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | — | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | — | no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin |
+
 ## Backlog
 
 | # | Size | Blocked by | What it covers |
@@ -36,7 +42,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | — | package-level signatures on the published RPMs |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | — | the agent contract named at install time |
-| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | — | no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin |
 
 ## Finished
 
