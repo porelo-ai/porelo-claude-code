@@ -33,5 +33,5 @@ Feature: Porelo shows the agent waiting for a person, read by the agent's own de
         # not what this proves, and when it never asks, this step prints the screen it drew instead.
         Then the screen of task "asks" of "asks" shows "Esc to cancel"
         And porelo shows the "claude" agent in task "asks" of "asks" waiting for a person
-        When a script runs "porelo project unfollow asks --force"
+        When a script runs "porelo project remove asks --force"
         Then it exits zero

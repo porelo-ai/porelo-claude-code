@@ -58,5 +58,5 @@ Feature: What a person sees with this agent, before there is any credential
             printf 'screen, last lines:\n'; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
             exit 1
             """
-        When a script runs "porelo project unfollow nomem --force"
+        When a script runs "porelo project remove nomem --force"
         Then it exits zero

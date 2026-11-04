@@ -229,7 +229,7 @@ Feature: A subscription is renewed only on the host
         And its output contains "all subscription tokens absent"
         When a script runs "porelo task remove {task} --force && (podman container exists {task}; test $? -eq 1)" about the task
         Then it exits zero
-        When a script runs "porelo project unfollow subscription --force"
+        When a script runs "porelo project remove subscription --force"
         Then it exits zero
         When a script runs "touch \"$PORELO_VAULT.subscription/stop\""
         Then it exits zero

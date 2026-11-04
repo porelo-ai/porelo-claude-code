@@ -24,7 +24,7 @@ Feature: A task that comes back continues the conversation it was having
         And its output contains "session   continuing"
         # The second prompt does not name the word: only the session it continued does.
         And its output contains "PAPAYA"
-        When a script runs "porelo project unfollow cont --force"
+        When a script runs "porelo project remove cont --force"
         Then it exits zero
 
     @slow
@@ -51,5 +51,5 @@ Feature: A task that comes back continues the conversation it was having
         When I run "porelo task start back --project back --repository back --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --clearance deny"
         # A fresh session would show an empty conversation; the continued one shows what was said in it.
         Then the screen of task "back" of "back" shows "Remember the word PAPAYA"
-        When a script runs "porelo project unfollow back --force"
+        When a script runs "porelo project remove back --force"
         Then it exits zero

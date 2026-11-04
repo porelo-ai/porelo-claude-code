@@ -66,7 +66,7 @@ Feature: An agent at rest is woken by a message for it
             exit 1
             """
         When a script runs "porelo task remove porelo-wake-wake --force"
-        And a script runs "porelo project unfollow wake --force"
+        And a script runs "porelo project remove wake --force"
         Then it exits zero
 
     @slow
@@ -136,5 +136,5 @@ Feature: An agent at rest is woken by a message for it
             exit 1
             """
         When a script runs "porelo task remove porelo-busy-busy --force"
-        And a script runs "porelo project unfollow busy --force"
+        And a script runs "porelo project remove busy --force"
         Then it exits zero
