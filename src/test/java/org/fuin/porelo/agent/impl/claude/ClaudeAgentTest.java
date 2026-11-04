@@ -466,4 +466,11 @@ class ClaudeAgentTest {
                                 "❯ 1. Yes\n  2. No\nEnter to select · ↑/↓ to navigate · Esc to cancel\n⏵⏵ bypass permissions on (shift+tab to cycle)"))
                 .isFalse();
     }
+
+    @Test
+    void declaresThatItHoldsATaskToACountOfSubagents() {
+
+        assertThat(agent.definition().subagents())
+                .isEqualTo(org.fuin.porelo.agent.api.SubagentLimit.COUNT);
+    }
 }

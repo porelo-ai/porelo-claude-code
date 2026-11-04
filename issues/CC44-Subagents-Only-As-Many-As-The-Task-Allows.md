@@ -1,6 +1,6 @@
 # CC44 — Subagents Only As Many As The Task Allows
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of
 24.5, raised by the scenario on the VM and the attended check of the three switches.
 
@@ -53,8 +53,25 @@ off, but this adapter switches nothing off, so Claude Code in such a task still 
 
 - None.
 
+## Measured
+
+On the VM at the pin 2.1.311, through OpenRouter with `z-ai/glm-5.3-flash`, the adapter installed in the account,
+against a Porelo older than the one on `main`, so `project remove` in the new scenario's last step was run as
+`project unfollow`:
+
+- **Seen to fail first:** the new `session.feature` scenario against the adapter before the change: the agent
+  called `Agent` and answered `STARTED`.
+- **With the change, headless:** the same scenario is green: the agent answers `MISSING` and no `[Agent]` call
+  appears.
+- **At a count of 1, headless, one run not kept as a scenario:** of three asked at once, one ran and two were
+  refused with "Concurrent subagent limit reached".
+- **Attended, at a terminal, one run each, not kept as scenarios:** at the default the settings file denies `Agent`
+  and the agent answers that it has no such tool. At `--subagents 1` the file holds the count 1 and the depth 1, and
+  the agent started the three one after another, so the refusal was not seen at a terminal.
+
 ## To be checked
 
-- The same three switches attended, at a terminal.
-- Whether an undocumented variable is safe to rely on across the weekly pin bumps, or needs a check in
-  the update job.
+- Whether an undocumented variable is safe to rely on across the weekly pin bumps. The new scenario covers `Agent`
+  being denied, which fails the update job if it stops holding; nothing in the suite covers the count and the depth.
+- The depth of 1 from a subagent itself: the settings are written as measured in this issue's plan, not measured
+  again with this adapter.

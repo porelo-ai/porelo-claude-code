@@ -1,6 +1,7 @@
 package org.fuin.porelo.agent.impl.claude;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.fuin.porelo.wire.Json;
 
@@ -45,13 +46,19 @@ final class ClaudeSettings {
     /**
      * Returns the settings document for a container.
      *
+     * @param subagents The most subagents the task allows at the same time; 0 for none.
      * @return File content.
      */
-    static String document() {
+    static String document(final int subagents) {
 
         final Map<String, Object> permissions = new LinkedHashMap<>();
         // What puts the session in bypass mode, flag or not. Alone it also raises the warning.
         permissions.put("defaultMode", "bypassPermissions");
+        // Measured on 2.1.311: a subagent starts in bypass mode too, and this takes the tool out of
+        // the session, whose init record names it Task.
+        if (subagents == 0) {
+            permissions.put("deny", List.of("Agent"));
+        }
 
         final Map<String, Object> root = new LinkedHashMap<>();
         root.put("permissions", permissions);
@@ -79,6 +86,14 @@ final class ClaudeSettings {
         // No memory of its own: what holds across tasks is the repository's reviewed AGENTS.md.
         // The variable, not 'autoMemoryEnabled': the /memory menu cannot switch it back on.
         env.put("CLAUDE_CODE_DISABLE_AUTO_MEMORY", "1");
+        // Measured on 2.1.311, where only the binary's error texts name them: of three asked at
+        // once one ran at a count of 1. The depth is this adapter's own: a subagent then starts
+        // none of its own, so the count holds for the whole task. The per-session variable does
+        // not hold, so a total is not offered.
+        if (subagents > 0) {
+            env.put("CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS", Integer.toString(subagents));
+            env.put("CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH", "1");
+        }
         root.put("env", env);
         return Json.write(root);
     }

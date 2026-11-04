@@ -40,7 +40,8 @@ public class ClaudeContainerSetup implements ContainerSetup {
                 apiKey.isEmpty()
                         ? ContainerFile.of(ClaudeFirstRun.FILE, firstRun)
                         : ContainerFile.secret(ClaudeFirstRun.FILE, firstRun),
-                ContainerFile.of(ClaudeSettings.FILE, ClaudeSettings.document()));
+                ContainerFile.of(
+                        ClaudeSettings.FILE, ClaudeSettings.document(context.subagents())));
     }
 
     /**

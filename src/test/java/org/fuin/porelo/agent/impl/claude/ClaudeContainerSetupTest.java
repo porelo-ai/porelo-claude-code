@@ -38,6 +38,44 @@ class ClaudeContainerSetupTest {
         return files(type).stream().filter(f -> f.path().equals(path)).findFirst().orElseThrow();
     }
 
+    private Map<?, ?> settingsAllowing(int subagents) {
+        final List<ContainerFile> files =
+                new ClaudeContainerSetup()
+                        .files(
+                                new org.fuin.porelo.agent.api.SetupContext(
+                                        TOKEN, "oauth", "/workspace", "", "anthropic", subagents));
+        return parse(
+                files.stream()
+                        .filter(f -> f.path().equals(ClaudeSettings.FILE))
+                        .findFirst()
+                        .orElseThrow());
+    }
+
+    @Test
+    void takesTheSubagentToolAwayFromATaskThatAllowsNone() {
+
+        // Measured on 2.1.311: without this a subagent starts, in bypass mode too; with it the tool
+        // is gone from the session.
+        final Map<?, ?> settings = settingsAllowing(0);
+
+        assertThat(((Map<?, ?>) settings.get("permissions")).get("deny"))
+                .isEqualTo(List.of("Agent"));
+        final Map<?, ?> env = (Map<?, ?>) settings.get("env");
+        assertThat(env.get("CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS")).isNull();
+        assertThat(env.get("CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH")).isNull();
+    }
+
+    @Test
+    void holdsATaskToTheSubagentsItAllowsAtOnceAndNoneOfTheirOwn() {
+
+        final Map<?, ?> settings = settingsAllowing(2);
+
+        assertThat(((Map<?, ?>) settings.get("permissions")).get("deny")).isNull();
+        final Map<?, ?> env = (Map<?, ?>) settings.get("env");
+        assertThat(env.get("CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS")).isEqualTo("2");
+        assertThat(env.get("CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH")).isEqualTo("1");
+    }
+
     @Test
     void answersTheQuestionsAFreshContainerWouldBeAsked() {
 

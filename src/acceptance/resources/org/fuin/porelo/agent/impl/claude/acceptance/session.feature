@@ -28,6 +28,19 @@ Feature: A task that comes back continues the conversation it was having
         Then it exits zero
 
     @slow
+    Scenario: a task that allows no subagents gives its agent none to start
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"
+        And a project called "alone" of class "guarded" with a file in it
+        # A pin that drops the setting or renames the tool gives the agent the tool again, which this sees.
+        When a script runs "timeout 300 porelo task start solo --project alone --repository alone --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --prompt 'If you have a tool that starts a subagent, start one now, tell it to answer with one word of your choice, and then answer with the word STARTED. If you have no such tool, answer with the word MISSING and try nothing else.'"
+        Then it exits zero
+        And its output contains "MISSING"
+        And its output does not contain "[Agent]"
+        When a script runs "porelo project remove alone --force"
+        Then it exits zero
+
+    @slow
     Scenario: an attached agent stopped and started again continues its conversation
         Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
         And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"

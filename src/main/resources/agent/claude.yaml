@@ -13,6 +13,10 @@ binary: claude
 # the agent runs as 'agent' there, so this is /home/agent/.claude in that case.
 config_dir: "~/.claude"
 
+# What this adapter can hold a task to: a count at the same time, which 0 switches off. ClaudeSettings
+# turns the task's number into the CLI's own settings.
+subagents: count
+
 # How this agent logs in, for 'porelo vault login'. The list is arguments to 'binary' above, and
 # an empty list means the binary alone - which is this agent's case: running 'claude' with no
 # credentials starts its own authentication and writes .credentials.json when it finishes.
