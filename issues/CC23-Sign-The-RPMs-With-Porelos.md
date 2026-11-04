@@ -18,7 +18,7 @@ changes nothing for a user, because both share one repository and one `.repo` fi
 ## Plan
 
 - **Nothing here moves before Porelo's signing change** has named the packaging key, the CI secret that carries it and the
-  day `porelo`, the transport, the filter and the three agents switch together.
+  day `porelo`, the transport, the filter and all five adapters (`porelo-claude-code`, `porelo-pi`, `porelo-omp`, `porelo-codex` and `porelo-agy`) switch together.
 - **`pom.xml`:** `rpm.sign.skip` to `false`, and the rpm plugin's `<signature>` block given the key
   name that change sets.
 - **`.github/workflows/build.yml`:** the job that builds `-Pnative,dist` imports the key from that
@@ -32,6 +32,6 @@ changes nothing for a user, because both share one repository and one `.repo` fi
 ## Acceptance
 
 - The release job imports the signing key and builds with `-Drpm.sign.skip=false`, in `porelo` and in
-  the three agents.
+  all five adapters.
 - The `.repo` file uses `gpgcheck=1` with `gpgkey=`, and an acceptance leg installs with it on; an
   unsigned or re-signed package is seen to be refused.

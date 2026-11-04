@@ -2,7 +2,7 @@
 
 **Status:** Estimated; waits for Porelo's packages providing its lowest agent protocol version.
 **Size:** S - here two dependency lines and one test; Porelo's `Provides` is Porelo's own change, and
-`porelo-pi` and `porelo-omp` take the same lines.
+`porelo-pi`, `porelo-omp`, `porelo-codex` and `porelo-agy` take the same lines, each in an issue of its own.
 
 **What must be true.** Installing this adapter beside a Porelo that speaks another agent protocol is
 refused by the package manager, not at the first task.
@@ -35,7 +35,9 @@ work.
   this adapter compiles against; with the last number one off it fails.
 - **On the VM:** the adapter's `.deb` beside a Porelo package whose lowest version is above the adapter's
   `VERSION` is refused by `apt`, and installs beside one at or below it, a lower one included.
-- Then the same in `porelo-pi` and `porelo-omp`.
+- Then the same in `porelo-pi`, `porelo-omp`, `porelo-codex` and `porelo-agy`, each by an issue of its own there. `porelo-pi`, `porelo-codex` and `porelo-agy`
+  keep the version floor they have on `porelo` beside it; a floor refuses a Porelo too old, not one whose lowest
+  version has passed the adapter.
 
 ## Acceptance
 
@@ -43,4 +45,4 @@ work.
 - This adapter's packages depend on one of the lowest versions from 3 to its own `VERSION`, beside
   `porelo`, and a test holds that list to the API's `AgentProtocol.VERSION`; it is seen to fail with the
   numbers apart.
-- The same in `porelo-pi` and `porelo-omp`.
+- The same in `porelo-pi`, `porelo-omp`, `porelo-codex` and `porelo-agy`.
