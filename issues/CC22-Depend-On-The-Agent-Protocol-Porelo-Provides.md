@@ -1,6 +1,6 @@
 # CC22 — Depend on the agent protocol Porelo's package provides
 
-**Status:** Estimated; waits for Porelo's lowest agent protocol version and its packages providing it.
+**Status:** Estimated; waits for Porelo's packages providing its lowest agent protocol version.
 **Size:** S - here two dependency lines and one test; Porelo's `Provides` is Porelo's own change, and
 `porelo-pi` and `porelo-omp` take the same lines.
 
@@ -14,8 +14,8 @@ version, while the adapter is built against one agent contract. It is not a live
 an adapter's `protocolVersion` before using it and refuses one it cannot use with a message
 (`agents/api/.../InstalledAgent.java`), but that refusal comes at the first task.
 
-Once Porelo accepts every agent at or above its lowest protocol version, a newer one included, and
-raises that lowest version only for a change that breaks the contract, the one pairing to refuse is an
+Porelo accepts every agent at or above its lowest protocol version, a newer one included, and
+raises that lowest version only for a change that breaks the contract, so the one pairing to refuse is an
 adapter older than Porelo's lowest version; a dependency on one exact number would refuse pairings that
 work.
 
@@ -23,7 +23,7 @@ work.
 
 - **Porelo first:** `Provides: porelo-agent-protocol-<L>` in
   `dist/dist-deb/src/deb/control/control` and a `<provide>` in `dist/dist-rpm/pom.xml`, with `<L>` from
-  the new `AgentProtocol.LOWEST` (3), not from `VERSION`. Published before any agent depends on it, or the
+  `AgentProtocol.LOWEST` (3), not from `VERSION`. Published before any agent depends on it, or the
   agents stop installing.
 - **Here:** a dependency on any lowest version up to the adapter's own `VERSION`, from 3, the first lowest
   version there is: `Depends: porelo-agent-protocol-3 | porelo-agent-protocol-4` in `src/deb/control/control`

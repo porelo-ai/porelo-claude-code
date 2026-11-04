@@ -68,7 +68,8 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
   start then finds no copy of the repository on the host's forge.
 - What porelo-message-sluice's dry run showed, each to hold here before the start:
   - That the task's Claude writes `Assisted-by: Claude Code, <model>` and no `Co-Authored-By` line, set in the image or
-    the task's settings, since check-commits refuses the other.
+    the task's settings, since the shared rules ask for `Assisted-by`, and check-commits lets a `Co-authored-by`
+    trailer through.
   - Whether a fix after the outside reading lands as a new commit on top, so no force push is needed (the sluice's recommendation, a question for the operator with the move), or as an amend pushed with `git push --force` to the
     task's own unmerged branch, which the gate passes on.
   - That a revoked sign-in is renewed with `porelo vault login claude --force` and a stop and start of the task: a

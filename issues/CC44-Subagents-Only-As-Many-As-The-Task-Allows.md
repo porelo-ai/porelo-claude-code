@@ -2,11 +2,13 @@
 
 **Status:** Estimated.
 **Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of
-24.5, raised by the scenario on the VM, the attended check of the three switches and the move to the Porelo
-snapshot that carries the value.
+24.5, raised by the scenario on the VM and the attended check of the three switches.
 
 **What must be true.** Claude Code in a Porelo task starts no subagent unless the task allows it, and then no
 more at once than the task says.
+
+**This does not hold today.** Porelo takes a task's default of 0 as none and reads `claude.yaml`, which declares nothing, as
+off, but this adapter switches nothing off, so Claude Code in such a task still starts a subagent, as measured below.
 
 ## Plan
 
@@ -38,8 +40,8 @@ more at once than the task says.
   sees it refused, so a pin bump that drops the variables or renames the tool fails the update job.
 - **A soft switch:** the agent has a shell and can start another copy of its CLI; this issue governs only
   the built-in subagents. A hard bound is Porelo's own, outside this repository.
-- **Porelo's version:** `porelo.version` in `pom.xml` moves to the Porelo snapshot whose agent API
-  carries the value; until then nothing here compiles against it.
+- **Porelo's version:** `porelo.version` in `pom.xml` is already 0.5.1-SNAPSHOT, and the published snapshot's agent API
+  carries the value (`SubagentLimit`, `subagents` in `SetupContext`).
 
 ## Acceptance
 
