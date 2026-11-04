@@ -54,11 +54,15 @@ final class ClaudeSettings {
         final Map<String, Object> permissions = new LinkedHashMap<>();
         // What puts the session in bypass mode, flag or not. Alone it also raises the warning.
         permissions.put("defaultMode", "bypassPermissions");
-        // Measured on 2.1.311: a subagent starts in bypass mode too, and this takes the tool out of
-        // the session, whose init record names it Task.
-        if (subagents == 0) {
-            permissions.put("deny", List.of("Agent"));
-        }
+        // Measured on 2.1.311: a subagent starts in bypass mode too, and a denied tool is gone from
+        // the session, whose init record names Agent Task. At a count of 1 three of a workflow's
+        // ran at once, and a skill with "context: fork" ran beside a subagent and inside one, so
+        // neither is left at any number; at 0 a forked skill also starts with Agent denied.
+        permissions.put(
+                "deny",
+                subagents == 0
+                        ? List.of("Agent", "Workflow", "Skill")
+                        : List.of("Workflow", "Skill"));
 
         final Map<String, Object> root = new LinkedHashMap<>();
         root.put("permissions", permissions);

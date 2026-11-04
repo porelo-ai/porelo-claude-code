@@ -52,14 +52,14 @@ class ClaudeContainerSetupTest {
     }
 
     @Test
-    void takesTheSubagentToolAwayFromATaskThatAllowsNone() {
+    void takesEveryToolThatStartsAnAgentAwayFromATaskThatAllowsNone() {
 
-        // Measured on 2.1.311: without this a subagent starts, in bypass mode too; with it the tool
-        // is gone from the session.
+        // Measured on 2.1.311: with any of the three left, a subagent starts, in bypass mode too.
         final Map<?, ?> settings = settingsAllowing(0);
 
         assertThat(((Map<?, ?>) settings.get("permissions")).get("deny"))
-                .isEqualTo(List.of("Agent"));
+                .as("the subagent tool, a workflow's agents and a forked skill each start one")
+                .isEqualTo(List.of("Agent", "Workflow", "Skill"));
         final Map<?, ?> env = (Map<?, ?>) settings.get("env");
         assertThat(env.get("CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS")).isNull();
         assertThat(env.get("CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH")).isNull();
@@ -70,7 +70,9 @@ class ClaudeContainerSetupTest {
 
         final Map<?, ?> settings = settingsAllowing(2);
 
-        assertThat(((Map<?, ?>) settings.get("permissions")).get("deny")).isNull();
+        assertThat(((Map<?, ?>) settings.get("permissions")).get("deny"))
+                .as("a workflow's agents and a forked skill run outside the count and the depth")
+                .isEqualTo(List.of("Workflow", "Skill"));
         final Map<?, ?> env = (Map<?, ?>) settings.get("env");
         assertThat(env.get("CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS")).isEqualTo("2");
         assertThat(env.get("CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH")).isEqualTo("1");
