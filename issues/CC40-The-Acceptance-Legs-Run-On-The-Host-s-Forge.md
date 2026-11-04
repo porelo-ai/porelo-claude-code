@@ -26,6 +26,8 @@ forge still runs them, so a change is tested there only after the gathered push.
 
 ## To be checked
 
+- How a leg gets the packages its run built: `actions/upload-artifact` v7 and `actions/download-artifact` v8 refuse
+  every server but GitHub's, so the `build` job uploads them only where `vars.PORELO_PUBLISH` is `true`.
 - That the host's VM pool is larger than none: a rented server once reported a pool of 0 KiB.
 - That a pool VM reaches the package and CLI download hosts a leg installs from.
 - That `OPEN_ROUTER_API_KEY` is set on the forge, verified by the operator, as the shared rule on separate access

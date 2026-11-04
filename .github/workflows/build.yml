@@ -114,6 +114,23 @@ jobs:
             - name: No provider named outside its implementation
               run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-providers .
 
+            # What the native build and the package checks run, installed where the runner's image lacks it, from the
+            # distribution's signed archive: the local Forgejo's image carries no rpm.
+            - name: The tools the packages are built and read with
+              run: |
+                  set -euo pipefail
+                  missing=()
+                  for tool in gcc:gcc rpm:rpm dpkg-deb:dpkg; do
+                      command -v "${tool%%:*}" > /dev/null || missing+=("${tool#*:}")
+                  done
+                  dpkg-query -W -f='${Status}' zlib1g-dev 2> /dev/null | grep -q 'ok installed' || missing+=(zlib1g-dev)
+                  if [ ${#missing[@]} -gt 0 ]; then
+                      sudo=
+                      [ "$(id -u)" -eq 0 ] || sudo=sudo
+                      $sudo apt-get update -qq
+                      $sudo apt-get install -y -qq --no-install-recommends "${missing[@]}"
+                  fi
+
             # The packages are what an operator installs, so a build that has not produced them has not proved.
             # Not -DskipTests: that also skips NativeLinkageCheck and PackageVersionCheck, the tests that
             # need the binary and the packages it is packed into.
@@ -123,7 +140,9 @@ jobs:
               run: ./mvnw -B -s settings.xml -Pnative,dist verify
                   -Dagent.snapshot.run=${{ github.run_number }}
 
+            # The action refuses every server but GitHub's; on a forge that publishes nothing no job reads the artifact yet.
             - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              if: vars.PORELO_PUBLISH == 'true'
               with:
                   name: packages
                   path: |

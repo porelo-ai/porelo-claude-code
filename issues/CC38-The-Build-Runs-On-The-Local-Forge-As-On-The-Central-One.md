@@ -1,6 +1,7 @@
 # CC38 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Implementing; the GitHub side is built, the Forgejo half is being measured on a local Forgejo.
+**Status:** Review; on a local Forgejo the Build, the shared rules and the workflow check run green, and the central
+forge's side is unchanged; what only a host shows is named below.
 **Size:** S - the workflows and `settings.xml` of this one repository, no contract another repository reads; about
 3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the runs on the
 local Forgejo.
@@ -87,14 +88,25 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   rented, published as today).
 - The kinds' check finds no provider's name in this repository's workflows.
 
-## To be checked
+## Measured on a local Forgejo
 
-- That the runner of that pattern, which offers only the label `host`, runs these workflows: what `runs-on` must name,
-  and what the job needs beside it that the runner's image does not hold.
-- That Forgejo's package registry takes and serves the Maven snapshots with a token of the test forge's own.
-- That the Forgejo runner serves `actions/upload-artifact` v7, `actions/download-artifact` v8 and
-  `actions/cache` v6, and that the `pinned-jdk` action (`JAVA_HOME_25_X64`, `porelo-machines jdk --github`) works there.
-- That the runner reaches GitHub where the checks still read it: `check-citations` fetches the other repositories'
-  indexes from `raw.githubusercontent.com`, so a cited issue pushed only to the host's forge fails it, and
-  `check-pin` asks `api.github.com` without a token, inside the limit of 60 requests an hour per address.
-- That the runner has `python3` with `yaml` for `workflows.yml`'s load check.
+Forgejo 17 and its runner 13.2.0, pinned as the host's forge pins them, with the host's job image `act-24.04` as root and
+a JDK mounted as `JAVA_HOME_25_X64`; the registry held the snapshots this Build resolves, copied in from a Maven cache.
+
+- **The red runs, each stopping the Build in turn:** Maven's default http blocker refused a `MAVEN_SNAPSHOTS_URL` on
+  `http://<host>.localhost` and took the same address on `http://localhost`; the tests of a denied read failed as root,
+  which reads through any mode; the image holds no `rpm`, which the package check runs; and `actions/upload-artifact`
+  refuses every server but GitHub's.
+- **What changed for them:** those tests skip where the account reads through a mode, so they still run on the central
+  forge; *The tools the packages are built and read with* installs only what is missing; and the packages are uploaded
+  only where `vars.PORELO_PUBLISH` is `true`, since no job on a forge that publishes nothing reads them yet.
+- **Green:** the Build, with the `acceptance`, `proof` and `release` jobs skipped, nothing published and every snapshot
+  read from the forge's registry.
+- **What the central forge sees:** no change. Its image holds the tools, its `PORELO_PUBLISH` is `true`, and its account
+  is not root.
+
+## What only a host shows
+
+- The registry through the host's proxy and gate, with `MAVEN_SNAPSHOTS_URL` as the host sets it, and the runner's jobs in
+  their own containers rather than in the runner's.
+- `porelo`'s, `porelo-parent`'s and `porelo-buildtools`' snapshots deployed there by their own Builds, not copied.

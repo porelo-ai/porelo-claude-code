@@ -1,6 +1,6 @@
 # CC41 — Snapshots Resolved With A Read-Only Token, A Forge Without Its Registry Refused
 
-**Status:** Review; the central forge's side built, the local forge's checked when the repository moves there.
+**Status:** Review; the central forge's side built, the local forge's measured on a local Forgejo.
 **Size:** S - the workflows and `settings.xml` of this one repository, no contract another
 repository reads.
 
@@ -41,9 +41,8 @@ instead of falling back to Central's snapshots.
 - A Build on the local forge with `MAVEN_SNAPSHOTS_URL` unset is seen to fail at its first step, naming the variable;
   on the central forge, where the variable names Central's snapshots, the Build is unchanged.
 
-## To be checked
+## Measured on a local Forgejo
 
-- On the local forge, once the repository moves there: a branch's `verify` green with the read-only token, a
-  write to the registry with it refused, and a Build with `MAVEN_SNAPSHOTS_URL` unset stopped at its first step.
-- That the read-only token reads the registry's snapshots where the organization there is private, with the user
-  name Maven sends today.
+- A branch's `verify` is green with the read-only token only, reading a private organization's registry under the user
+  name Maven sends today; a write to the registry with that token is refused with `401`.
+- A Build with `MAVEN_SNAPSHOTS_URL` unset stops at the action's first step, naming the variable.

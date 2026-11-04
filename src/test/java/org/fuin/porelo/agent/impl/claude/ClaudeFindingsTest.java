@@ -1,6 +1,7 @@
 package org.fuin.porelo.agent.impl.claude;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -388,6 +389,8 @@ class ClaudeFindingsTest {
         final Set<PosixFilePermission> before = Files.getPosixFilePermissions(directory);
         Files.setPosixFilePermissions(directory, Set.of());
         try {
+            // The forge's runner is root, which reads through any mode.
+            assumeFalse(Files.isReadable(directory), "this account reads through a mode");
             action.run();
         } finally {
             Files.setPosixFilePermissions(directory, before);
