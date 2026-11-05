@@ -4,8 +4,8 @@
 # The pins are those the Build takes: the GraalVM and the Ubuntu image from porelo-machines' own pins
 # (machines.properties), shfmt from build.yml. A move there is not followed here by itself.
 image:
-    base_image: "docker.io/library/ubuntu:24.04@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
-    snippet: |
+    from: "docker.io/library/ubuntu:24.04@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
+    run: |
         RUN apt-get update \
             && apt-get install -y --no-install-recommends build-essential zlib1g-dev ca-certificates curl git unzip rpm \
             && rm -rf /var/lib/apt/lists/*
