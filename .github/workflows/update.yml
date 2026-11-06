@@ -158,7 +158,7 @@ jobs:
                       exit 0
                   fi
                   BIN="target/claude-$VERSION"
-                  if ! curl -sfL -o "$BIN" "${TEMPLATE//'${agent.cli.version}'/$VERSION}" \
+                  if ! curl -sfL --retry 5 --retry-all-errors -o "$BIN" "${TEMPLATE//'${agent.cli.version}'/$VERSION}" \
                           || ! echo "$SHA256  $BIN" | sha256sum -c -; then
                       echo "STOP=Claude Code $VERSION could not be downloaded as pinned" >> "$GITHUB_ENV"
                       exit 0
