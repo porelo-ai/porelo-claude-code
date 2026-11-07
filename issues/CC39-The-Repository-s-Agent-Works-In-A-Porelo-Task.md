@@ -30,9 +30,12 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
   agent per repository and porelo describes no second sign-in inside a task. Until Porelo has a task that reviews, an agent outside the task reads the pull request's diff against the skills, as today's sub-agent reading does, and posts its
   findings in the room.
 - **Steps:**
-  0. *A dry run on this machine first*, as for porelo-message-sluice: the task online with GitHub as upstream, its
-     Build read through the `github` reader, snapshots from Sonatype; it shows the image, the room, the wake and the
-     gate, and only the `forgejo` lines wait for the host.
+  0. *A dry run on this machine first*, only the part that needs nobody: the task's image built from
+     `porelo.yml` with podman, and inside it, as a user other than root on an empty local Maven repository,
+     `./mvnw -B -s settings.xml verify` and `./mvnw -B -s settings.xml -Pnative,dist verify` on a fresh clone.
+     No task starts here and nothing goes through a gate: the room, the wake and the gate are shown on the
+     rented host directly. Passed: the image built in 2 min; `verify` ran 196 tests,
+     none failed or skipped, in 44 s; the native packages, `.deb` and `.rpm`, built and checked in 78 s.
   1. *Before, from this machine:* a dry run of the task start on the host names each image key's source as
      `porelo.yml`; the image builds; inside it, `./mvnw -s settings.xml verify` and the native packages pass.
   2. *porelo-project (the coordinator):* `repositories.claude.agent` and the nickname `Claude`
@@ -58,6 +61,8 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 
 ## To be checked
 
+- That the context tells the task's agent the skills are read as files: the adapter's settings deny Claude Code's
+  `Skill` tool in every task, so a skill fetched into the skills folder is never loaded as one.
 - That porelo-project's `project.yml` lets the task reach the hosts named under *Plan*.
 - Where the task's agent finds what the local setup gives it here (its name, the room in place of the channel, the
   operator's language and time zone): that setup is not committed, so it is not in the task.
