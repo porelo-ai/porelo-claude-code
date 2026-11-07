@@ -1,5 +1,5 @@
 # What this repository's whole local build needs: the image a Porelo task on this repository is built from.
-# A draft: no Porelo reads this file yet. Tools only, never a rule.
+# Porelo reads it when it builds a task's image. Tools only, never a rule.
 #
 # The pins are those the Build takes: the GraalVM and the Ubuntu image from porelo-machines' own pins
 # (machines.properties), shfmt from build.yml. A move there is not followed here by itself.
