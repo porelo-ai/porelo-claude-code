@@ -38,8 +38,8 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
      none failed or skipped, in 44 s; the native packages, `.deb` and `.rpm`, built and checked in 78 s.
   1. *Before, from this machine:* a dry run of the task start on the host names each image key's source as
      `porelo.yml`; the image builds; inside it, `./mvnw -s settings.xml verify` and the native packages pass.
-  2. *porelo-project (the coordinator):* `repositories.claude.agent` and the nickname `Claude`
-     in `project.yml`, and the upstream switched to the host's forge, as the project's procedure for an agent's move lays out.
+  2. *porelo-project (the coordinator):* `repositories.claude.agent` in `project.yml`, no nickname, since the key
+     `claude` gives the room's name, and the upstream switched to the host's forge, as the project's procedure for an agent's move lays out.
   3. *The start:* the operator starts the task attended; inside it the agent takes this issue to Review, its push
      through the gate to `porelo/<task>`, the forge's Build read through the `forgejo` reader.
   4. *After the check:* the session on this machine gives up `porelo-claude-code`;
@@ -53,7 +53,7 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 - The task follows `porelo-claude-code` through the gate; its pushes reach the local Forgejo, and it reads its builds through the
   `forgejo` reader.
 - Its build runs on the local forge as on the central one, [CC38](README.md#cc38).
-- The room shows it as `Agent Claude`, from the nickname `Claude` in porelo-project's `project.yml`.
+- The room shows it as `Agent Claude`, from the capitalized key `claude` in porelo-project's `project.yml`.
 - The build in the task passes on Sonatype's snapshots; it takes them from the local forge's registry only once that registry lets a task read it and the task sets `MAVEN_SNAPSHOTS_URL`, which is not this move's. Claude Code works with the operator's subscription from
   the vault.
 - The move's check is red for `porelo-claude-code` before the move and green after it; the agent's session on this machine and its
