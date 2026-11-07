@@ -28,6 +28,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc46"></a>[CC46](CC46-Claude-s-Own-Commit-Attribution-Is-Off-In-A-Task.md) |  | — | no `Co-Authored-By:` or generated-with note of Claude Code's own in a task's commits and pull requests, switched off in the settings the adapter writes |
 | <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) |  | — | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) |  | [CC38](#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
 
