@@ -104,6 +104,33 @@ Feature: A task authenticates without ever holding the credential
         When a script runs "porelo project remove broker --force"
         Then it exits zero
 
+    Scenario: a task's commit names the model that made it, and none of Claude Code's own attribution
+        # The shared rules ask for "Assisted-by: <tool>, <model>" and refuse Claude's "Co-Authored-By:". Only the
+        # session knows its model, so the hook reads it from the transcript; the agent is told no trailer at all.
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"
+        And a project called "trailer" of class "guarded" with a file in it
+        When a task is started in "trailer" for the "claude" agent through "openrouter" and left running
+        And the task's container runs:
+            """
+            cd /workspace
+            base=$(git rev-list --count HEAD)
+            for try in 1 2 3; do
+              timeout 300 ~/.local/bin/claude --model "${PORELO_E2E_MODEL}" -p "Append the line 'one more' to any tracked file here, then run exactly: git commit -am 'Add one more line'" >/dev/null || exit 1
+              [ "$(git rev-list --count HEAD)" -gt "$base" ] && break
+              echo "try $try: no commit made"
+            done
+            [ "$(git rev-list --count HEAD)" -gt "$base" ] || { echo "no commit in three tries"; exit 1; }
+            git log -1 --format=%B
+            last=$(git log -1 --format=%B | sed '/^$/d' | tail -n 1)
+            [ "$last" = "Assisted-by: Claude Code, ${PORELO_E2E_MODEL}" ] && echo "the trailer names the model that ran"
+            """
+        Then its output contains "Add one more line"
+        And its output contains "the trailer names the model that ran"
+        And its output does not contain "Co-Authored-By"
+        When a script runs "porelo project remove trailer --force"
+        Then it exits zero
+
     @slow
     Scenario: a person's fresh task reaches work without being asked anything
         # "Reached work, and nothing came first" rather than "the dialogs we know about are absent": a

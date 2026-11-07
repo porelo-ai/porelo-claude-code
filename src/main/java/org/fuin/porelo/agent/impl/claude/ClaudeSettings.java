@@ -70,6 +70,16 @@ final class ClaudeSettings {
         // is
         // reached without it.
         root.put("skipDangerousModePermissionPrompt", true);
+        // Measured on 2.1.311: unset, the CLI asks for its own Co-Authored-By, which the shared
+        // rules refuse; the task's trailer is written by the git hook instead.
+        final Map<String, Object> attribution = new LinkedHashMap<>();
+        attribution.put("commit", "");
+        attribution.put("pr", "");
+        root.put("attribution", attribution);
+        final Map<String, Object> install = new LinkedHashMap<>();
+        install.put("type", "command");
+        install.put("command", ClaudeCommitTrailer.installCommand());
+        root.put("hooks", Map.of("SessionStart", List.of(Map.of("hooks", List.of(install)))));
 
         // The version that runs is the pinned one. Left alone, the CLI fetched 2.1.276 within 90
         // seconds of starting 2.1.267 and would run it on the next start - unpinned and unchecked.

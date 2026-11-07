@@ -13,9 +13,10 @@ import org.fuin.porelo.agent.api.SetupContext;
  * variables, which is the shape it declared. An agent that can only be given a URL writes it into a
  * file here instead.
  *
- * <p>Two files with two different owners, which is why each is produced somewhere else: {@link
+ * <p>Files with different owners, which is why each is produced somewhere else: {@link
  * ClaudeFirstRun} is the agent's own state, {@link ClaudeSettings} is configuration a person would
- * otherwise edit. This class only says what a container needs.
+ * otherwise edit, {@link ClaudeCommitTrailer} is the git hook that writes a commit's trailer. This
+ * class only says what a container needs.
  *
  * <p><strong>No credential file.</strong> The task's token reaches the CLI in the variable the
  * definition names for its kind - {@code ANTHROPIC_API_KEY} or {@code CLAUDE_CODE_OAUTH_TOKEN} -
@@ -40,8 +41,8 @@ public class ClaudeContainerSetup implements ContainerSetup {
                 apiKey.isEmpty()
                         ? ContainerFile.of(ClaudeFirstRun.FILE, firstRun)
                         : ContainerFile.secret(ClaudeFirstRun.FILE, firstRun),
-                ContainerFile.of(
-                        ClaudeSettings.FILE, ClaudeSettings.document(context.subagents())));
+                ContainerFile.of(ClaudeSettings.FILE, ClaudeSettings.document(context.subagents())),
+                ContainerFile.of(ClaudeCommitTrailer.HOOK, ClaudeCommitTrailer.script()));
     }
 
     /**

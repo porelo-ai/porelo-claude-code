@@ -150,6 +150,43 @@ class ClaudeContainerSetupTest {
     }
 
     @Test
+    void switchesClaudesOwnAttributionOffSoOnlyTheTasksTrailerIsWritten() {
+
+        // Measured on 2.1.311: unset, the CLI asks for "Co-Authored-By: <model> <noreply@...>",
+        // which the shared rules refuse; empty, its reminder says to add no attribution lines.
+        final Map<?, ?> settings = parse(named(ClaudeSettings.FILE, "oauth"));
+
+        assertThat(settings.get("attribution"))
+                .as("neither a commit nor a pull request gets Claude Code's own attribution")
+                .isEqualTo(Map.of("commit", "", "pr", ""));
+    }
+
+    @Test
+    void makesTheTrailerHookOneGitRunsBeforeTheFirstTurn() {
+
+        // A file the setup writes has no mode, and git skips a hook that is not executable.
+        final Map<?, ?> hooks = (Map<?, ?>) parse(named(ClaudeSettings.FILE, "oauth")).get("hooks");
+
+        assertThat(hooks.get("SessionStart"))
+                .as("the session's start makes the hook executable and points git at it")
+                .isEqualTo(
+                        List.of(
+                                Map.of(
+                                        "hooks",
+                                        List.of(
+                                                Map.of(
+                                                        "type",
+                                                        "command",
+                                                        "command",
+                                                        ClaudeCommitTrailer.installCommand())))));
+        assertThat(ClaudeCommitTrailer.installCommand())
+                .contains("chmod +x " + ClaudeCommitTrailer.HOOK)
+                .contains("core.hooksPath " + ClaudeCommitTrailer.HOOKS);
+        assertThat(named(ClaudeCommitTrailer.HOOK, "oauth").content())
+                .isEqualTo(ClaudeCommitTrailer.script());
+    }
+
+    @Test
     void keepsTheSettingsReadableRatherThanSecret() {
 
         // Configuration, not a credential: nothing in it is worth hiding, and marking it
@@ -165,7 +202,8 @@ class ClaudeContainerSetupTest {
         // A file nothing reads is only a second copy of the token.
         for (final String kind : List.of("api-key", "oauth")) {
             assertThat(paths(files(kind)))
-                    .containsExactlyInAnyOrder(ClaudeFirstRun.FILE, ClaudeSettings.FILE);
+                    .containsExactlyInAnyOrder(
+                            ClaudeFirstRun.FILE, ClaudeSettings.FILE, ClaudeCommitTrailer.HOOK);
         }
     }
 
