@@ -1,6 +1,6 @@
 # CC39 — The Repository's Agent Works In A Porelo Task
 
-**Status:** Review; blocked by [CC38](README.md#cc38), in Review.
+**Status:** Implementing; blocked by [CC38](README.md#cc38), in Review.
 **Size:** S - no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
 work, plus the operator's attended start of the task.
 
@@ -22,8 +22,8 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
   CLI comes from its package's own layer, not from `porelo.yml`. The acceptance legs do not run in a task (no container
   inside it, no rented machine); they run in the forge's Build ([CC38](README.md#cc38)).
 - **What the task reaches while it runs:** Maven Central, Sonatype or the forge's registry, `fuinorg.jfrog.io` for
-  the skills, `github.com` for `check-citations`, and the forge's address as a host service. That egress is the
-  project's, in porelo-project's `project.yml`; the image, the agent's CLI with it, is built on the host outside the
+  the skills, `raw.githubusercontent.com` for `check-citations`, and the forge's address as a host service. That
+  egress is the project's, in porelo-project's `project.yml`; the image, the agent's CLI with it, is built on the host outside the
   task's firewall. The task's build reads Sonatype's snapshots: the forge's registry refuses a task today (the organization is private), and nothing sets
   `MAVEN_SNAPSHOTS_URL` in a task yet, so the `forge` profile stays off there until both are in.
 - **The sub-agent reading:** no sub-agent CLI is in the task's image, since a project file names one
@@ -76,13 +76,16 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
   operator's relay.
 - **The forge's Build and *Shared rules check* both failed** before any check ran: Maven could not resolve the parent
   pom `porelo-parent` 0.2.1-SNAPSHOT from the local forge's registry, where it is absent. The same build passed in the
-  task, which reads Sonatype's snapshots, so the cause is not the commit; the parent has to be published to that
-  registry before either can go green.
+  task, which reads Sonatype's snapshots, so the cause is not the commit; either can go green once the forge reads the
+  Porelo snapshots its registry does not hold from an upstream snapshot repository.
 - **The commit trailer** is written by the task's hook from the session's model, and Claude Code's own attribution is
   off, so no `Co-Authored-By` line is made.
 
 ## To be checked
 
+- That the forge's Build and *Shared rules check* pass on this issue's commits, once the forge reads the Porelo
+  snapshots its registry does not hold.
+- That the task reads its builds through the `forgejo` reader; in the trial none was in the task.
 - That the project's egress lets the task reach `raw.githubusercontent.com`, which `check-citations` reads.
 - That the outside reader can fetch `porelo/<task>` from the host's forge, not only from GitHub.
 - The way back, rehearsed once: the task's open work fetched from the host's forge into the checkout here.
