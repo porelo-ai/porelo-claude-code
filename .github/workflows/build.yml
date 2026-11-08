@@ -103,7 +103,11 @@ jobs:
                       check-commits "$start..$GITHUB_SHA"
 
             # A bump that forgets the digest builds, tests and packages green, and fails at an image build on.
+            # The job's token on GitHub, so its API answers the check; empty elsewhere, since a forge's runner puts
+            # its own token into GITHUB_TOKEN for every step, and the check would hand it to GitHub.
             - name: The pin agrees everywhere it is written
+              env:
+                  GITHUB_TOKEN: ${{ github.server_url == 'https://github.com' && github.token || '' }}
               run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-pin
 
             # What every workflow step runs is pinned, and Dependabot moves the pins: the shared rule, refused
