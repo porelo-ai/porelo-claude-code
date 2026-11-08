@@ -1,6 +1,6 @@
 # CC39 — The Repository's Agent Works In A Porelo Task
 
-**Status:** Implementing; blocked by [CC38](README.md#cc38), in Review.
+**Status:** Review; blocked by [CC38](README.md#cc38), in Review.
 **Size:** S - no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
 work, plus the operator's attended start of the task.
 
@@ -59,25 +59,34 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 - The move's check is red for `porelo-claude-code` before the move and green after it; the agent's session on this machine and its
   test accounts are no longer used, and the way back the project's procedure for an agent's move describes is open.
 
+## Findings from the trial
+
+- **What ran, each as its own step, exit code 0:** the tests tagged `documents` (5 tests, 21 s), `verify` (218 tests, none
+  failed or skipped, 11 s) and `-Pnative,dist verify` (the `.deb` and `.rpm` built, 90 s, the bill of materials made),
+  on an empty local Maven repository, as a user other than root.
+- **The seven skills** came from the skills repository, each checked against its sha256 before unpacking; the harness's
+  skills folder did not exist and was created. The context said they are read as files, since the settings deny the
+  `Skill` tool.
+- **Reached:** Maven Central, Sonatype's snapshots, the skills repository and the host's forge (`git ls-remote` on the
+  gate's remote lists `main` and the release tags).
+- **Not reached:** `raw.githubusercontent.com`, `github.com` and `api.github.com`, so `check-citations` cannot run in
+  a task and is left to the forge's *Shared rules check*.
+- **Missing in the context:** the repository has no `origin` remote, only the gate's, so `origin/main` in the shared
+  rules' commit check is read as the gate's `main`; no `forgejo` reader was in the task, so the Build is read from the
+  operator's relay.
+- **The forge's Build and *Shared rules check* both failed** before any check ran: Maven could not resolve the parent
+  pom `porelo-parent` 0.2.1-SNAPSHOT from the local forge's registry, where it is absent. The same build passed in the
+  task, which reads Sonatype's snapshots, so the cause is not the commit; the parent has to be published to that
+  registry before either can go green.
+- **The commit trailer** is written by the task's hook from the session's model, and Claude Code's own attribution is
+  off, so no `Co-Authored-By` line is made.
+
 ## To be checked
 
-- That the context tells the task's agent the skills are read as files: the adapter's settings deny Claude Code's
-  `Skill` tool in every task, so a skill fetched into the skills folder is never loaded as one.
-- That porelo-project's `project.yml` lets the task reach the hosts named under *Plan*.
-- Where the task's agent finds what the local setup gives it here (its name, the room in place of the channel, the
-  operator's language and time zone): that setup is not committed, so it is not in the task.
+- That the project's egress lets the task reach `raw.githubusercontent.com`, which `check-citations` reads.
 - That the outside reader can fetch `porelo/<task>` from the host's forge, not only from GitHub.
 - The way back, rehearsed once: the task's open work fetched from the host's forge into the checkout here.
-- That the host's inventory names `porelo-claude-code` in `forge_repositories`: the forge role skips the migration, `main`'s
-  protection and the gate's identity where it names none (porelo-host `roles/forge/tasks/main.yml`), and a task
-  start then finds no copy of the repository on the host's forge.
-- What porelo-message-sluice's dry run showed, each to hold here before the start:
-  - That the task's Claude writes `Assisted-by: Claude Code, <model>` and no `Co-Authored-By` line, set in the image or
-    the task's settings, since the shared rules ask for `Assisted-by`, and check-commits lets a `Co-authored-by`
-    trailer through.
-  - Whether a fix after the outside reading lands as a new commit on top, so no force push is needed (the sluice's recommendation, a question for the operator with the move), or as an amend pushed with `git push --force` to the
-    task's own unmerged branch, which the gate passes on.
-  - That a revoked sign-in is renewed with `porelo vault login claude --force` and a stop and start of the task: a
-    running task keeps the credential it started with.
-  - That the outside reader may join the room from its harness; otherwise it posts its findings in the channel and the
-    operator relays them.
+- That a revoked sign-in is renewed with `porelo vault login claude --force` and a stop and start of the task: a
+  running task keeps the credential it started with.
+- That the outside reader may join the room from its harness; otherwise it posts its findings in the channel and the
+  operator relays them.
