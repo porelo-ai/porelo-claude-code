@@ -39,7 +39,7 @@ jobs:
         name: Build and unit tests
         # Pinned to the oldest glibc it must run against, because a native image links it dynamically.
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 35
         steps:
             # Every commit, so a pushed range is read from this checkout.
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -265,7 +265,7 @@ jobs:
     proof:
         name: Legs already proven
         runs-on: ubuntu-26.04
-        timeout-minutes: 10
+        timeout-minutes: 25
         if: vars.PORELO_PUBLISH == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         # Reads this repository's runs, jobs and artifact names; nothing more.
         permissions:
@@ -304,7 +304,7 @@ jobs:
     acceptance:
         name: Acceptance - ${{ matrix.os }}
         runs-on: ubuntu-26.04
-        timeout-minutes: 40
+        timeout-minutes: 55
         needs: [build, proof]
         # The proof is skipped on a tag and a dispatch, and a failed one proves nothing: the legs run then.
         # Only on GitHub while the repository moves: the host's pool lends no forge job a machine by kind yet.

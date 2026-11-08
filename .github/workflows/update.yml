@@ -38,7 +38,7 @@ jobs:
         name: Follow Claude Code
         # It builds the native binary the legs test, so on the build job's glibc.
         runs-on: ubuntu-24.04
-        timeout-minutes: 90
+        timeout-minutes: 105
         # It updates the central forge only - its pull request, its merge and the bill it compares with are
         # GitHub's and Artifactory's - so it runs only where PORELO_PUBLISH is true.
         if: vars.PORELO_PUBLISH == 'true'
@@ -159,8 +159,8 @@ jobs:
                       exit 0
                   fi
                   BIN="target/claude-$VERSION"
-                  if ! curl -sfL --retry 5 --retry-all-errors -o "$BIN" "${TEMPLATE//'${agent.cli.version}'/$VERSION}" \
-                          || ! echo "$SHA256  $BIN" | sha256sum -c -; then
+                  . .github/actions/pinned-jdk/pinned.sh
+                  if ! pinned_fetch "${TEMPLATE//'${agent.cli.version}'/$VERSION}" "$SHA256" "$BIN"; then
                       echo "STOP=Claude Code $VERSION could not be downloaded as pinned" >> "$GITHUB_ENV"
                       exit 0
                   fi
