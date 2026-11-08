@@ -1,6 +1,6 @@
 # CC39 — The Repository's Agent Works In A Porelo Task
 
-**Status:** Implementing; blocked by [CC38](README.md#cc38), in Review.
+**Status:** Review; blocked by [CC38](README.md#cc38), in Review.
 **Size:** S - no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
 work, plus the operator's attended start of the task.
 
@@ -61,23 +61,19 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 
 ## Findings from the trial
 
-- **What ran, each as its own step, exit code 0:** the tests tagged `documents` (5 tests, 21 s), `verify` (218 tests, none
-  failed or skipped, 11 s) and `-Pnative,dist verify` (the `.deb` and `.rpm` built, 90 s, the bill of materials made),
-  on an empty local Maven repository, as a user other than root.
+- **What ran, each as its own step, exit code 0:** the tests tagged `documents` (5 tests, 21 s), `verify` (222 tests, none
+  failed or skipped, 13 s) and `-Pnative,dist verify` (the `.deb` and `.rpm` built, 91 s, the bill of materials made),
+  as a user other than root.
 - **The seven skills** came from the skills repository, each checked against its sha256 before unpacking; the harness's
-  skills folder did not exist and was created. The context said they are read as files, since the settings deny the
-  `Skill` tool.
+  skills folder did not exist and was created. They are read as files, since the settings deny the `Skill` tool.
 - **Reached:** Maven Central, Sonatype's snapshots, the skills repository and the host's forge (`git ls-remote` on the
   gate's remote lists `main` and the release tags).
-- **Not reached:** `raw.githubusercontent.com`, `github.com` and `api.github.com`, so `check-citations` cannot run in
-  a task and is left to the forge's *Shared rules check*.
+- **Not reached:** `raw.githubusercontent.com` does not resolve, so `check-citations` cannot run in a task and is left to
+  the forge's *Shared rules check*.
 - **Missing in the context:** the repository has no `origin` remote, only the gate's, so `origin/main` in the shared
   rules' commit check is read as the gate's `main`; no `forgejo` reader was in the task, so the Build is read from the
-  operator's relay.
-- **The forge's Build and *Shared rules check* both failed** before any check ran: Maven could not resolve the parent
-  pom `porelo-parent` 0.2.1-SNAPSHOT from the local forge's registry, where it is absent. The same build passed in the
-  task, which reads Sonatype's snapshots, so the cause is not the commit; either can go green once the forge reads the
-  Porelo snapshots its registry does not hold from an upstream snapshot repository.
+  operator's relay; the mailbox lists no room by name, so the agent answers to `people`.
+- **A documents-only commit starts no Build**, because of `build.yml`'s paths filter.
 - **The commit trailer** is written by the task's hook from the session's model, and Claude Code's own attribution is
   off, so no `Co-Authored-By` line is made.
 
@@ -85,8 +81,7 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 
 - That the forge's Build and *Shared rules check* pass on this issue's commits, once the forge reads the Porelo
   snapshots its registry does not hold.
-- That the task reads its builds through the `forgejo` reader; in the trial none was in the task.
-- That the project's egress lets the task reach `raw.githubusercontent.com`, which `check-citations` reads.
+- That the task reads its builds through the `forgejo` reader; the trial had none in the task.
 - That the outside reader can fetch `porelo/<task>` from the host's forge, not only from GitHub.
 - The way back, rehearsed once: the task's open work fetched from the host's forge into the checkout here.
 - That a revoked sign-in is renewed with `porelo vault login claude --force` and a stop and start of the task: a
