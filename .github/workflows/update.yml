@@ -21,6 +21,7 @@ on:
 env:
     MAVEN_ARGS: -U
     MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
+    MAVEN_UPSTREAM_SNAPSHOTS_URL: ${{ vars.MAVEN_UPSTREAM_SNAPSHOTS_URL }}
 
 # Read-only for the workflow; the job below takes the two it needs to write, and no more.
 permissions:

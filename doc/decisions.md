@@ -30,7 +30,8 @@ repository is built.
 | [Accepted risk: the release binary and its digest share one trust root](#accepted-risk-the-release-binary-and-its-digest-share-one-trust-root) | nothing independent to verify the download against, and why that stays |
 | **The build** | |
 | [The release tooling is Porelo's, configured from the pom](#the-release-tooling-is-porelos-configured-from-the-pom) | data beside the pin, never a copy of code |
-| [A release is built from releases only](#a-release-is-built-from-releases-only) | on a tag no snapshot repository, Central's or the forge's, and a tag on a Porelo snapshot refused by the step itself |
+| [A release is built from releases only](#a-release-is-built-from-releases-only) | on a tag no snapshot repository, Central's, the forge's or the upstream one, and a tag on a Porelo snapshot refused by the step itself |
+| [Accepted risk: a forge's snapshot can lose to the upstream's](#accepted-risk-a-forges-snapshot-can-lose-to-the-upstreams) | the newer timestamp wins for one version; nothing here builds against a snapshot it publishes |
 | [Actions run from a commit, and Dependabot moves them](#actions-run-from-a-commit-and-dependabot-moves-them) | every `uses:` by commit, GraalVM by Porelo's pin, checked by `check-actions` |
 | [What an update takes, and when](#what-an-update-takes-and-when) | three days old and still the newest, verified on rented machines before the pull request |
 | [NullAway comes from `porelo-parent`](#nullaway-comes-from-porelo-parent) | one compiler configuration for every repository; `.mvn/jvm.config` stays here |
@@ -328,11 +329,13 @@ belongs in the tool as a named strategy, as the three upstream kinds are.
 Between releases everything is built on snapshots: `porelo.version`, the parent, and with the parent the release
 tooling. A tag's build takes none of them.
 
-- **No snapshot repository on a tag.** The snapshot repositories are two profiles in `settings.xml`, `standard`
-  (Central's snapshots) where no forge names its own and `forge` where `MAVEN_SNAPSHOTS_URL` does; a profile's
-  activation takes one property only, so `build.yml` sets `MAVEN_ARGS` to `-P!standard,!forge` on a tag and to `-U`
-  elsewhere. Measured: with it, a build from an empty local repository cannot resolve the snapshot parent, with
-  `MAVEN_SNAPSHOTS_URL` set and without; without it, it does in both cases.
+- **No snapshot repository on a tag.** The snapshot repositories are three profiles in `settings.xml`: `standard`
+  (Central's snapshots) where no forge names its own, `forge` where `MAVEN_SNAPSHOTS_URL` does, and `upstream` where
+  `MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the snapshots a forge's registry does not hold come from. A profile's
+  activation takes one property only, so `build.yml` sets `MAVEN_ARGS` to `-P!standard,!forge,!upstream` on a tag
+  and to `-U` elsewhere. `UpstreamSnapshotsTest` fails when a profile that reads snapshots is left out of it.
+  Measured: with it, a build from an empty local repository cannot resolve the snapshot parent, with
+  `MAVEN_SNAPSHOTS_URL` set and without, and with both variables set; without it, it does in each case.
 - **Nothing asked for again on a tag.** `-U` is in no command; `MAVEN_ARGS` carries it where it belongs, also into
   the `pinned-jdk` action.
 - **A tag on a snapshot is refused.** "Which channel" refuses a `porelo.version` that names a snapshot, in the build
@@ -343,6 +346,24 @@ tooling. A tag's build takes none of them.
   is resolved in steps that hold only the token that reads the forge's snapshots, as every step that calls Maven
   does. The other steps that hold one run only what needs it: the acceptance legs and their clean-up the cloud's key
   and the provider's, publishing the repository's token.
+
+## Accepted risk: a forge's snapshot can lose to the upstream's
+
+A forge's own registry holds only what its organization publishes, so the `upstream` profile reads every other Porelo
+snapshot from the repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, anonymously: its id has no `<server>`, so the
+forge's token goes to the forge's registry alone, which `UpstreamSnapshotsTest` holds.
+
+**The exposure:** for one snapshot version, Maven reads the metadata of every repository and takes the newest
+timestamp. Where the forge and the upstream repository both hold the same snapshot version, the upstream one can win,
+and a build is made against what the central forge published instead of what the organization's own forge did.
+
+**Why it stays:** this repository builds against no snapshot it publishes itself, and the snapshots it takes from
+upstream are published by the central forge's builds of the same repositories.
+
+**What would change it:** a forge that publishes a Porelo snapshot this repository builds against, under a version
+the central forge also publishes. Then the upstream profile names only what the forge does not hold, or the forge
+mirrors upstream itself.
+
 ## Actions run from a commit, and Dependabot moves them
 
 Every `uses:` names a full commit with its release beside it, `@<commit> # vX.Y.Z`. A tag is a name its

@@ -15,14 +15,15 @@ on:
         paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**', 'porelo.yml']
     workflow_dispatch:
 
-# Read by every Maven call, the pinned-jdk action's too. On a tag -P!standard,!forge: no snapshot repository and
-# nothing asked for again, so a release is built from releases only. Elsewhere -U: Maven asks for a newer snapshot
+# Read by every Maven call, the pinned-jdk action's too. On a tag -P!standard,!forge,!upstream: no snapshot
+# repository and nothing asked for again, so a release is built from releases only. Elsewhere -U: Maven asks for a newer snapshot
 # once a day, and a cache restored the day Porelo publishes would keep yesterday's.
 # The same file runs on GitHub and on the local Forgejo; what differs between them is only the values of variables
 # and secrets present on both: the snapshot repository Maven reads (settings.xml), and whether this forge publishes.
 env:
-    MAVEN_ARGS: ${{ startsWith(github.ref, 'refs/tags/v') && '-P!standard,!forge' || '-U' }}
+    MAVEN_ARGS: ${{ startsWith(github.ref, 'refs/tags/v') && '-P!standard,!forge,!upstream' || '-U' }}
     MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
+    MAVEN_UPSTREAM_SNAPSHOTS_URL: ${{ vars.MAVEN_UPSTREAM_SNAPSHOTS_URL }}
 
 # Read-only: nothing in this workflow writes to the repository with its token.
 permissions:

@@ -14,6 +14,7 @@ permissions:
 # As in the Build workflow: the snapshot repository Maven reads, a variable present on GitHub and the local Forgejo.
 env:
     MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
+    MAVEN_UPSTREAM_SNAPSHOTS_URL: ${{ vars.MAVEN_UPSTREAM_SNAPSHOTS_URL }}
 
 jobs:
     check:
