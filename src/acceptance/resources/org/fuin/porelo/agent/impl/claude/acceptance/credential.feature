@@ -65,9 +65,12 @@ Feature: A task authenticates without ever holding the credential
         And I wait for the shell inside the container
         Then the terminal shows "token"
         And the terminal does not show the value of "PORELO_E2E_OPENROUTER_API_KEY"
-        When I run "claude --model ${PORELO_E2E_MODEL} -p 'Reply with exactly the word PORELOLIVE and nothing else.'"
+        # Each command splits the word it waits for with '', so its typed line never shows it and only its output can.
+        When I run "claude --model ${PORELO_E2E_MODEL} -p 'Reply with exactly the word PORELO''LIVE and nothing else.'"
         Then within 240 seconds the terminal shows "PORELOLIVE"
-        When I run "env"
+        # Only the line asked for: the whole env is taller than the screen, and the attached tmux draws only what is
+        # left on it, so a line that scrolled past in one burst never reached this terminal.
+        When I run "env | grep '^ANTHROPIC_API''_KEY='"
         Then the terminal shows "ANTHROPIC_API_KEY="
         And the terminal does not show the value of "PORELO_E2E_OPENROUTER_API_KEY"
         When I run "exit"
