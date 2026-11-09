@@ -30,15 +30,20 @@ which takes the definition's `as_root` lines unchanged into the agent's layer of
   so `ClaudeSettings` keeps none.
 - **Unit tests (red first, before the line and the guard exist):** the packaged definition's `as_root` holds that
   `ENV` line, read through the agent API's own reader; the settings document holds no `PermissionRequest` hook and
-  does not carry the variable in its `env`, where it would look set and do nothing.
-- **Acceptance scenario (the real CLI in a real task, which nothing lower can show), on the rented test host:** an
-  unattended task of class `guarded` is told to run the loop below unchanged; the scenario asserts the effect, that
-  the file the loop touches after its `rm` exists and the task's output names the next command's marker, within the
-  task's own time limit, and fails fast when the output shows the check's text. Red first: the same scenario with the
-  `ENV` line taken out of the installed definition.
-- **The decision** goes into `doc/decisions.md`: the exposure (an `rm` whose variable is empty removes a top-level
-  path inside the container, not on the host), why it stays (the container and its egress are a task's boundary, and
-  the workspace is a clone behind the gate), and what would change it (a task that mounts a host path writable).
+  does not carry the variable in its `env`, where it would look set and do nothing. They keep the line from being
+  dropped or moved; that the CLI honors it only the scenarios below show.
+- **Acceptance scenarios (the real CLI in a real task, which nothing lower can show), on the rented test host, one
+  unattended and one attended:** the task is told to run the loop below unchanged, its directories made by the loop
+  itself. The scenarios assert the effect - the loop's directories are gone and the file it touches after its `rm`
+  exists - and, unattended, that no tool result in the session's `stream-json` carries the check's refusal; attended,
+  that the screen never shows the question. Each fails fast on the check's text. Red first: both with the `ENV` line
+  taken out of the installed definition. The update job runs these legs on every pin bump, so a CLI that renames or
+  drops the variable fails its bump.
+- **The decision** goes into `doc/decisions.md`: the exposure (an `rm` whose variable is empty removes what the agent
+  may write under `/`: the workspace, its home, and the two mounts it writes, its own mailbox and the vault socket's
+  directory; nothing of the host besides), why it stays (the check is no boundary - it reads only the text of an `rm` - while
+  the container and its egress are, and the workspace is a clone behind the gate), and what would change it (a task
+  that mounts a host path writable beyond its own mailbox).
 
 ## Acceptance
 
@@ -71,6 +76,23 @@ switch on: reads outside the working directories when `permissions.blockReadsOut
 isolation from peer machines, a restricted mode, and an unfinished check that only a person at the host may answer.
 That last reading is inferred from the names and was not measured.
 
-## To be checked
+Read where the binary raises them: `restrictedMode` only while a restriction is configured, which the adapter's
+settings never set; `isolatePeerMachines` only for messages and files sent to another session; `unfinishedCheck`
+only when the CLI's own permission check fails to finish ("its safety checks did not run"), an internal failure no
+setting waives and no scenario provokes, so it stays a known exposure.
 
-- Whether `restrictedMode` or `unfinishedCheck` can arise in a task, read where the binary sets them.
+## Plan reading
+
+Read by another model; taken: the attended scenario, asserting the removal and the session's tool results rather than
+the agent's words, the pin bump as the guard of the variable's name, the mailbox in the exposure. Declined, with the
+reason:
+
+- A `PermissionRequest` hook, an `ENV` that clears the variable, or a tmux setting that unsets it, written by a
+  project, its image or the person starting the task, drops the waiver: that is their own choice, which Porelo does
+  not guard against. Written by the agent, it stops only its own task, which its pushed change shows.
+- An agent removing its own home or settings breaks only its own task; the key the CLI would then show is the phantom
+  token Porelo minted for that task.
+- An image built before the change keeps the old environment: not so, the agent's layers are rendered into every
+  task's build and a changed line rebuilds them; the fingerprint leaves them out only to tell a project's image apart.
+- A waived check lets the agent push or send more: it does not, the waiver touches only the `rm` check, and what
+  leaves a task goes through its gate and egress as before.
