@@ -1,6 +1,6 @@
 # CC52 — The First Words Agree With The Task
 
-**Status:** Backlog.
+**Status:** Implementing.
 **Size:** S - the wording of the three first-words texts for the adapters' tasks of class `online`, no code and no
 contract.
 
