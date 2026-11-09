@@ -1,6 +1,6 @@
 # CC51 — A Task Never Stops On A Question Of Claude Code
 
-**Status:** Backlog.
+**Status:** Implementing.
 **Size:** M - one change to the settings the adapter writes, measured on the pin first, and one acceptance scenario
 with the real CLI.
 

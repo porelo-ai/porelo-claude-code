@@ -15,11 +15,16 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | — | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
 | <a id="cc39"></a>[CC39](CC39-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CC38](#cc38) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
-## Backlog
+## Implementing
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | — | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario |
+
+## Backlog
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
 | <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | — | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | — | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
 
