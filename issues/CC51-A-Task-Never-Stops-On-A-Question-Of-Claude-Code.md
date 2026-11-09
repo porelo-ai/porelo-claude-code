@@ -18,23 +18,27 @@ the one command that hit it is not enough: the agent writes its own commands, an
 
 ## Plan
 
-Read in today's `ClaudeSettings` (the settings file with `defaultMode: bypassPermissions`, the `SessionStart` hook
-that installs the commit trailer) and `claude.yaml`'s `sandboxed` key.
+Read in today's `ClaudeSettings` (the settings file with `defaultMode: bypassPermissions`, its deny rules and the
+`SessionStart` hook that installs the commit trailer), `claude.yaml`'s `install` block, and Porelo's Containerfile,
+which takes the definition's `as_root` lines unchanged into the agent's layer of the task image.
 
-- **Measure first, on the pin, in a task on the VM, attended and headless (`-p`):** which checks still ask under
-  bypass mode. The rm check is one; the others are read from the pinned binary's texts and each is tried once.
-- **The answer, in the order tried:** a `PreToolUse` hook for `Bash` in the settings `ClaudeSettings` writes, which
-  answers `allow`; if the safety check still asks after it, the setting the binary names for that check. What is
-  taken is the first one measured to let the command run at once. If none lets it run, the check is answered with
-  an immediate deny, so the agent sees the refusal and rewrites the command instead of waiting; that is said in the
-  channel before it is built.
-- **Unit test:** the settings document holds the answer for `Bash`, read from the document and not from a constant
-  of the class; if the answer is a command, its output for a `Bash` tool call is asserted.
-- **Acceptance scenario (the real CLI, which nothing lower can show):** an unattended task is told to run
-  `rm -rf $EMPTY/<marker>` with `EMPTY` unset and a marker directory under the workspace; the scenario asserts the
-  effect, that the command ran and the session went on, within one minute, and fails fast when the screen shows the
-  question.
-- **Red first:** that scenario on today's settings, seen to stop on the question.
+- **The answer, measured below:** the image sets `CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1` in its
+  environment, by an `ENV` line in `claude.yaml`'s `install.as_root`, so every start of the CLI in a task has it,
+  attended, headless and resumed, and the dangerous-rm check is waived in bypass mode. Not in the settings' `env`:
+  there it has no effect. The `PreToolUse` hook is not taken: it does not reach past the check.
+- **The settings stay free of what clears the waiver:** the binary drops it while a `PermissionRequest` hook is set,
+  so `ClaudeSettings` keeps none.
+- **Unit tests (red first, before the line and the guard exist):** the packaged definition's `as_root` holds that
+  `ENV` line, read through the agent API's own reader; the settings document holds no `PermissionRequest` hook and
+  does not carry the variable in its `env`, where it would look set and do nothing.
+- **Acceptance scenario (the real CLI in a real task, which nothing lower can show), on the rented test host:** an
+  unattended task of class `guarded` is told to run the loop below unchanged; the scenario asserts the effect, that
+  the file the loop touches after its `rm` exists and the task's output names the next command's marker, within the
+  task's own time limit, and fails fast when the output shows the check's text. Red first: the same scenario with the
+  `ENV` line taken out of the installed definition.
+- **The decision** goes into `doc/decisions.md`: the exposure (an `rm` whose variable is empty removes a top-level
+  path inside the container, not on the host), why it stays (the container and its egress are a task's boundary, and
+  the workspace is a clone behind the gate), and what would change it (a task that mounts a host path writable).
 
 ## Acceptance
 
@@ -45,22 +49,28 @@ that installs the commit trailer) and `claude.yaml`'s `sandboxed` key.
 
 ## Measured on 2.1.311
 
-With the settings the adapter writes today, the binary run directly with its own home, attended in a terminal and
-headless (`-p`):
+The binary run directly on a VM with its own home, the settings the adapter writes today, attended in a terminal and
+headless (`-p`), with an OpenRouter model:
 
 - `rm -rf $UNSET/name` with the variable unset in the environment runs at once, attended and headless: the check
   questions only a target that can expand to `/`, `/*` or a top-level directory.
 - `DEST=$PWD/x; for slug in one two; do mkdir -p $DEST/$slug/y; rm -rf $DEST/$slug; done` stops on the check.
   Attended, the question is on the screen within 14 seconds and the CLI denies it by itself later; headless, it is
   denied at once and the agent reads "Dangerous rm operation detected ... requires explicit approval".
+- The same loop written `rm -rf "${DEST:?}/${slug:?}"` runs at once, attended and headless.
 - A `PreToolUse` hook for `Bash` answering `allow` is called, and the check still asks attended and still denies
   headless: a hook does not reach past it.
-- The binary marks this check as immune to bypass mode but waivable in it, by an environment variable that names
-  itself as even more dangerous than skipping permissions, and it says the variable has no effect while
-  permission rules or `PermissionRequest` hooks are set.
+- `CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1` in the process environment lets the loop run at once,
+  attended and headless, with the adapter's deny rules in place; the CLI then shows a one-line notice at its start
+  and waits for nothing. In the settings' `env` it changes nothing: the loop stops as before.
+
+What still asks under bypass mode, read in the binary's table of safety checks: the dangerous-rm check (also covering
+`rm` inside `sh -c` scripts and command substitutions) is the only one marked waivable. Four more are marked immune
+to bypass mode and not waivable; by their names and the texts beside them they belong to features a task does not
+switch on: reads outside the working directories when `permissions.blockReadsOutsideWorkingDirectories` is set,
+isolation from peer machines, a restricted mode, and an unfinished check that only a person at the host may answer.
+That last reading is inferred from the names and was not measured.
 
 ## To be checked
 
-- Whether that variable, set in the settings' `env` or in the process environment, lets the loop above run at once,
-  attended and headless, with the adapter's own deny rules in place.
-- Which other checks of 2.1.311 still ask under bypass mode, besides the rm check.
+- Whether `restrictedMode` or `unfinishedCheck` can arise in a task, read where the binary sets them.
