@@ -22,6 +22,7 @@ repository is built.
 | [Waiting for a person is read from the question's own last line](#waiting-for-a-person-is-read-from-the-questions-own-last-line) | the line only a question draws, in the last lines of the screen |
 | [A task that comes back continues its conversation](#a-task-that-comes-back-continues-its-conversation) | the session id read from Claude Code's own record, unattended or attached |
 | [The agent keeps no memory of its own in a task](#the-agent-keeps-no-memory-of-its-own-in-a-task) | what holds across tasks is the repository's reviewed `AGENTS.md` |
+| [Accepted risk: the CLI's rm check is waived in a task](#accepted-risk-the-clis-rm-check-is-waived-in-a-task) | a task never stops on it; the container, not the check, is the boundary |
 | **On the host** | |
 | [What the adapter finds of Claude Code on the host](#what-the-adapter-finds-of-claude-code-on-the-host) | files only, never a value; "cannot say" where the shell or a project could change the answer |
 | **The pinned CLI** | |
@@ -138,6 +139,30 @@ shows *"false"*, and Enter on that menu entry leaves it false and the file uncha
 - **Nothing in a task's home reaches the next task today:** a file left in one task's `/home/agent`
   was gone in the next, `.claude/projects` in the home with it. So the switch matters within a task stopped and
   started again, and for whatever a later change keeps or mounts.
+
+## Accepted risk: the CLI's rm check is waived in a task
+
+A task's Claude Code never stops to ask a person whether to run a command: unattended there is nobody to ask, and a
+task waiting at a question is a task that does nothing. Bypass mode does not skip one check: an `rm` whose target
+can expand to `/`, `/*` or a top-level directory when a variable is empty, such as `rm -rf $DEST/$slug` in a loop.
+
+**Measured on Claude Code 2.1.311**, attended and headless, with the settings the adapter writes: the check asked
+within seconds attended and denied at once headless. A `PreToolUse` hook answering `allow` was called and did not
+reach past it. `CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1` waived it from the process environment, with
+the adapter's deny rules in place, and changed nothing in the settings' `env`. So the task image sets it with an
+`ENV` line, and the settings keep no `PermissionRequest` hook, which the binary says makes the variable have no
+effect.
+
+- **The exposure:** an `rm` whose variable is empty removes what the agent may write under `/`: the workspace, its
+  home, and the two mounts it writes, its own mailbox and the directory of the vault's socket. Nothing else of the
+  host is mounted writable.
+- **Why it stays:** the check reads only the text of an `rm` and is no boundary; the container and its egress are,
+  and the workspace is a clone whose work leaves only through the gate. A person at a terminal outside a task keeps
+  the check, since nothing sets the variable there.
+- **What would change the answer:** a task that mounts a host path writable beyond its own mailbox, or a CLI whose
+  variable waives more than this check.
+- **What still asks:** the CLI's own question when its permission check fails to finish ("its safety checks did not
+  run"); no setting waives it, and it was not seen in a task.
 
 ## The CLI does not update itself in a task
 

@@ -19,6 +19,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
+- A task's agent no longer stops on Claude Code's question about an `rm` on a variable that may be empty, which bypass mode did not skip; the task image waives that check.
 - The package says that the `porelo-wire` classes in its executable are under Apache-2.0, in its
   Debian copyright and its RPM license, with the license's text beside the GPL's in the RPM.
 - `vault import` takes the API key a Console sign-in keeps in `.claude.json` in the home.

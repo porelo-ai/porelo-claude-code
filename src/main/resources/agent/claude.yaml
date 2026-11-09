@@ -194,3 +194,10 @@ install:
           license: "SEE LICENSE IN README.md"
           target: /home/agent/.local/bin/claude
           mode: "0755"
+    as_root:
+        - "# Bypass mode does not skip the check of an rm on a variable that may be empty: measured on 2.1.311,"
+        - "# it asked attended and denied headless, a PreToolUse hook answering allow did not reach past it, and"
+        - "# this variable waived it only from the process environment, not from the settings' env. The container"
+        - "# is a task's boundary, not this check: doc/decisions.md, \"Accepted risk: the CLI's rm check is waived"
+        - "# in a task\"."
+        - "ENV CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1"
