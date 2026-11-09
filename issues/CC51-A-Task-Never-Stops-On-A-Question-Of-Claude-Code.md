@@ -1,6 +1,6 @@
 # CC51 — A Task Never Stops On A Question Of Claude Code
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** M - one change to the settings the adapter writes, measured on the pin first, and one acceptance scenario
 with the real CLI.
 
@@ -39,11 +39,11 @@ which takes the definition's `as_root` lines unchanged into the agent's layer of
   that the screen never shows the question. Each fails fast on the check's text. Red first: both with the `ENV` line
   taken out of the installed definition. The update job runs these legs on every pin bump, so a CLI that renames or
   drops the variable fails its bump.
-- **The decision** goes into `doc/decisions.md`: the exposure (an `rm` whose variable is empty removes what the agent
-  may write under `/`: the workspace, its home, and the two mounts it writes, its own mailbox and the vault socket's
-  directory; nothing of the host besides), why it stays (the check is no boundary - it reads only the text of an `rm` - while
-  the container and its egress are, and the workspace is a clone behind the gate), and what would change it (a task
-  that mounts a host path writable beyond its own mailbox).
+- **The decision** goes into `doc/decisions.md`: the exposure (an `rm` whose variable is empty removes what the
+  agent may write under `/`: the workspace, its home, and the two mounts it writes, its own mailbox and the vault
+  socket's directory; nothing of the host besides), why it stays (the check is no boundary - it reads only the text
+  of an `rm` - while the container and its egress are, and the workspace is a clone behind the gate), and what would
+  change it (a task that mounts a host path writable beyond its own mailbox).
 
 ## Acceptance
 
@@ -96,3 +96,10 @@ reason:
   task's build and a changed line rebuilds them; the fingerprint leaves them out only to tell a project's image apart.
 - A waived check lets the agent push or send more: it does not, the waiver touches only the `rm` check, and what
   leaves a task goes through its gate and egress as before.
+
+## Code reading
+
+Read by another model; taken: the unattended scenario also fails on any `permission_denied` record, whatever the
+refusal is worded as, so a command rewritten after a refusal does not pass; the attached scenario reads the session's
+own record for the refusal instead of a screen that may have moved on. Both seen red on the adapter without the `ENV`
+line and green with it.
