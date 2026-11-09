@@ -1,6 +1,6 @@
 # CC52 — The First Words Agree With The Task
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** S - the wording of the three first-words texts for the adapters' tasks of class `online`, no code and no
 contract.
 
@@ -14,32 +14,39 @@ replace inside a task, when it writes in the room, and a skill fetch no safety c
 The first words are kept outside the repository, beside the guide for a move, one text per task; each changes in the
 same way.
 
-- **Where it pushes.** The texts name the branch `porelo/<task>`, while the task's push setting sends a plain
-  `git push` to the gate's ref `incoming/<task>`, and the move's pull requests came from `porelo/<task>`. They say:
-  push with a plain `git push`, never to `main`, and name the branch the pull request shows.
-- **The checks.** The texts call `.github/workflows/shared-rules.yml` the list and then name `check-actions` and
-  `check-commits`, which that workflow does not run. The list is the hand-over checks of `AGENTS.md`'s shared block:
-  `check-shared`, `check-citations`, `check-commits`, `check-readmes`, `check-doc-site`, `check-actions` and the tests
-  tagged `documents`. The texts name that block as the list and say which of them the forge runs again
-  (`shared-rules.yml`, and `check-actions` in `workflows.yml`); `check-commits` runs only in the task.
-- **What they replace.** Two rules of the shared block do not hold in a task: the agent pushes its task branch itself,
-  and it sets Implementing and Review on that branch. The texts say both plainly, as replacing those rules in the
-  task, rather than leaving the agent to find the contradiction.
+- **Where it pushes.** A plain `git push` from the task reaches the gate's ref `incoming/<task>`, and the gate
+  passes it on to the forge as the branch `porelo/<task>`, which the pull request shows. The texts say: push with a
+  plain `git push`, never to `main`, and name that branch as the one the pull request shows.
+- **The checks.** The texts called `.github/workflows/shared-rules.yml` the list and then named `check-actions`,
+  which that workflow does not run. The list is the hand-over checks of `AGENTS.md`'s shared block: `check-shared`,
+  `check-citations`, `check-commits`, `check-readmes`, `check-doc-site`, `check-actions` and the tests tagged
+  `documents`. The texts name that block as the list and say where the forge runs them again: the Build on a push
+  (`check-commits`, `check-actions`), the Shared rules check on the pull request (the others, and `check-commits`).
+- **What they replace.** Three rules of the shared block do not hold in a task: the agent pushes its task branch
+  itself, it sets Implementing and Review on that branch, and it writes to the operator itself, in its session and
+  the host's room. The texts say all three plainly, as replacing those rules in the task, rather than leaving the
+  agent to find the contradiction.
 - **The room.** An agent writes in the room only when it needs a decision or an action from a person, when it is
-  stuck, or when its work is done. Progress, check lists and estimates stay in its session.
-- **The skill fetch** writes `rm -rf "${DEST:?}/${slug:?}"`, so the shell refuses an empty variable and no agent's
-  safety check stops on it.
+  stuck, when it answers a line or a finding posted there, when a step of its first words asks for it, or when its
+  work is done. Progress, check lists, estimates and Build results stay in its session.
+- **The skill fetch** writes `rm -rf "${DEST:?}/${slug:?}"`, so the shell refuses an empty variable. Measured on
+  Claude Code 2.1.311 under bypass mode, attended and headless: the loop with this form runs at once, the same loop
+  with `rm -rf $DEST/$slug` stops on the dangerous-rm check.
 - **No test:** the texts are wording a person reads, and the next move is where they are seen to work; that the
   agent never stops on such a command is guarded by the adapter itself
   ([CC51](README.md#cc51)).
 
 ## Acceptance
 
-- Each of the three texts states the push, the list of checks, the two replaced rules, the room rule and the guarded
+- Each of the three texts states the push, the list of checks, the three replaced rules, the room rule and the guarded
   `rm` as above.
 - An agent given them reports no contradiction between them and its task at the start of the next move.
 
-## To be checked
+## Reading
 
-- How a plain push to `incoming/<task>` becomes the pull request's branch, read in Porelo's gate, so the texts name
-  what the agent sees.
+Declined findings of the reading, with the reason:
+
+- The check of citations may be named as not run when the task's egress refuses its host: the texts state that
+  exception and forbid reporting it green, so nothing is done silently less.
+- Pi's packages left to the forge's Build, and Pi's planted red Build kept as two commits, are what that move asked
+  of Pi, not what the first words claim of every task.

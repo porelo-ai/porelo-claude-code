@@ -8,6 +8,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | — | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
 | <a id="cc47"></a>[CC47](CC47-Snapshots-Not-Published-On-The-Forge-Come-From-Upstream.md) | S | — | on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone, a tag still built from releases only |
 | <a id="cc46"></a>[CC46](CC46-A-Task-Writes-Its-Own-Commit-Trailer.md) | M | — | a task's commits end with `Assisted-by: Claude Code, <model>` written by a git hook from the session's own model, with Claude Code's own attribution switched off in the settings the adapter writes |
 | <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | — | no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin |
@@ -20,7 +21,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | — | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario |
-| <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | — | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
 
 ## Backlog
 
