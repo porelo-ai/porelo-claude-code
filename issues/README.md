@@ -12,6 +12,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner |
 | <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | - | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
+| <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | - | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again |
 
 ## Accepted
 
