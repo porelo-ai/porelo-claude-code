@@ -1,7 +1,20 @@
 # CC44 — Subagents Only As Many As The Task Allows
 
-**Status:** Review.
-**Size:** S - one module and its tests, no contract other repositories read; about 45 minutes: the S median of
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC44",
+  "title": "Subagents Only As Many As The Task Allows",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 5,
+  "blockedBy": [],
+  "covers": "no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin"
+}
+```
+
+**Why this size.** one module and its tests, no contract other repositories read; about 45 minutes: the S median of
 24.5, raised by the scenario on the VM and the attended check of the three switches.
 
 **What must be true.** Claude Code in a Porelo task starts no subagent unless the task allows it, and then no

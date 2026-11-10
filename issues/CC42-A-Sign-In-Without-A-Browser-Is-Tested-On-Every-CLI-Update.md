@@ -1,6 +1,18 @@
 # CC42 — A Sign-In Without A Browser Is Tested On Every CLI Update
 
-**Status:** Idea.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC42",
+  "title": "A Sign-In Without A Browser Is Tested On Every CLI Update",
+  "state": "Idea",
+  "size": "-",
+  "priority": "Medium",
+  "rank": 3,
+  "blockedBy": [],
+  "covers": "the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump"
+}
+```
 
 **What must be true.** `porelo vault login` for Claude Code, started over `ssh -t` in a host account with no browser
 opener set, shows its link and waits for the pasted code, and the link it shows names no loopback address as its

@@ -1,7 +1,20 @@
 # CC45 — Mutation Testing With PIT
 
-**Status:** Backlog.
-**Size:** S - one profile in `pom.xml` and a report in this issue, no contract.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC45",
+  "title": "Mutation Testing With PIT",
+  "state": "Backlog",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones"
+}
+```
+
+**Why this size.** one profile in `pom.xml` and a report in this issue, no contract.
 
 **What must be true.** A person can run mutation testing over this repository by hand and read which changes to the
 code no test notices, sorted into real gaps and harmless ones.

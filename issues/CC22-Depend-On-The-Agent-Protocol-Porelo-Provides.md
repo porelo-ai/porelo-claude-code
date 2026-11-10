@@ -1,8 +1,23 @@
 # CC22 — Depend on the agent protocol Porelo's package provides
 
-**Status:** Estimated; waits for Porelo's packages providing its lowest agent protocol version.
-**Size:** S - here two dependency lines and one test; Porelo's `Provides` is Porelo's own change, and
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC22",
+  "title": "Depend on the agent protocol Porelo's package provides",
+  "state": "Estimated",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 2,
+  "blockedBy": [],
+  "covers": "the agent contract named at install time"
+}
+```
+
+**Why this size.** here two dependency lines and one test; Porelo's `Provides` is Porelo's own change, and
 `porelo-pi`, `porelo-omp`, `porelo-codex` and `porelo-agy` take the same lines, each in an issue of its own.
+
+**How it stands.** Waits for Porelo's packages providing its lowest agent protocol version.
 
 **What must be true.** Installing this adapter beside a Porelo that speaks another agent protocol is
 refused by the package manager, not at the first task.

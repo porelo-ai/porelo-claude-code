@@ -1,9 +1,23 @@
 # CC23 — Sign the RPMs, together with Porelo's
 
-**Status:** Estimated; waits for Porelo's packaging key, the CI secret that carries it and the day every
-repository switches to signed RPMs.
-**Size:** S - here one pom property and a key step in the release job; the key, its CI secret, the day
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC23",
+  "title": "Sign the RPMs, together with Porelo's",
+  "state": "Estimated",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "package-level signatures on the published RPMs"
+}
+```
+
+**Why this size.** here one pom property and a key step in the release job; the key, its CI secret, the day
 every repository switches and the legs that install with `gpgcheck=1` are Porelo's signing change.
+
+**How it stands.** Waits for Porelo's packaging key, the CI secret that carries it and the day every repository switches to signed RPMs.
 
 **What must be true.** A Fedora user installs this adapter with `gpgcheck=1`, and a package whose
 signature does not fit is refused.

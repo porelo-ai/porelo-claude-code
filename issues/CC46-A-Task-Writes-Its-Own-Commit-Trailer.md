@@ -1,7 +1,20 @@
 # CC46 — A Task Writes Its Own Commit Trailer
 
-**Status:** Review.
-**Size:** M - the settings file, a git hook and its git configuration written into the container, a measurement at the
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC46",
+  "title": "A Task Writes Its Own Commit Trailer",
+  "state": "Review",
+  "size": "M",
+  "priority": "Medium",
+  "rank": 4,
+  "blockedBy": [],
+  "covers": "a task's commits end with `Assisted-by: Claude Code, <model>` written by a git hook from the session's own model, with Claude Code's own attribution switched off in the settings the adapter writes"
+}
+```
+
+**Why this size.** the settings file, a git hook and its git configuration written into the container, a measurement at the
 pin; no contract of another repository changes.
 
 **What must be true.** A commit Claude Code makes in a Porelo task ends with `Assisted-by: Claude Code, <model>`, the

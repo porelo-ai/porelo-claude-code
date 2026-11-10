@@ -1,7 +1,20 @@
 # CC51 — A Task Never Stops On A Question Of Claude Code
 
-**Status:** Review.
-**Size:** M - one change to the settings the adapter writes, measured on the pin first, and one acceptance scenario
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC51",
+  "title": "A Task Never Stops On A Question Of Claude Code",
+  "state": "Review",
+  "size": "M",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario"
+}
+```
+
+**Why this size.** one change to the settings the adapter writes, measured on the pin first, and one acceptance scenario
 with the real CLI.
 
 **What must be true.** A task's Claude Code never stops to ask a person whether to run a command. A command one of

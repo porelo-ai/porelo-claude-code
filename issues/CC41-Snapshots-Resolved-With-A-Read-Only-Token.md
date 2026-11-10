@@ -1,8 +1,23 @@
 # CC41 — Snapshots Resolved With A Read-Only Token, A Forge Without Its Registry Refused
 
-**Status:** Review; the central forge's side built, the local forge's measured on a local Forgejo.
-**Size:** S - the workflows and `settings.xml` of this one repository, no contract another
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC41",
+  "title": "Snapshots Resolved With A Read-Only Token, A Forge Without Its Registry Refused",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 7,
+  "blockedBy": [],
+  "covers": "on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start"
+}
+```
+
+**Why this size.** the workflows and `settings.xml` of this one repository, no contract another
 repository reads.
+
+**How it stands.** The central forge's side built, the local forge's measured on a local Forgejo.
 
 **What must be true.** On a forge other than the central one, no step of `porelo-claude-code`'s workflows that builds or tests
 holds a token that can write the forge's package registry: Maven resolves snapshots with the read-only package token

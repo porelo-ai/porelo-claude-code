@@ -1,7 +1,20 @@
 # CC50 — The Tests Follow The Pyramid
 
-**Status:** Accepted.
-**Size:** S - two scenario files and one test class, no contract.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC50",
+  "title": "The Tests Follow The Pyramid",
+  "state": "Accepted",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms"
+}
+```
+
+**Why this size.** two scenario files and one test class, no contract.
 
 **What must be true.** Every flow this adapter owns is proven by unit tests that run in seconds. The end-to-end legs
 show only what the real Claude Code and the installed package alone can show, and no test waits longer than the

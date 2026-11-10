@@ -1,49 +1,49 @@
 # Issues
 
-What is open in this repository, grouped by state in the order Review, Rework, Implementing, Backlog,
-Analyzed, Accepted, Idea, Estimated, Finished and Rejected; a group with nothing in it is left out.
+What is open in this repository, grouped by state in the order of [workflow.yml](workflow.yml); a group
+with nothing in it is left out. The index is generated from the issues' heads and never edited by hand.
 Within a group, the order is the priority. The number is identity, not sequence.
-
-## Review
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | — | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario |
-| <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | — | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
-| <a id="cc47"></a>[CC47](CC47-Snapshots-Not-Published-On-The-Forge-Come-From-Upstream.md) | S | — | on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone, a tag still built from releases only |
-| <a id="cc46"></a>[CC46](CC46-A-Task-Writes-Its-Own-Commit-Trailer.md) | M | — | a task's commits end with `Assisted-by: Claude Code, <model>` written by a git hook from the session's own model, with Claude Code's own attribution switched off in the settings the adapter writes |
-| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | — | no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin |
-| <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind, green on a local Forgejo |
-| <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | — | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
-| <a id="cc39"></a>[CC39](CC39-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CC38](#cc38) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
-
-## Backlog
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | — | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
-
-## Accepted
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | — | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms |
 
 ## Idea
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) |  | — | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class |
-| <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) |  | — | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner |
-| <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) |  | — | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
-| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) |  | [CC38](#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
+| <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | - | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class |
+| <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner |
+| <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
+| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | - | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
+
+## Accepted
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | - | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms |
 
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | — | package-level signatures on the published RPMs |
-| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | — | the agent contract named at install time |
+| <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | - | package-level signatures on the published RPMs |
+| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time |
+
+## Backlog
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
+
+## Review
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | - | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario |
+| <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | - | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
+| <a id="cc47"></a>[CC47](CC47-Snapshots-Not-Published-On-The-Forge-Come-From-Upstream.md) | S | - | on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone, a tag still built from releases only |
+| <a id="cc46"></a>[CC46](CC46-A-Task-Writes-Its-Own-Commit-Trailer.md) | M | - | a task's commits end with `Assisted-by: Claude Code, <model>` written by a git hook from the session's own model, with Claude Code's own attribution switched off in the settings the adapter writes |
+| <a id="cc44"></a>[CC44](CC44-Subagents-Only-As-Many-As-The-Task-Allows.md) | S | - | no subagent in a task unless the task allows it, then at most as many as it says; off, count and depth measured to hold at the pin |
+| <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | - | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind, green on a local Forgejo |
+| <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | - | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start |
+| <a id="cc39"></a>[CC39](CC39-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CC38](README.md#cc38) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
 ## Finished
 

@@ -1,6 +1,20 @@
 # CC40 — The Acceptance Legs Run On The Host's Forge
 
-**Status:** Idea; waits for machines asked for by kind from the host's pool on the forge.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC40",
+  "title": "The Acceptance Legs Run On The Host's Forge",
+  "state": "Idea",
+  "size": "-",
+  "priority": "Medium",
+  "rank": 4,
+  "blockedBy": ["CC38"],
+  "covers": "the acceptance legs on the host's pool again, once it lends a forge job a machine by kind"
+}
+```
+
+**How it stands.** Waits for machines asked for by kind from the host's pool on the forge.
 
 **What must be true.** On the host's forge, `porelo-claude-code`'s Build runs its acceptance legs again, each on a machine of
 its kind from the host's pool, so a change made in a task is tested on Ubuntu and Fedora before it reaches the

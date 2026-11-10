@@ -1,7 +1,20 @@
 # CC47 — Snapshots Not Published On The Forge Come From Upstream
 
-**Status:** Review.
-**Size:** S - `settings.xml`, the workflows' variables and one test of this repository; the variable's name is agreed
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC47",
+  "title": "Snapshots Not Published On The Forge Come From Upstream",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 3,
+  "blockedBy": [],
+  "covers": "on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone, a tag still built from releases only"
+}
+```
+
+**Why this size.** `settings.xml`, the workflows' variables and one test of this repository; the variable's name is agreed
 with the host's forge role.
 
 **What must be true.** On a forge whose own registry holds only what its organization publishes, a Build of

@@ -1,10 +1,24 @@
 # CC38 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Review; on a local Forgejo the Build, the shared rules and the workflow check run green, and the central
-forge's side is unchanged; what only a host shows is named below.
-**Size:** S - the workflows and `settings.xml` of this one repository, no contract another repository reads; about
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC38",
+  "title": "The Build Runs On The Local Forge As On The Central One",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 6,
+  "blockedBy": [],
+  "covers": "the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind, green on a local Forgejo"
+}
+```
+
+**Why this size.** the workflows and `settings.xml` of this one repository, no contract another repository reads; about
 3 hours of work, the first of the three adapters, whose shape porelo-pi and porelo-omp then copy, plus the runs on the
 local Forgejo.
+
+**How it stands.** On a local Forgejo the Build, the shared rules and the workflow check run green, and the central forge's side is unchanged; what only a host shows is named below.
 
 **What must be true.** `porelo-claude-code`'s workflows run green on the local Forgejo and on the central forge on the same
 commit, with no edit between them: the machines its legs rent are asked for by kind, and the registry and the

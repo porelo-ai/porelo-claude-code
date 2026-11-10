@@ -1,7 +1,20 @@
 # CC52 — The First Words Agree With The Task
 
-**Status:** Review.
-**Size:** S - the wording of the three first-words texts for the adapters' tasks of class `online`, no code and no
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CC52",
+  "title": "The First Words Agree With The Task",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 2,
+  "blockedBy": [],
+  "covers": "the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch"
+}
+```
+
+**Why this size.** the wording of the three first-words texts for the adapters' tasks of class `online`, no code and no
 contract.
 
 **What must be true.** The first words an adapter repository's agent gets at the start of its task (Claude Code's,
