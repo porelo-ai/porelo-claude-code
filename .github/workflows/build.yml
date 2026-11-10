@@ -6,7 +6,7 @@ name: Build
 # content builds with it.
 on:
     push:
-        branches: ['**']
+        branches: [main]
         # A release: v<version>, built and published to the 'releases' channel. Paths are not filtered for a tag.
         tags: ['v*']
         paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**', 'porelo.yml']
