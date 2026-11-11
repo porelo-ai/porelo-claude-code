@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC54",
   "title": "The Busy Scenario Holds Its Loop In The Foreground",
-  "state": "Idea",
+  "state": "Accepted",
   "size": "-",
   "priority": "Medium",
   "rank": 6,

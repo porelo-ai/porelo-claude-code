@@ -8,18 +8,18 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | - | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class |
 | <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner |
-| <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
-| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | - | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
-| <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | - | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again |
-| <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself |
 
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | - | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class |
 | <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | - | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms |
+| <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
+| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | - | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind |
+| <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | - | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again |
+| <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself |
 
 ## Estimated
 
