@@ -39,6 +39,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc57"></a>[CC57](CC57-Measure-What-The-Agents-Streams-Tell-About-Tool-Calls.md) | S | - | a measurement, no product code: each agent Porelo runs, given the same small order unattended in a task, and what its raw stream says of each tool call - name, input, start, end, own time, background jobs, sub-agents - and how the wall time splits |
+
 ## Review
 
 | # | Size | Blocked by | What it covers |
