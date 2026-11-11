@@ -227,10 +227,23 @@ class ClaudeToolEventsTest {
                                 "2026-11-11T16:13:57.292Z",
                                 "ISSUE-7",
                                 null));
+        // Porelo moves a call whose job is named to that job: a foreground sub-agent ends when
+        // its Agent call returns, so its task names no job.
         assertThat(agent.toolEvents(SUB_AGENT_JOB_STARTED))
-                .as("the sub-agent's job keeps its name and joins the Agent call")
-                .extracting(ToolEvent::id, ToolEvent::kind, ToolEvent::jobId, ToolEvent::name)
-                .containsExactly(tuple("toolu_019X", Kind.SUB_AGENT, "aebe", "ISSUE-7"));
+                .as("the task of a sub-agent in the foreground")
+                .isEmpty();
+        assertThat(
+                        agent.toolEvents(
+                                SUB_AGENT_JOB_STARTED.replace(
+                                        "\"is_backgrounded\":false", "\"is_backgrounded\":true")))
+                .as("the job of a sub-agent in the background keeps its name and joins the call")
+                .extracting(
+                        ToolEvent::id,
+                        ToolEvent::kind,
+                        ToolEvent::jobId,
+                        ToolEvent::name,
+                        ToolEvent::background)
+                .containsExactly(tuple("toolu_019X", Kind.SUB_AGENT, "aebe", "ISSUE-7", true));
         assertThat(agent.toolEvents(CALL_UNDER_SUB_AGENT))
                 .as("a call the sub-agent makes names the Agent call it ran under")
                 .extracting(ToolEvent::id, ToolEvent::parent)

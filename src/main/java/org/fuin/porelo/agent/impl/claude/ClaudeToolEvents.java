@@ -17,9 +17,12 @@ import org.jspecify.annotations.Nullable;
  * <p>A call starts with a {@code tool_use} block in an {@code assistant} line and ends with the
  * {@code tool_result} of the same id in a {@code user} line, both at the line's own {@code
  * timestamp}. A job in the background starts with {@code system/task_started}, which names the
- * call, and ends with {@code system/task_updated} at its {@code end_time}. A call a sub-agent makes
- * names the {@code Agent} call it ran under in {@code parent_tool_use_id}. Nothing of a tool's
- * output and no input but a shell call's command line and a sub-agent's name is passed on.
+ * call, and ends with {@code system/task_updated} at its {@code end_time}; a task Claude Code
+ * starts in the foreground is no such job, and one it moves to the background later, as a shell
+ * call past its timeout, ends when its call returns, since that line names no call. A call a
+ * sub-agent makes names the {@code Agent} call it ran under in {@code parent_tool_use_id}. Nothing
+ * of a tool's output and no input but a shell call's command line and a sub-agent's name is passed
+ * on.
  */
 final class ClaudeToolEvents {
 
@@ -130,7 +133,10 @@ final class ClaudeToolEvents {
 
     private static List<ToolEvent> jobStarted(final Map<?, ?> event, final String job) {
         final String id = text(event.get("tool_use_id"));
-        if (id == null) {
+        // Porelo moves a call whose job is named to that job, so only a job in the background is
+        // named: a task in the foreground, a sub-agent's or a long shell call's, ends when its
+        // call returns.
+        if (id == null || !Boolean.TRUE.equals(event.get("is_backgrounded"))) {
             return List.of();
         }
         final boolean agent = "local_agent".equals(event.get("task_type"));
@@ -142,7 +148,7 @@ final class ClaudeToolEvents {
                         agent ? "Agent" : "Bash",
                         agent ? Kind.SUB_AGENT : Kind.SHELL,
                         null,
-                        Boolean.TRUE.equals(event.get("is_backgrounded")),
+                        true,
                         job,
                         null,
                         agent ? text(event.get("description")) : null,
