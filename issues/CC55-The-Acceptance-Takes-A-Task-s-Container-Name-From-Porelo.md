@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC55",
   "title": "The Acceptance Takes A Task's Container Name From Porelo",
-  "state": "Implementing",
+  "state": "Review",
   "size": "XS",
   "priority": "High",
   "rank": 1,

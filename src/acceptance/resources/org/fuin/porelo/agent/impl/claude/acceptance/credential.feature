@@ -75,10 +75,9 @@ Feature: A task authenticates without ever holding the credential
         And the terminal does not show the value of "PORELO_E2E_OPENROUTER_API_KEY"
         When I run "exit"
         Then the terminal shows "ready$"
-        # The task is named so its container is known: porelo-<project>-<task>. Checked before it is removed,
-        # so a change to that rule fails here with the name shown rather than later with none.
-        And the terminal shows "container porelo-live-shell"
-        When a script runs "porelo task remove porelo-live-shell --force"
+        # The start names its container; the task is removed by its own name, never one built from that rule.
+        And the terminal shows "container porelo-"
+        When a script runs "porelo task remove shell --force"
         Then it exits zero
 
     @slow
@@ -170,7 +169,7 @@ Feature: A task authenticates without ever holding the credential
         And a project called "refused" of class "guarded" with a file in it
         When a script runs "timeout 300 porelo task start talk --project refused --repository refused --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --prompt 'Reply with OK only.'"
         # The start returns while the agent still runs; its end shows once the agent has written it.
-        And a script runs "for i in $(seq 60); do porelo task status porelo-refused-talk | grep -q 'with an error' && break; sleep 5; done; porelo task status porelo-refused-talk"
+        And a script runs "for i in $(seq 60); do porelo task status talk | grep -q 'with an error' && break; sleep 5; done; porelo task status talk"
         Then its output contains "with an error"
         And its output contains "the provider"
         When a script runs "porelo project remove refused --force"
@@ -185,7 +184,7 @@ Feature: A task authenticates without ever holding the credential
         And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"
         And a project called "mailbox" of class "guarded" with a file in it
         When a script runs "timeout 300 porelo task start talk --project mailbox --repository mailbox --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --prompt 'Without using any tool: in which directory do new messages for you arrive? Reply with its absolute path only.'"
-        And a script runs "for i in $(seq 60); do porelo task status porelo-mailbox-talk | grep -q 'ended' && break; sleep 5; done; grep -E '\"(assistant|result)\"' /run/user/$(id -u)/porelo/porelo-mailbox-talk/task.log"
+        And a script runs "for i in $(seq 60); do porelo task status talk | grep -q 'ended' && break; sleep 5; done; grep -E '\"(assistant|result)\"' /run/user/$(id -u)/porelo/$(porelo task status talk --json | grep -o '\"name\": *\"[^\"]*\"' | head -n 1 | cut -d'\"' -f4)/task.log"
         Then its output contains "/run/porelo/mail/inbox/new"
         When a script runs "porelo project remove mailbox --force"
         Then it exits zero

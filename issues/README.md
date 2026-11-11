@@ -33,16 +33,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc55"></a>[CC55](CC55-The-Acceptance-Takes-A-Task-s-Container-Name-From-Porelo.md) | XS | - | the acceptance scenarios name a task by its own name in Porelo's commands and take its container's name from `porelo task status --json`, never built as `porelo-<project>-<task>` |
-
 ## Review
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc55"></a>[CC55](CC55-The-Acceptance-Takes-A-Task-s-Container-Name-From-Porelo.md) | XS | - | the acceptance scenarios name a task by its own name in Porelo's commands and take its container's name from `porelo task status --json`, never built as `porelo-<project>-<task>` |
 | <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | - | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario |
 | <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | - | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch |
 | <a id="cc47"></a>[CC47](CC47-Snapshots-Not-Published-On-The-Forge-Come-From-Upstream.md) | S | - | on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone, a tag still built from releases only |

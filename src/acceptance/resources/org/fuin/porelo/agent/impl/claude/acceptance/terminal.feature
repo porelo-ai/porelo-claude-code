@@ -53,7 +53,7 @@ Feature: What a person sees with this agent, before there is any credential
         And I press Enter
         Then within 30 seconds this script exits zero:
             """
-            screen=$(podman exec porelo-nomem-nomem tmux capture-pane -p -t porelo)
+            screen=$(podman exec "$(porelo task status nomem --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo)
             printf '%s\n' "$screen" | grep -qE 'Auto-memory +false' && exit 0
             printf 'screen, last lines:\n'; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
             exit 1

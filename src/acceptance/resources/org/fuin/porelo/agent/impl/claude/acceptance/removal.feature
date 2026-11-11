@@ -44,7 +44,7 @@ Feature: A task never stops on Claude Code's question about an rm
         # And the session's own record holds no refusal of the check, which a question timed out would have left.
         Then within 90 seconds this script exits zero:
             """
-            podman exec porelo-brush-brush sh -c 'test -e /workspace/cc51-gone && ! grep -rqi "dangerous rm operation" /home/agent/.claude/projects'
+            podman exec "$(porelo task status brush --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" sh -c 'test -e /workspace/cc51-gone && ! grep -rqi "dangerous rm operation" /home/agent/.claude/projects'
             """
         And the terminal does not show "Do you want to proceed"
         When a script runs "porelo project remove brush --force"
