@@ -57,3 +57,10 @@ What it means for the adapters:
 - codex gives neither in its stream. Its session files have them (spawn with name, start and end with times), but
   those are not lines of the stream the adapter reads.
 - In a pi or agy task no issue can be measured alone.
+
+## Decisions
+
+- The operator, 2026-11-11: features are built only for agents run in the task. No adapter reads codex's session
+  files; a codex task's time, like a pi or an agy task's, is shared evenly among its issues.
+- agy's larger task log with `stream-json` is accepted.
+- An END passes the duration the stream gives (`durationMs`); porelod dates a start without a time of its own from it.
