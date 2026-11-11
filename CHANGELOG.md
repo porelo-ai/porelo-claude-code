@@ -30,6 +30,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - A task's agent no longer refuses `raw.githubusercontent.com`; it resolves where the project grants it, so `check-citations` runs in a Claude Code task.
 - The code is in the shared style, google-java-format in its AOSP variant, with YAML and Gherkin at four spaces, and `validate` refuses code that is not; `.git-blame-ignore-revs` lets `git blame` skip the commit that reformatted it.
 - No checkout leaves the job's token in `.git/config`; the weekly update's push alone gets it, from its own environment in that one step.
+- The CI takes the runner's distribution packages and the Claude Code binary the update job checks from the Actions cache, keyed by the package list's hash and the binary's digest, each file checked against its hash before use, so an outage of a package mirror or the download host fails only a run on a new pin.
 - The weekly update neither calls its pull request green nor merges it unless every step before succeeded, so a step ended by its time limit or a cancel stops it.
 - A release is not uploaded when the release index cannot be read, and the weekly update fails when deleting its rented machines fails.
 - The Build passes the event and the ref into its shell through the environment, so a branch's name is never run as a command.

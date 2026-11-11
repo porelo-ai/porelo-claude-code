@@ -145,27 +145,55 @@ jobs:
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-pin \
                       || echo "STOP=the pinned version and digest disagree" >> "$GITHUB_ENV"
 
+            # The pin is the pom property; claude.yaml names the download with it in place of the version.
+            - name: The pinned CLI's download
+              id: cli
+              if: steps.plan.outputs.proceed == 'yes' && !env.STOP
+              run: |
+                  set -eu
+                  VERSION="$(sed -n 's|^        <agent.cli.version>\(.*\)</agent.cli.version>$|\1|p' pom.xml | head -1)"
+                  TEMPLATE="$(sed -n 's|^        - url: \(.*\)$|\1|p' src/main/resources/agent/claude.yaml | head -1)"
+                  SHA256="$(sed -n 's|^          sha256: "\(.*\)"$|\1|p' src/main/resources/agent/claude.yaml | head -1)"
+                  if [ -z "$VERSION" ] || [ -z "$TEMPLATE" ] || [ -z "$SHA256" ]; then
+                      echo "STOP=the pinned download could not be read" >> "$GITHUB_ENV"
+                      exit 0
+                  fi
+                  {
+                      echo "version=$VERSION"
+                      echo "url=${TEMPLATE//'${agent.cli.version}'/$VERSION}"
+                      echo "sha256=$SHA256"
+                  } >> "$GITHUB_OUTPUT"
+
+            # From the Actions cache on a pin a run has seen before; its download host only on a new one.
+            - name: The pinned CLI
+              id: download
+              if: steps.plan.outputs.proceed == 'yes' && !env.STOP
+              continue-on-error: true
+              uses: ./.github/actions/agent-downloads
+              with:
+                  url: ${{ steps.cli.outputs.url }}
+                  sha256: ${{ steps.cli.outputs.sha256 }}
+                  name: claude
+
             # A subscription login is renewed with a token URL and client id read out of the binary, and a
             # release that moves them breaks renewal while every other gate stays green.
             - name: The pinned CLI still renews where the adapter says
               if: steps.plan.outputs.proceed == 'yes' && !env.STOP
+              env:
+                  VERSION: ${{ steps.cli.outputs.version }}
+                  BIN: ${{ steps.download.outputs.file }}
+                  DOWNLOADED: ${{ steps.download.outcome }}
               run: |
                   set -eu
+                  if [ "$DOWNLOADED" != success ]; then
+                      echo "STOP=Claude Code $VERSION could not be downloaded as pinned" >> "$GITHUB_ENV"
+                      exit 0
+                  fi
                   EXTRACTOR=src/main/java/org/fuin/porelo/agent/impl/claude/ClaudeCredentialExtractor.java
                   TOKEN_URL="$(sed -n 's|^    static final String TOKEN_URL = "\(.*\)";$|\1|p' "$EXTRACTOR")"
                   CLIENT_ID="$(sed -n 's|^    static final String CLIENT_ID = "\(.*\)";$|\1|p' "$EXTRACTOR")"
-                  # The pin is the pom property; claude.yaml names the download with it in place of the version.
-                  VERSION="$(sed -n 's|^        <agent.cli.version>\(.*\)</agent.cli.version>$|\1|p' pom.xml | head -1)"
-                  TEMPLATE="$(sed -n 's|^        - url: \(.*\)$|\1|p' src/main/resources/agent/claude.yaml | head -1)"
-                  SHA256="$(sed -n 's|^          sha256: "\(.*\)"$|\1|p' src/main/resources/agent/claude.yaml | head -1)"
-                  if [ -z "$TOKEN_URL" ] || [ -z "$CLIENT_ID" ] || [ -z "$VERSION" ] || [ -z "$TEMPLATE" ] || [ -z "$SHA256" ]; then
-                      echo "STOP=the token URL, client id or pinned download could not be read" >> "$GITHUB_ENV"
-                      exit 0
-                  fi
-                  BIN="target/claude-$VERSION"
-                  . .github/actions/pinned-jdk/pinned.sh
-                  if ! pinned_fetch "${TEMPLATE//'${agent.cli.version}'/$VERSION}" "$SHA256" "$BIN"; then
-                      echo "STOP=Claude Code $VERSION could not be downloaded as pinned" >> "$GITHUB_ENV"
+                  if [ -z "$TOKEN_URL" ] || [ -z "$CLIENT_ID" ]; then
+                      echo "STOP=the token URL or client id could not be read" >> "$GITHUB_ENV"
                       exit 0
                   fi
                   # Its production endpoints, one object literal; the development one starts with localhost.

@@ -1,0 +1,63 @@
+# The agent's pinned CLI a job reads, from the Actions cache, kept under agent-cli-<sha256>: a run on a pin it has seen
+# before reaches no download host for it. On a hit and on a miss the file goes through pinned_fetch, which keeps a file
+# that matches its pin and fetches one that does not, so a changed entry is refused and fetched again; a fetch that
+# passed its check is saved at once. GitHub removes an entry nobody read for 7 days, so an old pin's entry goes by
+# itself. Needs pinned.sh of the pinned-jdk action beside it.
+name: Agent CLI download
+description: Restores or fetches the agent's pinned CLI, checked against its sha256, and names the file in its output.
+inputs:
+    url:
+        description: Where the pinned file is served.
+        required: true
+    sha256:
+        description: Its pinned sha256.
+        required: true
+    name:
+        description: The file's name in the cache's directory.
+        required: true
+outputs:
+    file:
+        description: The checked file.
+        value: ${{ steps.pin.outputs.file }}
+runs:
+    using: composite
+    steps:
+        - name: The pin
+          id: pin
+          shell: bash
+          env:
+              SHA256: ${{ inputs.sha256 }}
+              NAME: ${{ inputs.name }}
+          run: |
+              set -euo pipefail
+              # Both go into a key and a path, so each must be what it claims.
+              [[ $SHA256 =~ ^[0-9a-f]{64}$ ]] || { echo "::error::the pinned sha256 is '$SHA256'"; exit 1; }
+              [[ $NAME =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "::error::the file name is '$NAME'"; exit 1; }
+              echo "file=$HOME/.cache/porelo-pinned/agent-cli/$NAME" >> "$GITHUB_OUTPUT"
+
+        - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          id: cache
+          with:
+              path: ~/.cache/porelo-pinned/agent-cli
+              key: agent-cli-${{ inputs.sha256 }}
+
+        # A download from github.com goes with the job's token, in this step alone.
+        - name: The pinned CLI, checked against its digest
+          shell: bash
+          env:
+              PORELO_PINNED_GITHUB_TOKEN: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+              URL: ${{ inputs.url }}
+              SHA256: ${{ inputs.sha256 }}
+              FILE: ${{ steps.pin.outputs.file }}
+          run: |
+              set -euo pipefail
+              . "$GITHUB_ACTION_PATH/../pinned-jdk/pinned.sh"
+              # Only the pinned file: whatever else an older entry held would only grow this one.
+              find "$(dirname "$FILE")" -mindepth 1 -maxdepth 1 ! -name "$(basename "$FILE")" -delete 2> /dev/null || true
+              pinned_fetch "$URL" "$SHA256" "$FILE"
+
+        - if: steps.cache.outputs.cache-hit != 'true'
+          uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          with:
+              path: ~/.cache/porelo-pinned/agent-cli
+              key: agent-cli-${{ inputs.sha256 }}
