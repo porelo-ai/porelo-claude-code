@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC56",
   "title": "The Adapter Reports Each Tool Call With Its Time",
-  "state": "Implementing",
+  "state": "Review",
   "size": "M",
   "priority": "High",
   "rank": 1,
@@ -73,7 +73,3 @@ its own time gets, the masking of a command line and where the entry is kept are
 - A shell call keeps its whole command line, not only its program. Porelo masks it before it is stored; the adapter
   passes the line as the stream gives it.
 - A task gives each issue a sub-agent of its own, named by the issue's id; an issue's time is its sub-agent's span.
-
-## To be checked
-
-- The agent API with `name` and `parent` on `ToolEvent`, installed locally to build against.

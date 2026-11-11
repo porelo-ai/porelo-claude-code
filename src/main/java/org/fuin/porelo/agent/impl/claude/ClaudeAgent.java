@@ -1,18 +1,20 @@
 package org.fuin.porelo.agent.impl.claude;
 
+import java.util.List;
 import org.fuin.porelo.agent.api.AgentEnd;
 import org.fuin.porelo.agent.api.AgentMain;
 import org.fuin.porelo.agent.api.ContainerSetup;
 import org.fuin.porelo.agent.api.CredentialExtractor;
 import org.fuin.porelo.agent.api.Finder;
 import org.fuin.porelo.agent.api.LogFormatter;
+import org.fuin.porelo.agent.api.ToolEvent;
 import org.fuin.porelo.agent.api.YamlAgent;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Claude Code.
  *
- * <p>Five overrides, all because the definition genuinely cannot express them, and all living here
+ * <p>Six overrides, all because the definition genuinely cannot express them, and all living here
  * rather than in Porelo:
  *
  * <ul>
@@ -20,7 +22,8 @@ import org.jspecify.annotations.Nullable;
  *   <li>what it finds of itself on the host depends on several files read in Claude's own order;
  *   <li>a fresh container needs the files Claude reads at its first run and its settings;
  *   <li>the output is a stream of JSON objects rather than lines of text;
- *   <li>how the run ended is read from the last of those objects, the result line.
+ *   <li>how the run ended is read from the last of those objects, the result line;
+ *   <li>the tool calls are read from those objects, by the ids that join a call's start and end.
  * </ul>
  *
  * Everything else is {@code claude.yaml}.
@@ -61,6 +64,11 @@ public final class ClaudeAgent extends YamlAgent {
     @Override
     public @Nullable AgentEnd ended(String line) {
         return ClaudeStreamJsonFormatter.ended(line);
+    }
+
+    @Override
+    public List<ToolEvent> toolEvents(String line) {
+        return ClaudeToolEvents.of(line);
     }
 
     /**

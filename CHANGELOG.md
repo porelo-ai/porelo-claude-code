@@ -17,6 +17,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - The adapter says what it finds of Claude Code on the host: how it is signed in and to which provider, each finding with its path and never a value.
 - The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; the Porelo it builds against reads the key, and its agent listing names the flow.
 - The package carries the full license texts of what its executable compiles in from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in `THIRD-PARTY-NOTICES`, in its doc directory and as an RPM license file, and its Debian copyright names them.
+- The adapter reads each tool call out of an unattended run's stream for Porelo: its tool, kind and times, a shell call's command line, a background job's end, and a sub-agent's name and the calls made under it.
 
 ### Changed
 
