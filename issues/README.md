@@ -33,6 +33,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
+
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
 | <a id="cc60"></a>[CC60](CC60-The-Build-Takes-Its-Downloads-From-A-Cache.md) | S | - | the Claude Code binary the update job checks and the runner's packages come from the Actions cache, keyed by digest or package manifest, so an outage of their hosts no longer fails a run that already ran once; what must stay live is named, and an entry nobody reads for 7 days is removed by GitHub |
 
 ## Review
