@@ -355,12 +355,17 @@ Between releases everything is built on snapshots: `porelo.version`, the parent,
 tooling. A tag's build takes none of them.
 
 - **No snapshot repository on a tag.** The snapshot repositories are three profiles in `settings.xml`: `standard`
-  (Central's snapshots) where no forge names its own, `forge` where `MAVEN_SNAPSHOTS_URL` does, and `upstream` where
-  `MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the snapshots a forge's registry does not hold come from. A profile's
-  activation takes one property only, so `build.yml` sets `MAVEN_ARGS` to `-P!standard,!forge,!upstream` on a tag
-  and to `-U` elsewhere. `UpstreamSnapshotsTest` fails when a profile that reads snapshots is left out of it.
-  Measured: with it, a build from an empty local repository cannot resolve the snapshot parent, with
-  `MAVEN_SNAPSHOTS_URL` set and without, and with both variables set; without it, it does in each case.
+  (Central's snapshots, under the id `central.sonatype.snapshots`, asked only for `org.fuin.porelo`) wherever the
+  filter's switch in `.mvn/maven.config` and its file in `.mvn/rrf/` are, on a forge too, `forge` where
+  `MAVEN_SNAPSHOTS_URL` does, and `upstream` where `MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the snapshots a forge's
+  registry does not hold come from. On a forge Sonatype is so asked beside its registry: on the local Forgejo a newer
+  snapshot of `main` on Sonatype can shadow one the forge published from a branch, and a forge that cannot reach
+  Sonatype waits on it; on GitHub the forge's repository is Sonatype itself and unfiltered. Accepted with the filter,
+  by the coordinator on 2026-11-12. A profile's activation takes one property only, so `build.yml` sets `MAVEN_ARGS`
+  to `-P!standard,!forge,!upstream` on a tag and to `-U` elsewhere. `UpstreamSnapshotsTest` fails when a profile that
+  reads snapshots is left out of it. Measured: with it, a build from an empty local repository cannot resolve the
+  snapshot parent, with `MAVEN_SNAPSHOTS_URL` set and without, and with both variables set; without it, it does in
+  each case.
 - **Nothing asked for again on a tag.** `-U` is in no command; `MAVEN_ARGS` carries it where it belongs, also into
   the `pinned-jdk` action.
 - **A tag on a snapshot is refused.** "Which channel" refuses a `porelo.version` that names a snapshot, in the build
