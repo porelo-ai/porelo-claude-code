@@ -74,6 +74,10 @@ headless:
 session:
     supports_resume: true
     resume_flag: "--resume"
+    # How an attended session takes its opening text: last and positional. 'claude --help': "starts an
+    # interactive session by default ... [prompt] Your prompt"; '-p', the headless prompt flag, is print mode.
+    # Measured on 2.1.311 in an attended task: it answers the text as its first turn, then rests at its prompt.
+    opening_flag: ""
     # Where it names the session it runs, so a task that comes back continues it. Measured on 2.1.267:
     # an unattended run's first record, {"type":"system","subtype":"init"}, carries
     # session_id, and the same id names its session file, ~/.claude/projects/-workspace/<id>.jsonl - the
