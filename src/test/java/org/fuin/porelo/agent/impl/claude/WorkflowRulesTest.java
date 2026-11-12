@@ -184,6 +184,54 @@ class WorkflowRulesTest {
     }
 
     @Test
+    void theAcceptanceLegsRunOnEveryForge() throws IOException {
+
+        // On the host's forge a leg takes a machine of its kind from the host's pool, told where by
+        // the forge; a condition naming GitHub's server would leave the host's forge untested until
+        // the gathered push.
+        final List<String> lines = Files.readAllLines(workflows().resolve("build.yml"));
+        final int start = lines.indexOf("    acceptance:");
+        assertThat(start).as("the acceptance job in build.yml").isNotNegative();
+        int end = start + 1;
+        while (end < lines.size() && !lines.get(end).matches("^ {4}[a-z].*:$")) {
+            end++;
+        }
+        assertThat(lines.subList(start, end))
+                .as("the acceptance job names no forge's server")
+                .noneMatch(line -> line.contains("github.server_url"));
+
+        assertThat(stepBlock("build.yml", "Acceptance on ${{ matrix.os }}"))
+                .as("the leg is given the pool's run key, empty where there is no pool")
+                .anyMatch(
+                        line ->
+                                line.trim()
+                                        .equals("PORELO_POOL_SSH: ${{ secrets.PORELO_POOL_SSH }}"));
+
+        // GitHub's artifact actions refuse every other server, so the packages travel through the
+        // cache, saved and restored under the condition the leg passes --candidate on.
+        final String key = "key: candidate-${{ github.run_id }}-${{ github.run_attempt }}";
+        final String when = "if: github.ref_type == 'tag' || vars.PORELO_PUBLISH != 'true'";
+        assertThat(lines)
+                .as("the build job saves the packages under the key the legs restore")
+                .filteredOn(line -> line.trim().equals(key))
+                .hasSize(2);
+        assertThat(stepBlock("build.yml", "The packages this run built"))
+                .map(String::trim)
+                .contains(
+                        when,
+                        key,
+                        "restore-keys: candidate-${{ github.run_id }}-",
+                        "fail-on-cache-miss: true")
+                .noneMatch(line -> line.contains("download-artifact"));
+        assertThat(stepBlock("build.yml", "Acceptance on ${{ matrix.os }}"))
+                .as("the leg passes --candidate where the packages were restored")
+                .anyMatch(
+                        line ->
+                                line.contains(
+                                        "if [ \"$GITHUB_REF_TYPE\" = tag ] || [ \"$PORELO_PUBLISH\" != true ]; then FROM=\"--package porelo-agent-claude --candidate candidate\""));
+    }
+
+    @Test
     void theUpdateJobStopsOnAnEmptyKey(@TempDir final Path dir) throws Exception {
 
         // The update job's legs run only while nothing said STOP; a leg without the key would

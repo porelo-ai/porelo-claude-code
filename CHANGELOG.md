@@ -25,6 +25,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 - Central's snapshots (`central.sonatype.snapshots`) are asked only for `org.fuin.porelo`, the group listed in `.mvn/rrf/`, through the switch in the now committed `.mvn/maven.config`, on a forge too, where they are read beside its registry and the newest wins; the forge's own repository stays unfiltered. The daily shared rules check refuses a filter that would let another name out.
 - The daily shared rules check also holds every issue head to its schema and each index to its heads.
+- The acceptance legs run on every forge, the host's lending each a machine of its kind from its pool through `PORELO_POOL_SSH`, and a leg takes the packages its run built from the Actions cache, keyed by the run; GitHub's artifact stays for the release job.
 - An acceptance leg may take 45 minutes and its job 65, since Fedora's took more than 30.
 - A task's agent no longer stops on Claude Code's question about an `rm` on a variable that may be empty, which bypass mode did not skip; the task image waives that check.
 - The package says that the `porelo-wire` classes in its executable are under Apache-2.0, in its
