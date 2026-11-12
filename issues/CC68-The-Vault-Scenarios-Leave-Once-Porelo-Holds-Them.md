@@ -30,14 +30,15 @@ three below test Porelo's vault, not this adapter:
 ## Why
 
 Split from [CC50](README.md#cc50) on 2026-11-13. Porelo's acceptance suite on `main` (916577457) proves `porelo
-setup` and `porelo doctor`, so those two scenarios left this suite with CC50. It proves none of these three:
+setup` and `porelo doctor`, so those two scenarios left this suite with [CC50](README.md#cc50). It proves none of these three:
 `vault-commands.feature` uses `--passphrase-command` and `--passphrase-stdin` only, and nothing types a passphrase
 or a value at a terminal or reads the vault file for the value. So they were handed to Porelo's agent first, and
-they stay here until Porelo's suite holds them; no coverage is dropped.
+they stay here until Porelo's suite holds them; no coverage is dropped. Porelo's agent took them as B687, *The Vault
+Typed At A Terminal Echoes No Secret* (Medium, S, Backlog), on 2026-11-13.
 
 ## Plan
 
-- Once Porelo's acceptance suite proves each of the three, delete them from `credential.feature`. The end-to-end
+- Once B687 is Done and Porelo's acceptance suite on `main` proves each of the three, delete them from `credential.feature`. The end-to-end
   count falls from 30 to 27, on both legs.
 - **Level:** the acceptance leg on Ubuntu and Fedora, through the Build.
 
