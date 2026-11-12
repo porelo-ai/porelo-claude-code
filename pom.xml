@@ -695,6 +695,46 @@
             </build>
         </profile>
 
+        <!-- Mutation testing, run by hand and read, never by verify or CI, and with no threshold:
+             no execution is bound to a phase. One class is named with -Dpit.classes=.
+
+               ./mvnw -B -s settings.xml -Ppit test-compile org.pitest:pitest-maven:mutationCoverage
+
+             The *Check classes need a built package and stay out; target/pit-reports holds the report. -->
+
+        <profile>
+            <id>pit</id>
+            <properties>
+                <pit.classes>org.fuin.porelo.agent.impl.claude.*</pit.classes>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.30.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <targetClasses>${pit.classes}</targetClasses>
+                            <targetTests><param>org.fuin.porelo.agent.impl.claude.*Test</param></targetTests>
+                            <excludedClasses><param>org.fuin.porelo.agent.impl.claude.package-info</param></excludedClasses>
+                            <excludedMethods><param>main</param></excludedMethods>
+                            <threads>4</threads>
+                            <timeoutConstant>10000</timeoutConstant>
+                            <timestampedReports>false</timestampedReports>
+                            <outputFormats><param>HTML</param><param>XML</param></outputFormats>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 </project>
