@@ -28,6 +28,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | S | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again | 0 |
 | <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself | 0 |
 
+## Backlog
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc66"></a>[CC66](CC66-The-Protocol-Refusal-Played-As-A-Person-Would.md) | S | - | a script plays story ST35 on the test VM as a person would: Claude Code's adapter installs beside a Porelo it speaks with and is refused beside one it does not, and `task start --now` is refused rather than accepted without effect; part of ST347 |
+
 ## Implementing
 
 | # | Size | Blocked by | What it covers | Open questions |
