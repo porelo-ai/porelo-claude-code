@@ -309,7 +309,8 @@ jobs:
     acceptance:
         name: Acceptance - ${{ matrix.os }}
         runs-on: ubuntu-26.04
-        timeout-minutes: 55
+        # The acceptance step's limit and some 20 minutes for the steps around it.
+        timeout-minutes: 65
         needs: [build, proof]
         # The proof is skipped on a tag and a dispatch, and a failed one proves nothing: the legs run then.
         # Only on GitHub while the repository moves: the host's pool lends no forge job a machine by kind yet.
@@ -356,7 +357,8 @@ jobs:
 
             # PORELO_E2E_OPENROUTER_API_KEY turns the tier 2 half on.
             - name: Acceptance on ${{ matrix.os }}
-              timeout-minutes: 30
+              # Fedora took more than 30 minutes on 2026-11-12, its suite alone 27:51; half again as margin.
+              timeout-minutes: 45
               env:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
                   PORELO_MACHINES_API: ${{ secrets.PORELO_MACHINES_API }}
