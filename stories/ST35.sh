@@ -71,7 +71,7 @@ stand_in() {
             echo "ST35: B230's porelo provides no porelo-agent-protocol to repack" >&2
             return 1
         }
-    dpkg-deb -b "$dir" "$WORK/porelo-$lowest.deb" >/dev/null
+    dpkg-deb --root-owner-group -b "$dir" "$WORK/porelo-$lowest.deb" >/dev/null
     printf '%s\n' "$WORK/porelo-$lowest.deb"
 }
 

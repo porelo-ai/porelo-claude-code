@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC66",
   "title": "The Protocol Refusal Played As A Person Would",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -86,4 +86,22 @@ for an issue not yet in Review.
   binary of the published 0.5.4~snapshot.165, since only the package's relations change. That spares a native build on
   a host with 8 GB free.
 - `porelo task start --now` with nothing else: whether the unknown option is reported before a missing argument once
-  B201 removes it.
+  B201 removes it. Open: today porelo reports "no project named" first and never looks at `--now`, so the play stays
+  `waiting on B201` until B201's build is played.
+
+## Runs
+
+Both runs were on `ubuntu26.04` as `smith2`, with `WAITING="B201"`. They played B230's porelo
+0.5.1~snapshot.500+local.20261112T201242 and [CC22](README.md#cc22)'s adapter 0.5.4~snapshot.9022, and put back
+porelo 0.5.1~snapshot.500+local.20261112T193932 and porelo-agent-claude 0.5.4~snapshot.165 after each run.
+
+- **Run 1** (2026-11-12, 22:35Z): plays 1 to 4 passed and `now` was waiting on B201; ST35: `waiting on B201`.
+  - Script fault: `dpkg-deb -b` warned that the stand-ins' root was owned by the account, not root. Fixed with
+    `--root-owner-group`.
+  - Product faults: none.
+- **Run 2** (2026-11-12, 22:44Z), after the fix: the same verdicts, with no warning. `porelo agents` listed `claude`
+  from `/usr/libexec/porelo/agents/porelo-agent-claude`.
+  - lowest-6 was refused, naming `porelo-agent-protocol (<= 5)`.
+  - lowest-2 was refused, naming `(>= 3)`.
+  - The day's porelo was refused, naming both.
+  - ST35: `waiting on B201`; packages put back.
