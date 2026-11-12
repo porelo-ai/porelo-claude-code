@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC40",
   "title": "The Acceptance Legs Run On The Host's Forge",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "Medium",
   "rank": 4,
