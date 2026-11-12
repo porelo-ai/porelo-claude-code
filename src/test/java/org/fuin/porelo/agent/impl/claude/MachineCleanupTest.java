@@ -41,4 +41,26 @@ class MachineCleanupTest {
                     .isNotZero();
         }
     }
+
+    @Test
+    void aLegThatNeverResolvedTheToolingSaysSoAndPasses(@TempDir final Path dir) throws Exception {
+
+        final List<String> steps = WorkflowSteps.named("build.yml", "Delete what this run created");
+        assertThat(steps).as("the acceptance job's cleanup step").hasSize(1);
+        final Path bin = dir.resolve("bin");
+        final Path called = dir.resolve("java-called");
+        WorkflowSteps.stub(
+                bin,
+                "java",
+                "touch '" + called + "'\necho \"Could not find or load main class\" >&2\nexit 1\n");
+
+        final WorkflowSteps.Run run =
+                WorkflowSteps.run(steps.get(0), dir, Map.of("PATH", WorkflowSteps.pathWith(bin)));
+
+        assertThat(run.exit())
+                .as("exit of the cleanup without target/cp.txt:%n%s", run.output())
+                .isZero();
+        assertThat(run.output()).contains("this leg rented nothing to delete");
+        assertThat(called).as("the sweep is not started without its classpath").doesNotExist();
+    }
 }

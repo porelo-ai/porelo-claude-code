@@ -366,7 +366,7 @@ jobs:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
-            # Before anything is created, so the cleanup below always has something to run.
+            # Before anything is created; a leg that fails before it has the tooling rented nothing, and the cleanup says so.
             - name: Resolve the machine tooling
               env:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
@@ -406,7 +406,10 @@ jobs:
               env:
                   PORELO_MACHINES_API: ${{ secrets.PORELO_MACHINES_API }}
                   PORELO_CI_LEG: acc-${{ matrix.os }}
-              run: java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine
+              # Only the tooling rents, from that classpath, so a leg that never resolved it rented nothing.
+              run: |
+                  [ -s target/cp.txt ] || { echo "::notice::The machine tooling was never resolved, so this leg rented nothing to delete."; exit 0; }
+                  java -cp "$(cat target/cp.txt)" org.fuin.porelo.machines.Main sweep --mine
 
     # A release is never replaced and is what people install, so it waits for every job of the run, the legs
     # on rented machines included. A snapshot publishes from the build job, beside a leg still running.

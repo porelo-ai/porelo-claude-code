@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC49",
   "title": "The Clean-Up Says When Nothing Was Rented",
-  "state": "Implementing",
+  "state": "Review",
   "size": "XS",
   "priority": "Medium",
   "rank": 1,
