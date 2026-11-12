@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC50",
   "title": "The Tests Follow The Pyramid",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "Medium",
   "rank": 1,
@@ -64,6 +64,10 @@ above.
 - **Porelo's flows leave this suite** (S): the five scenarios above are deleted from `credential.feature` and
   `installed.feature` once Porelo's own suite is confirmed to cover each; one it does not is handed to Porelo's
   agent first. The end-to-end count falls from 32 to 27, on both legs.
+  - Done for the two Porelo's suite covers: *the hooks register for this user* and *doctor says what this machine
+    can do* left `installed.feature`, so the count falls to 30.
+  - The three vault scenarios are not covered there. They were handed to Porelo's agent and stay until Porelo's
+    suite holds them: [CC68](README.md#cc68).
 - **The timeout test waits 100 ms** (XS): `WorkflowStepsTest` with a limit of 100 ms, seen red first by a limit
   the sleep does not reach.
 
@@ -71,7 +75,8 @@ above.
 
 - The unit suite stays under a minute, and no flow of the adapter is reached only from an integration or an
   end-to-end run.
-- The end-to-end legs hold 27 scenarios, none of which tests only Porelo.
+- The end-to-end legs hold 30 scenarios. None tests only Porelo, apart from the three vault scenarios
+  [CC68](README.md#cc68) takes out once Porelo's suite holds them.
 - `WorkflowStepsTest` takes under 0.5 s.
 
 ## Open questions
@@ -82,3 +87,11 @@ above.
 
 - Whether Porelo's own acceptance suite proves the passphrase and the stored value are echoed nowhere, the vault file
   does not hold the value, `porelo setup` registers the hooks and `porelo doctor` reports them; asked of Porelo's agent.
+  - Answered from Porelo's `main` (916577457): `machine.feature` proves setup (*setup registers the hooks for this
+    account…*) and doctor (*doctor reports whether this machine can run a task*), as `terminal.feature` does
+    (*doctor reports what this machine can do*).
+  - Not proven there: `vault-commands.feature` passes passphrases by `--passphrase-command` or
+    `--passphrase-stdin` only, and nothing types a passphrase or a value at a terminal or reads the vault file for the
+    value. Handed to Porelo's agent, and followed by [CC68](README.md#cc68).
+- Measured after the change: `WorkflowStepsTest` waits 100 ms for its hanging step, under 0.5 s in all; it was red
+  first against that bound with the old 1 s limit.

@@ -18,12 +18,14 @@ class WorkflowStepsTest {
         // A step that never ends would otherwise hang the whole suite, not fail one test.
         final long start = System.nanoTime();
         assertThatThrownBy(
-                        () -> WorkflowSteps.run("sleep 20\n", dir, Map.of(), Duration.ofSeconds(1)))
+                        () ->
+                                WorkflowSteps.run(
+                                        "sleep 20\n", dir, Map.of(), Duration.ofMillis(100)))
                 .as("a step that sleeps past its limit")
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("did not end within");
         assertThat(Duration.ofNanos(System.nanoTime() - start))
                 .as("how long the hanging step was waited for")
-                .isLessThan(Duration.ofSeconds(10));
+                .isLessThan(Duration.ofMillis(500));
     }
 }

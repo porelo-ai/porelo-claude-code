@@ -19,15 +19,6 @@ Feature: The published package on a clean machine
         Then the terminal shows "claude"
         And the terminal shows "Claude Code"
 
-    Scenario: the hooks register for this user
-        When a script runs "porelo setup"
-        Then it exits zero
-
-    Scenario: doctor says what this machine can do
-        Given a terminal on the machine
-        When I run "porelo doctor"
-        Then the terminal shows "hooks registered"
-
     Scenario: the installed version is a snapshot the next build supersedes
         # A flat snapshot is the same version every build, so 'apt upgrade' has nothing to do and
         # whoever installed yesterday stays there. Asked of dpkg or rpm, not reasoned about.
