@@ -32,8 +32,13 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc61"></a>[CC61](CC61-An-Attended-Session-Takes-An-Opening-Text.md) | S | - | an attended session of Claude Code opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task |
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
+
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc61"></a>[CC61](CC61-An-Attended-Session-Takes-An-Opening-Text.md) | S | - | an attended session of Claude Code opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task |
 
 ## Review
 
