@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC42",
   "title": "A Sign-In Without A Browser Is Tested On Every CLI Update",
-  "state": "Estimated",
+  "state": "Implementing",
   "size": "M",
   "priority": "Medium",
   "rank": 3,
