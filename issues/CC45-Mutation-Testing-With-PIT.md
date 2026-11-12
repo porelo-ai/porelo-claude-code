@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC45",
   "title": "Mutation Testing With PIT",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "Medium",
   "rank": 1,
