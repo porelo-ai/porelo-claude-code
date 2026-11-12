@@ -16,6 +16,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc64"></a>[CC64](CC64-A-WSL-Host-Keeps-The-Waived-rm-Check.md) | M | - | on a WSL host the task's Claude Code honours CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS again: a root-owned reg.exe in the task image answers Claude Code's two managed-settings queries as Windows does where no policy is set and refuses all else |
+
+## Analyzed
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
 | <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | - | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms |
 
 ## Estimated

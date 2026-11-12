@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC50",
   "title": "The Tests Follow The Pyramid",
-  "state": "Accepted",
+  "state": "Analyzed",
   "size": "S",
   "priority": "Medium",
   "rank": 1,
@@ -30,7 +30,7 @@ green Build on GitHub (run 42477630790). A class that starts a process counts as
 |---|---|---|---|---|
 | Unit | 160 | 3.1 s | 62 % | `ClaudeFindingsTest` 54, `ClaudeCredentialExtractorTest` 27, `ClaudeAgentTest` 26, `ClaudeContainerSetupTest` 16, the declaration tests (session id, waiting, run end) 11, and the document and pin rules 26 |
 | Integration | 62 + 5 | 8.9 s, plus the checks inside the 2.7 min Build job | 26 % | `ClaudeCommitTrailerTest` 20 (real git, 3.0 s), the workflow-step tests 42 (bash with stand-in tools, real git), and the `dist` checks of the built packages (`NativeLinkageCheck` 2, `PackageVersionCheck` 3) |
-| End-to-end | 30 scenarios | 17.6 min (fedora) and 19.0 min (ubuntu), one rented machine each | 12 % | `credential` 10, `installed` 8, `terminal` 5, `session` 3, `wake` 2, `subscription` 1, `waiting` 1 |
+| End-to-end | 32 scenarios | 17.6 min (fedora) and 19.0 min (ubuntu), one rented machine each | 12 % | `credential` 10, `installed` 8, `terminal` 5, `session` 3, `wake` 2, `removal` 2, `subscription` 1, `waiting` 1 |
 
 The unit share is below the pyramid's 70-80 % because the Build's own workflow steps are bash and are proven by
 running them with stand-in tools, which is their lowest level. The adapter's Java has no class reached only from
@@ -63,7 +63,7 @@ above.
 
 - **Porelo's flows leave this suite** (S): the five scenarios above are deleted from `credential.feature` and
   `installed.feature` once Porelo's own suite is confirmed to cover each; one it does not is handed to Porelo's
-  agent first. The end-to-end count falls from 30 to 25, on both legs.
+  agent first. The end-to-end count falls from 32 to 27, on both legs.
 - **The timeout test waits 100 ms** (XS): `WorkflowStepsTest` with a limit of 100 ms, seen red first by a limit
   the sleep does not reach.
 
@@ -71,8 +71,12 @@ above.
 
 - The unit suite stays under a minute, and no flow of the adapter is reached only from an integration or an
   end-to-end run.
-- The end-to-end legs hold 25 scenarios, none of which tests only Porelo.
+- The end-to-end legs hold 27 scenarios, none of which tests only Porelo.
 - `WorkflowStepsTest` takes under 0.5 s.
+
+## Open questions
+
+- None. The five scenarios that test only Porelo leave the suite only where Porelo's own suite is confirmed to cover them (under *To be checked*); one it does not cover goes to Porelo's agent first, so no coverage is dropped.
 
 ## To be checked
 
