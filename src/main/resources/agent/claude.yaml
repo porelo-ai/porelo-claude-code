@@ -106,13 +106,19 @@ session:
     # 2.1.267 at a terminal: a question it puts ends with "Enter to select · ↑/↓ to
     # navigate · Esc to cancel", and the first-run consents with "Enter to confirm · Esc to cancel".
     # Both are gone once answered. At work its last lines say "esc to interrupt", never "cancel",
-    # and at rest neither. Unattended there is nothing to read: a run that asks ends like one that
+    # and at rest neither. Unattended there is no screen to read: a run that asks ends like one that
     # finished.
     waiting:
         screen:
             - contains: "Esc to cancel"
               in_last_lines: 5
               for: "an answer to its question"
+        # 2.1.311 ends an unattended run with a result record whose result is the last reply
+        # alone. A run the API refused ends in a result of subtype success too, its text the error;
+        # its terminal_reason, api_error rather than completed, is what tells it apart.
+        last_message:
+            record: { type: result, subtype: success, terminal_reason: completed }
+            text: result
 
 provider:
     # Anthropic's half - upstream, headers, prefixes - is declared once in

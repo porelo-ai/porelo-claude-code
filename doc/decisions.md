@@ -483,3 +483,24 @@ is Porelo's changelog check, proposed to logchange upstream first, and keeps thr
 own commit only, documentation is not exempt, and a range that cannot be compared fails.
 
 **What would change it:** Porelo's changelog check landing, or logchange being adopted here.
+
+## A finished run's last message
+
+An unattended run of 2.1.311 ends in a `result` record whose `result` is the run's last reply
+alone, read in a run recorded in a Porelo task on 2026-11-12: before it stood a reasoning, an
+earlier reply, a tool call and its output, and none of them is in it. The definition declares that
+record by `type: result`, `subtype: success` and `terminal_reason: completed`, and its field
+`result`.
+
+A run the API refuses ends in a `result` of subtype `success` too, its `result` the error ("Invalid
+API key · Fix external API key"), marked `is_error: true` and `terminal_reason: api_error`
+(measured with 2.1.322 on 2026-11-12; the pinned 2.1.311's refusal was not recorded). Porelo matches
+a record's fields on text values only, so the boolean `is_error` cannot be declared; the text
+`terminal_reason` tells the two apart, and a refused run answers nothing. A finished run ending
+for another reason answers nothing too, which errs on the side of no answer.
+
+Each recorded run held one result record. Should a stream ever hold several, the last one that
+matches answers.
+
+**What would change it:** a release whose finished run ends with another `terminal_reason`, or
+Porelo matching a record's non-text values, after which `is_error: false` says it more directly.

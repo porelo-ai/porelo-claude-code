@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC62",
   "title": "A Finished Run Answers Its Last Message",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -41,3 +41,17 @@ definition declares no last message.
 ## To be checked
 
 - The record and field the agent's last reply stands in, read in a recorded unattended run at the pinned version.
+  Read in a run of 2.1.311 recorded unattended in a Porelo task on 2026-11-12 (`src/test/resources/streams/unattended-run-2.1.311.jsonl`,
+  its JSON records only, the init record's lists cut): reasoning, a reply, a `Bash` call, its output and the reply
+  `ALL DONE`, then `{type: result, subtype: success, is_error: false, terminal_reason: completed, result: "ALL DONE"}`.
+  The `result` field is the last reply alone, as the plan expected.
+- A run the API refused also ends in `subtype: success`, with `is_error: true`, `terminal_reason: api_error` and its
+  error as `result` (recorded with 2.1.322 on the host, `src/test/resources/streams/refused-run-2.1.322.jsonl`). Porelo's
+  record match compares text values only, so `is_error` cannot be declared; the declaration adds
+  `terminal_reason: completed`, and the refused run answers nothing (its test seen to fail without it). A run cut
+  before its result answers nothing; the screen rules are unchanged, compared whole.
+- The plan's `part` is not in the porelo-agent-api built against, and is not needed: the result's `result` is text.
+- Read-only review by a Claude Code sub-agent, Sonnet: found that `terminal_reason` tells a refused run apart, which
+  made the follow-up for `is_error` unneeded; found the yaml's "nothing to read" stale beside the new declaration,
+  reworded. Not taken: loading the records from the classpath (the adapters' tests read them by path), and a test of
+  several result records, which no recorded run holds.

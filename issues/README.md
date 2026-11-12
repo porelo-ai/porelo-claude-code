@@ -40,7 +40,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time |
 
 ## Review
@@ -52,6 +51,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc57"></a>[CC57](CC57-Measure-What-The-Agents-Streams-Tell-About-Tool-Calls.md) | S | - | a measurement, no product code: each agent Porelo runs, given the same small order unattended in a task, and what its raw stream says of each tool call - name, input, start, end, own time, background jobs, sub-agents - and how the wall time splits | - |
 | <a id="cc59"></a>[CC59](CC59-Measure-What-The-Agents-Streams-Tell-About-Sub-Agents.md) | S | - | a measurement, no product code: each agent Porelo runs that has sub-agents of its own, ordered unattended in a task to start one sub-agent by a given name, and what its raw stream says of that sub-agent - its start, its end, its name, and which calls are its own | - |
 | <a id="cc61"></a>[CC61](CC61-An-Attended-Session-Takes-An-Opening-Text.md) | S | - | an attended session of Claude Code opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task | - |
+| <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent | - |
 | <a id="cc51"></a>[CC51](CC51-A-Task-Never-Stops-On-A-Question-Of-Claude-Code.md) | M | - | a task's Claude Code never stops to ask whether to run a command: what its safety checks still question under bypass mode, such as an `rm -rf` on a possibly-empty variable, runs at once, proven by an unattended acceptance scenario | - |
 | <a id="cc52"></a>[CC52](CC52-The-First-Words-Agree-With-The-Task.md) | S | - | the first words of the adapters' tasks agree with the task: the push, the list of checks, the two rules of `AGENTS.md` they replace, the room only for what needs a person, and a guarded `rm` in the skill fetch | - |
 | <a id="cc60"></a>[CC60](CC60-The-Build-Takes-Its-Downloads-From-A-Cache.md) | S | - | the Claude Code binary the update job checks and the runner's packages come from the Actions cache, keyed by digest or package manifest, so an outage of their hosts no longer fails a run that already ran once; what must stay live is named, and an entry nobody reads for 7 days is removed by GitHub | - |

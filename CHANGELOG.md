@@ -19,6 +19,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - The package carries the full license texts of what its executable compiles in from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in `THIRD-PARTY-NOTICES`, in its doc directory and as an RPM license file, and its Debian copyright names them.
 - The adapter reads each tool call out of an unattended run's stream for Porelo: its tool, kind and times, a shell call's command line, a background job's end, and a sub-agent's name and the calls made under it.
 - The definition says how an attended session takes an opening text, `session.opening_flag: ""`, so Porelo can open a discussion on Claude Code with the person's text as its first turn, after which it waits for them.
+- A finished unattended run answers its last reply, `session.waiting.last_message` over the result record's `result`, where its `terminal_reason` is `completed`; a run the API refused or cut off before its result answers nothing.
 
 ### Changed
 

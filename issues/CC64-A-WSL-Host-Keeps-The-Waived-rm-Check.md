@@ -19,7 +19,7 @@ and a watch in the update gate; no contract.
 
 **What must be true.** On a WSL host, Claude Code in a task shows "CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS has
 no effect while the Windows registry cannot be read for managed settings" and ignores the variable that the task image
-sets, so its check of an `rm` on a variable that may be empty stops the task again, which CC51 waived: attended with a
+sets, so its check of an `rm` on a variable that may be empty stops the task again, which [CC51](README.md#cc51) waived: attended with a
 question, unattended with a refusal. After this, a task on a WSL host behaves as on a Linux host.
 
 What is known, read in the binary of Claude Code 2.1.317:
@@ -55,12 +55,12 @@ host.
 - Confirm the path, arguments, answer condition and warning at the pin 2.1.311 before building. The reading above is
   from 2.1.317.
 - Reproduce it on the Linux VM first: a task with `WSL_DISTRO_NAME` set shows the warning, and the `rm` scenario of
-  CC51 is refused. With the script, there is no warning, the scenario passes, and any other call ends with exit 2.
+  [CC51](README.md#cc51) is refused. With the script, there is no warning, the scenario passes, and any other call ends with exit 2.
   Run it once on a real WSL host at the end.
 - Unit tests, red first: the image lines create the file root-owned at 0755, with its directories. The script answers
   the two queries with exit 1 and exactly that line, and anything else with exit 2.
 - The weekly update's gate watches the new binary for the `reg.exe` path, its arguments and the answer condition. It
   fails when they change, so a change does not show first on a WSL host.
-- A note in `doc/decisions.md`, beside CC51's accepted risk: a Windows administrator's
+- A note in `doc/decisions.md`, beside [CC51](README.md#cc51)'s accepted risk: a Windows administrator's
   `HKLM\SOFTWARE\Policies\ClaudeCode` does not reach a Porelo task, and did not before this either.
 - Whether Porelo's own update gate needs a part for this.
