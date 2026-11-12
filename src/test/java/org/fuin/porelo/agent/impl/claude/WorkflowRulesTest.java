@@ -147,6 +147,43 @@ class WorkflowRulesTest {
     }
 
     @Test
+    void theDailyCheckHoldsTheIssueHeadsAndFailsWithThem(@TempDir final Path dir) throws Exception {
+
+        // An issue head or index that breaks the rules would otherwise turn nothing red until the
+        // next push, and a [skip ci] push of issues alone starts no Build.
+        final List<String> steps =
+                WorkflowSteps.named("shared-rules.yml", "Every issue head holds to its schema");
+        assertThat(steps).as("the issue heads' step in shared-rules.yml").hasSize(1);
+        final Path bin = dir.resolve("bin");
+        WorkflowSteps.stub(
+                bin, "java", "echo \"$*\" >> \"$HOME/java-calls\"\nexit \"${CHECK_EXIT:-0}\"\n");
+        Files.createDirectories(dir.resolve("target"));
+        Files.writeString(dir.resolve("target/cp.txt"), "tooling.jar");
+
+        final WorkflowSteps.Run held =
+                WorkflowSteps.run(steps.get(0), dir, Map.of("PATH", WorkflowSteps.pathWith(bin)));
+        assertThat(held.exit()).as("exit of the step:%n%s", held.output()).isZero();
+        assertThat(Files.readAllLines(dir.resolve("java-calls")))
+                .as("the release tooling, called by the step on the resolved classpath")
+                .containsExactly(
+                        "-cp tooling.jar org.fuin.porelo.release.Main issues check issues");
+        assertThat(stepBlock("shared-rules.yml", "Every issue head holds to its schema"))
+                .as("the step runs on every trigger: a daily run, a pull request, a dispatch")
+                .noneMatch(
+                        line ->
+                                line.trim().startsWith("if:")
+                                        || line.trim().startsWith("continue-on-error:"));
+
+        // The other half: a head the tooling refuses fails the step, and so the day's run.
+        final WorkflowSteps.Run broken =
+                WorkflowSteps.run(
+                        steps.get(0),
+                        dir,
+                        Map.of("PATH", WorkflowSteps.pathWith(bin), "CHECK_EXIT", "1"));
+        assertThat(broken.exit()).as("exit of the step:%n%s", broken.output()).isNotZero();
+    }
+
+    @Test
     void theUpdateJobStopsOnAnEmptyKey(@TempDir final Path dir) throws Exception {
 
         // The update job's legs run only while nothing said STOP; a leg without the key would
@@ -238,5 +275,27 @@ class WorkflowRulesTest {
 
     private static int indentOf(final String line) {
         return line.length() - line.stripLeading().length();
+    }
+
+    /**
+     * The lines of one step in a workflow, from its name to the next step or the end.
+     *
+     * @param workflow The workflow's file name.
+     * @param name The step's name.
+     * @return Its lines.
+     * @throws IOException If the workflow cannot be read.
+     */
+    private static List<String> stepBlock(final String workflow, final String name)
+            throws IOException {
+        final List<String> lines = Files.readAllLines(workflows().resolve(workflow));
+        final int start = lines.indexOf("            - name: " + name);
+        assertThat(start).as("the step %s in %s", name, workflow).isNotNegative();
+        int end = start + 1;
+        while (end < lines.size()
+                && !lines.get(end).startsWith("            - ")
+                && !lines.get(end).matches("^ {0,8}\\S.*")) {
+            end++;
+        }
+        return lines.subList(start, end);
     }
 }
