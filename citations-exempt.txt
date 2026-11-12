@@ -1,0 +1,2 @@
+# A story script names its story, its ST347 parent and the issues whose plays it waits on, on purpose.
+stories/ST35.sh

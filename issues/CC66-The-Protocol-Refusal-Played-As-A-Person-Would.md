@@ -15,7 +15,7 @@
 ```
 
 **Why this size.** One script and one run on the test VM, no production code. The packages it installs are built by
-CC22, B230 and B201, and the stand-ins it needs are repacked copies of those packages.
+[CC22](README.md#cc22), B230 and B201, and the stand-ins it needs are repacked copies of those packages.
 
 **Estimate.** S: 27 min, the measured median of S over all repositories (n=167). Expect more for the run on the VM and
 the clean-up after it.
@@ -43,16 +43,19 @@ for an issue not yet in Review.
 
 ## Plan
 
-- **`stories/ST35.sh`**, run on the VM as the person's account, which may use `sudo` for the package manager as a
-  person installing does. It takes the directory holding the packages it installs:
+- **`stories/ST35.sh`**, run on the VM as the person's account. It installs with `sudo dpkg -i`, the only install
+  the test VM's accounts may run (`/etc/sudoers.d/90-porelo-<account>`). It takes the directory holding the
+  packages it installs:
   - `porelo_*.deb` from B230's build, whose `Provides: porelo-agent-protocol (= 3)` is `AgentProtocol.LOWEST`;
-  - `porelo-agent-claude_*.deb` from CC22's build, requiring `porelo-agent-protocol (>= 3)` and `(<= 5)`.
+  - `porelo-agent-claude_*.deb` from [CC22](README.md#cc22)'s build, requiring `porelo-agent-protocol (>= 3)` and `(<=
+    5)`.
 - **Before:** it records the installed Porelo and adapter versions, and puts them back at the end, after a failure
   too.
 - **The stand-ins.** Two copies of B230's `porelo` deb, repacked with `dpkg-deb -R`/`-b`, provide the protocol at 6
   (a Porelo whose lowest has passed this adapter) and at 2 (a Porelo older than the break this adapter was built
   after). The real Porelo of the day, from before B230, provides none.
-- **The plays,** each with `sudo apt-get install ./<package>` as a person would:
+- **The plays,** each with `sudo dpkg -i <package>` as a person would. A refused adapter is left unpacked by dpkg,
+  so the script takes it off again:
   1. **Compatible.** B230's `porelo`, then the adapter. Both install, and `porelo agent list` names `claude`.
   2. **Lowest above the adapter's version.** The stand-in at 6, then the adapter. apt refuses it, naming
      `porelo-agent-protocol (<= 5)`, and the adapter is not installed.
@@ -60,8 +63,8 @@ for an issue not yet in Review.
   4. **A Porelo without the provide** (the day's published one): refused, naming `porelo-agent-protocol`.
   5. **`--now`.** `porelo task start --now` is refused as an unknown option, with a message naming `--now`, and no
      task is started. Until B201 is in Review, a run where it is accepted reports `waiting on B201`.
-- **Verdict:** one line per play and the story's verdict last. Until CC22 and B230 are in Review, plays 1 to 4
-  report `waiting on CC22` or `waiting on B230`.
+- **Verdict:** one line per play and the story's verdict last. Until [CC22](README.md#cc22) and B230 are in Review,
+  plays 1 to 4 report "waiting on" [CC22](README.md#cc22) or B230.
 - **Level:** the run on the test VM, through the Coordinator.
 
 ## Acceptance
@@ -73,7 +76,14 @@ for an issue not yet in Review.
 
 ## To be checked
 
-- The test VM's account may use `sudo` for the package manager. `smith` on the VM used tonight may not, so the run
-  needs an account that may, or the Coordinator names the VM.
+- Answered: the VM is `ubuntu26.04`, and the run uses account `smith2` (the operator's word). `sudo -n -l` shows
+  it may run `/usr/bin/dpkg` and `apt-get update -qq`, and its `porelo agents` lists `claude` from
+  `/usr/libexec/porelo/agents`.
+  - The packages to put back are the VM's own. Porelo 0.5.1~snapshot.500+local.20261112T193932 is built in Core's
+    worktree `porelo-b675`.
+  - The adapter 0.5.4~snapshot.165 comes with `apt-get download` from the snapshot repository, without root.
+- The adapter to play is [CC22](README.md#cc22)'s deb, packed by `jdeb` from the `cc22` branch around the native
+  binary of the published 0.5.4~snapshot.165, since only the package's relations change. That spares a native build on
+  a host with 8 GB free.
 - `porelo task start --now` with nothing else: whether the unknown option is reported before a missing argument once
   B201 removes it.
