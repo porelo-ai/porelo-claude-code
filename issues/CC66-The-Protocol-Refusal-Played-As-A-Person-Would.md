@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC66",
   "title": "The Protocol Refusal Played As A Person Would",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 1,
