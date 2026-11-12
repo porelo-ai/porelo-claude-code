@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC22",
   "title": "Depend on the agent protocol Porelo's package provides",
-  "state": "Estimated",
+  "state": "Backlog",
   "size": "S",
   "priority": "Medium",
   "rank": 2,

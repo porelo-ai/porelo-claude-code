@@ -24,18 +24,18 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | - | package-level signatures on the published RPMs | - |
 | <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | XS | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class | 0 |
 | <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | - | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms | - |
-| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
 | <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | M | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump | 0 |
-| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 | <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | S | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again | 0 |
 | <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself | 0 |
 
 ## Backlog
 
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent |
-| <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent | - |
+| <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones | - |
+| <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
+| <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 
 ## Review
 
