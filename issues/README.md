@@ -33,7 +33,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 
@@ -49,6 +48,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent | - |
 | <a id="cc66"></a>[CC66](CC66-The-Protocol-Refusal-Played-As-A-Person-Would.md) | S | - | a script plays story ST35 on the test VM as a person would: Claude Code's adapter installs beside a Porelo it speaks with and is refused beside one it does not, and `task start --now` is refused rather than accepted without effect; part of ST347 | - |
 | <a id="cc69"></a>[CC69](CC69-A-Headless-Task-Shows-No-Skip-Permissions-Notice.md) | S | - | in a headless task the person never sees Claude Code's notice that CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS is set: the formatter drops its stream line and its stderr line, while the waiver stays and every other system line still passes | - |
+| <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones | - |
 | <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | XS | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class | 0 |
 | <a id="cc50"></a>[CC50](CC50-The-Tests-Follow-The-Pyramid.md) | S | - | the suites by level with measured times, no flow of the adapter only above the unit level; five end-to-end scenarios that test only Porelo leave the legs, and the timeout test waits 100 ms | - |

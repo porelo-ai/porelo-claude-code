@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC70",
   "title": "Claude Code Is Installed Root-Owned",
-  "state": "Implementing",
+  "state": "Review",
   "size": "M",
   "priority": "High",
   "rank": 1,
@@ -23,9 +23,9 @@ definition, its tests and one check at the pin.
 **What must be true.** Whatever the agent writes during a task, the next start of Claude Code runs the pinned binary
 Porelo built into the image.
 
-- The binary goes to `/usr/local/lib/claude/versions/<version>`, mode 0755, owned by `root:root`, in a directory owned by
-  root and not writable by the agent; `/usr/local/bin/claude` is a root-owned link to it, and nothing named `claude`
-  stays under `/home/agent`.
+- The binary goes to `/usr/local/share/claude/versions/<version>`, mode 0755, owned by `root:root`, in a directory owned
+  by root and not writable by the agent; `/usr/local/bin/claude` is a root-owned link to it. The agent's own links in its
+  home, kept for Claude Code's status screen, play no part in what a start runs.
 - The version is pinned in `pom.xml` (`agent.cli.version`) with the digest from Anthropic's per-version
   `manifest.json`, checked before the file is installed; it moves only through the update job, outside any task.
 - Updates stay off in the task (`DISABLE_UPDATES`, `downloads.claude.ai` refused), and a self-update that is tried
@@ -53,5 +53,4 @@ Porelo built into the image.
 
 ## To be checked
 
-- The contract change for a root-owned artifact, agreed with Porelo's agent in the channel.
 - Whether Claude Code's `/status` warns of an install outside the agent's home, measured at the pin.

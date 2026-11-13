@@ -189,6 +189,10 @@ resolved. It is a second line and a weak one: a name that shares an address with
 that address reachable, and nothing finer than a host can be refused, since the traffic is TLS and not
 terminated.
 
+**Behind both, the owner:** the binary is root's, in `/usr/local/share/claude/versions/`, and `claude` on
+the task's path is root's link to it. An update the agent forces anyway can only write into its own home, and the
+next start still runs the pinned file.
+
 **What would change it:** nothing in the CLI's behavior. A new version comes through the weekly
 update job, which verifies it on both distributions before anything is published.
 

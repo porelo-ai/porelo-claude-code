@@ -28,6 +28,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - The acceptance legs run on every forge, the host's lending each a machine of its kind from its pool through `PORELO_POOL_SSH`, and a leg takes the packages its run built from the Actions cache, keyed by the run; GitHub's artifact stays for the release job.
 - An acceptance leg may take 45 minutes and its job 65, since Fedora's took more than 30.
 - A task's agent no longer stops on Claude Code's question about an `rm` on a variable that may be empty, which bypass mode did not skip; the task image waives that check.
+- Claude Code is installed by root, outside the agent's home, and `claude` on the task's path is root's link to it, so the agent in a task cannot replace the binary the next start runs; the agent's own links in the home stay only for Claude Code's status screen.
 - A task's log no longer shows Claude Code's notice that the waiver of that check is set, neither its stream line, known by its key, nor its line on standard error; a notice that the waiver has no effect still shows, and the weekly update stops on a release that no longer names the notice as the log drops it.
 - The package says that the `porelo-wire` classes in its executable are under Apache-2.0, in its
   Debian copyright and its RPM license, with the license's text beside the GPL's in the RPM.

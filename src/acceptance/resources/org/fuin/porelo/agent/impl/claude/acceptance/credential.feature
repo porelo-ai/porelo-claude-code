@@ -94,7 +94,7 @@ Feature: A task authenticates without ever holding the credential
         And the task's container runs:
             """
             for try in 1 2 3; do
-              out=$(timeout 240 ~/.local/bin/claude --model "${PORELO_E2E_MODEL}" -p "Reply with exactly the word PORELOLIVE and nothing else.") || { printf '%s\n' "$out"; exit 1; }
+              out=$(timeout 240 /usr/local/bin/claude --model "${PORELO_E2E_MODEL}" -p "Reply with exactly the word PORELOLIVE and nothing else.") || { printf '%s\n' "$out"; exit 1; }
               case "$out" in *[![:space:]]*) printf '%s\n' "$out"; exit 0 ;; esac
               echo "try $try: an empty answer, exit 0"
             done
@@ -118,7 +118,7 @@ Feature: A task authenticates without ever holding the credential
             cd /workspace
             base=$(git rev-list --count HEAD)
             for try in 1 2 3; do
-              timeout 300 ~/.local/bin/claude --model "${PORELO_E2E_MODEL}" -p "Append the line 'one more' to any tracked file here, then run exactly: git commit -am 'Add one more line'" >/dev/null || exit 1
+              timeout 300 /usr/local/bin/claude --model "${PORELO_E2E_MODEL}" -p "Append the line 'one more' to any tracked file here, then run exactly: git commit -am 'Add one more line'" >/dev/null || exit 1
               [ "$(git rev-list --count HEAD)" -gt "$base" ] && break
               echo "try $try: no commit made"
             done
