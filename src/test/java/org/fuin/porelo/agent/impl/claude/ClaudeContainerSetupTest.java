@@ -95,6 +95,9 @@ class ClaudeContainerSetupTest {
         assertThat(config.get("hasSeenAutoDefaultNudge"))
                 .as("the auto mode question is answered, so the task's agent is not stopped at it")
                 .isEqualTo(Boolean.TRUE);
+        // Measured on 2.1.311: without it /status warns that a native installation runs while the
+        // configured install method is 'not set'.
+        assertThat(config.get("installMethod")).isEqualTo("native");
     }
 
     @Test

@@ -381,8 +381,12 @@ class ClaudeAgentTest {
                             assertThat(artifact.url()).contains(definition.version());
                             assertThat(artifact.sha256()).matches("[a-f0-9]{64}");
                             assertThat(artifact.unverified()).isFalse();
+                            // Where Claude Code's own installer puts it: a version file the
+                            // command links to, or its status screen warns of the install.
                             assertThat(artifact.target())
-                                    .isEqualTo("/home/agent/.local/bin/claude");
+                                    .isEqualTo(
+                                            "/home/agent/.local/share/claude/versions/"
+                                                    + definition.version());
                         });
         assertThat(definition.unverifiedArtifacts()).isEmpty();
     }
@@ -398,6 +402,24 @@ class ClaudeAgentTest {
         final int check = indexOf(lines, "sha256sum -c -");
         final int install = indexOf(lines, "install -D");
         assertThat(install).isGreaterThan(check);
+    }
+
+    @Test
+    void linksTheCommandToItsVersionAsTheInstallerDoes() {
+
+        // Measured on 2.1.311: a .local/bin/claude that is not a link into the versions directory
+        // makes /status warn that the native installer did not create it.
+        final var lines = agent.imageLayer().asAgent();
+        final String version = agent.definition().version();
+
+        final int install = indexOf(lines, "install -D");
+        final int link = indexOf(lines, "ln -s");
+        assertThat(link)
+                .as("the link, after the binary is placed: %s", lines)
+                .isGreaterThan(install);
+        assertThat(lines.get(link))
+                .contains("/home/agent/.local/share/claude/versions/" + version)
+                .contains("/home/agent/.local/bin/claude");
     }
 
     private static int indexOf(java.util.List<String> lines, String text) {

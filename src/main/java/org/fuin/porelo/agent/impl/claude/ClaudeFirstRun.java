@@ -50,6 +50,9 @@ final class ClaudeFirstRun {
         // the container makes safe (ClaudeSettings).
         root.put("hasSeenAutoDefaultNudge", true);
         root.put("theme", "dark");
+        // Measured on 2.1.311: unset, /status warns that a native installation runs while the
+        // configured install method is 'not set'.
+        root.put("installMethod", "native");
         root.put("projects", Map.of(workspace, project));
         if (!apiKey.isBlank()) {
             // A key in the environment makes the CLI ask whether to use it, recommending No. The

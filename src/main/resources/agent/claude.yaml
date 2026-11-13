@@ -202,7 +202,8 @@ install:
         - url: https://downloads.claude.ai/claude-code-releases/${agent.cli.version}/linux-x64/claude
           sha256: "86dc1fcc69498159eaf15f446613e847010f9036bfbbdffd4c49350be8489ada"
           license: "SEE LICENSE IN README.md"
-          target: /home/agent/.local/bin/claude
+          # Where Claude Code's own installer puts it, linked as the installer links it (below).
+          target: /home/agent/.local/share/claude/versions/${agent.cli.version}
           mode: "0755"
     as_root:
         - "# Bypass mode does not skip the check of an rm on a variable that may be empty: measured on 2.1.311,"
@@ -211,3 +212,8 @@ install:
         - "# is a task's boundary, not this check: doc/decisions.md, \"Accepted risk: the CLI's rm check is waived"
         - "# in a task\"."
         - "ENV CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS=1"
+    as_agent:
+        # Measured on 2.1.311: /status warns of the install unless .local/bin/claude is a link into the versions
+        # directory, as the native installer leaves it. The link only; the pinned version still never updates itself,
+        # since DISABLE_UPDATES stays in the settings and downloads.claude.ai stays refused.
+        - "RUN mkdir -p /home/agent/.local/bin && ln -sfn /home/agent/.local/share/claude/versions/${agent.cli.version} /home/agent/.local/bin/claude"
