@@ -7,7 +7,7 @@
   "title": "A WSL Host Keeps The Waived rm Check",
   "state": "Accepted",
   "size": "M",
-  "priority": "High",
+  "priority": "Medium",
   "rank": 1,
   "blockedBy": [],
   "covers": "on a WSL host the task's Claude Code honours CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS again: a root-owned reg.exe in the task image answers Claude Code's two managed-settings queries as Windows does where no policy is set and refuses all else"
