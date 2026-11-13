@@ -211,6 +211,33 @@ jobs:
                       echo "STOP=Claude Code $VERSION no longer names the token URL or client id the adapter renews with" >> "$GITHUB_ENV"
                   fi
 
+            # A task sets the waiver of the dangerous-rm check on purpose, and the log drops the notice
+            # that it is set by its key and its opening words; a release that renames either shows it again.
+            - name: The pinned CLI still names the waiver notice as the log drops it
+              if: steps.plan.outputs.proceed == 'yes' && !env.STOP
+              env:
+                  VERSION: ${{ steps.cli.outputs.version }}
+                  BIN: ${{ steps.download.outputs.file }}
+                  DOWNLOADED: ${{ steps.download.outcome }}
+              run: |
+                  set -eu
+                  if [ "$DOWNLOADED" != success ]; then
+                      echo "STOP=Claude Code $VERSION could not be downloaded as pinned" >> "$GITHUB_ENV"
+                      exit 0
+                  fi
+                  FORMATTER=src/main/java/org/fuin/porelo/agent/impl/claude/ClaudeStreamJsonFormatter.java
+                  KEY="$(sed -n 's|^    private static final String WAIVER_NOTICE = "\(.*\)";$|\1|p' "$FORMATTER")"
+                  TEXT="$(sed -n '/^    private static final String WAIVER_NOTICE_TEXT =$/{n;s|^ *"\(.*\)";$|\1|p;}' "$FORMATTER")"
+                  if [ -z "$KEY" ] || [ -z "$TEXT" ]; then
+                      echo "STOP=the waiver notice's key or words could not be read" >> "$GITHUB_ENV"
+                      exit 0
+                  fi
+                  if LC_ALL=C grep -aqF "key:\"$KEY\"" "$BIN" && LC_ALL=C grep -aqF "$TEXT" "$BIN"; then
+                      echo "  OK    Claude Code $VERSION names the waiver notice $KEY"
+                  else
+                      echo "STOP=Claude Code $VERSION no longer names the waiver notice the log drops" >> "$GITHUB_ENV"
+                  fi
+
             # Not -DskipTests: that also skips NativeLinkageCheck, the one test that needs the binary.
             - name: Native binary and packages
               env:

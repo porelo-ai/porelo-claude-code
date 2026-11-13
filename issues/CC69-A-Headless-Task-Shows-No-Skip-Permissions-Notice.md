@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC69",
   "title": "A Headless Task Shows No Skip-Permissions Notice",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -50,3 +50,24 @@ What is known, read in the binary of Claude Code 2.1.318:
   other `system` subtype still pass.
 - The weekly update's gate watches the new binary for the key. A renamed key would bring the notice back unseen by any
   test.
+
+## Done
+
+- `ClaudeStreamJsonFormatter` drops a `system` line of subtype `notification` whose key is `bypass-removal-waiver`, and
+  a line of standard error that opens, once its color codes are taken off, with the notice's words. The task's log
+  holds standard error beside the stream, since Porelo writes both to the one file, so the formatter is where both
+  are shown and where both are dropped. Every other `system` line passes, and so does a notice of another key and
+  the warning that the waiver has no effect, a line that holds the words further in, and the agent's own reply
+  quoting them. Standard error is matched one line at a time by how it opens, so a notice split over two lines, or
+  one interleaved into another write, would show its rest. The waiver and the task image are unchanged.
+- Measured with Claude Code 2.1.318 here, in a headless run with an invalid key and an empty home: standard error
+  carries the notice, in yellow (`ESC[33m` to `ESC[39m`) with a terminal's colors forced and plain without. That run
+  wrote no stream line for it; the binary writes one under a condition that run did not meet, with the key and
+  subtype above. 2.1.323 names the key and the words as well. The pin 2.1.311 is not installed here and was not
+  checked.
+- The weekly update stops on a release whose binary no longer names the key or the opening words, read out of the
+  formatter, beside its check of the token URL. Tried on 2.1.318 and 2.1.323: both pass.
+- Red first: `RemovalWaiverTest.theNoticeThatTheWaiverIsSetIsNotShownInATasksLog` failed before.
+  `everyOtherSystemLineStillReachesTheLog` pins what still passes.
+- Changelog under *Changed*.
+- **Locally.** The unit suite (279) passed whole; after the reading's added cases, `RemovalWaiverTest` passed again.

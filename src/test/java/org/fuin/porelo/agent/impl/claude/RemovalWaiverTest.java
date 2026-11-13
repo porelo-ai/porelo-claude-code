@@ -51,6 +51,63 @@ class RemovalWaiverTest {
         }
     }
 
+    /** What 2.1.318 wrote to standard error in a headless run with the waiver set. */
+    private static final String NOTICE =
+            WAIVER
+                    + " is set, so dangerous rm commands can run without a prompt in bypass"
+                    + " permissions mode once managed settings and plugin hooks have loaded. If you"
+                    + " didn't set it, check your shell profile.";
+
+    @Test
+    void theNoticeThatTheWaiverIsSetIsNotShownInATasksLog() {
+
+        final var formatter = new ClaudeAgent().logFormatter();
+
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"system\",\"subtype\":\"notification\","
+                                        + "\"key\":\"bypass-removal-waiver\",\"text\":\""
+                                        + NOTICE
+                                        + "\",\"priority\":\"high\",\"color\":\"warning\"}"))
+                .as("the notice's stream line, known by its key")
+                .isNull();
+        assertThat(formatter.format(NOTICE)).as("the notice on standard error").isNull();
+        assertThat(formatter.format("\u001b[33m" + NOTICE + "\u001b[39m"))
+                .as("the notice on standard error in yellow")
+                .isNull();
+        assertThat(formatter.format("  " + NOTICE + "\r"))
+                .as("the notice with a margin and a carriage return")
+                .isNull();
+    }
+
+    @Test
+    void everyOtherSystemLineStillReachesTheLog() {
+
+        final var formatter = new ClaudeAgent().logFormatter();
+
+        final String other =
+                "{\"type\":\"system\",\"subtype\":\"notification\",\"key\":\"other\","
+                        + "\"text\":\"something else\"}";
+        assertThat(formatter.format(other)).as("a notification with another key").isEqualTo(other);
+        final String retry = "{\"type\":\"system\",\"subtype\":\"api_retry\",\"attempt\":1}";
+        assertThat(formatter.format(retry)).as("another system subtype").isEqualTo(retry);
+        // That the waiver does nothing is what a task's log must still say.
+        final String lost =
+                WAIVER
+                        + " has no effect in this session: dangerous rm commands keep their"
+                        + " usual checks.";
+        assertThat(formatter.format(lost)).as("the warning that the waiver is off").isEqualTo(lost);
+        final String quoted = "the log said: " + NOTICE;
+        assertThat(formatter.format(quoted)).as("the words inside a line").isEqualTo(quoted);
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"text\":\""
+                                        + NOTICE
+                                        + "\"}]}}"))
+                .as("the agent's own reply quoting the words")
+                .isEqualTo(NOTICE);
+    }
+
     private static List<String> section(final int subagents, final String name) {
         final Object root = Json.parse(ClaudeSettings.document(subagents));
         assertThat(root).as("the settings document").isInstanceOf(Map.class);

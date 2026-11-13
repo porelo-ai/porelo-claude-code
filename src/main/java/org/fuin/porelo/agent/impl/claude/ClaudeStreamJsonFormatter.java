@@ -25,11 +25,29 @@ import org.jspecify.annotations.Nullable;
 public class ClaudeStreamJsonFormatter implements LogFormatter {
 
     /**
-     * The only line that is dropped: the CLI announces its session at startup and the operator has
-     * that information from the task itself. Matched by subtype, because "system" as a category
-     * also carries warnings and errors, and those are the lines an unattended run is read for.
+     * A line that is dropped: the CLI announces its session at startup and the operator has that
+     * information from the task itself. Matched by subtype, because "system" as a category also
+     * carries warnings and errors, and those are the lines an unattended run is read for.
      */
     private static final String BENIGN = "init";
+
+    /**
+     * The key of the notice that the task image's waiver of the dangerous-rm check is set. The task
+     * sets it on purpose, so the notice tells the person nothing; a notice that the waiver has no
+     * effect has other words and still passes.
+     */
+    private static final String WAIVER_NOTICE = "bypass-removal-waiver";
+
+    /**
+     * The same notice as the CLI writes it to standard error, which the task's log holds beside the
+     * stream. Standard error has no key, so it is known by its opening words.
+     */
+    private static final String WAIVER_NOTICE_TEXT =
+            "CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS is set, so dangerous rm commands";
+
+    /** A terminal's color and cursor sequences, which the CLI wraps the notice in. */
+    private static final java.util.regex.Pattern ESCAPES =
+            java.util.regex.Pattern.compile("\\u001b\\[[0-9;?]*[ -/]*[@-~]");
 
     /** Prefixes a line the formatter recognised but could not read, so it is visibly not prose. */
     private static final String UNREADABLE = "[unreadable] ";
@@ -61,7 +79,9 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
 
         final String trimmed = line.strip();
         if (!trimmed.startsWith("{")) {
-            return line;
+            return ESCAPES.matcher(trimmed).replaceAll("").startsWith(WAIVER_NOTICE_TEXT)
+                    ? null
+                    : line;
         }
 
         final Object parsed;
@@ -79,9 +99,16 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             case "assistant" -> text(event, "", line);
             case "user" -> text(event, "> ", line);
             case "result" -> result(event);
-            case "system" -> BENIGN.equals(String.valueOf(event.get("subtype"))) ? null : line;
+            case "system" -> system(event) ? null : line;
             default -> line;
         };
+    }
+
+    /** Whether a system line is one the person is not shown. */
+    private static boolean system(Map<?, ?> event) {
+        final String subtype = String.valueOf(event.get("subtype"));
+        return BENIGN.equals(subtype)
+                || "notification".equals(subtype) && WAIVER_NOTICE.equals(event.get("key"));
     }
 
     private String text(Map<?, ?> event, String prefix, String line) {
