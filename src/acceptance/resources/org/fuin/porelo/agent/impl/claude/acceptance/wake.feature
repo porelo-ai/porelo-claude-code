@@ -77,7 +77,14 @@ Feature: An agent at rest is woken by a message for it
         And the vault holds the value of "PORELO_E2E_OPENROUTER_API_KEY" as "openrouter" of kind "api-key"
         # The wake comes from the daemon's passes, which a leased machine's account does not run by itself.
         And a daemon of this scenario's own
-        And a project called "busy" of class "guarded" with a file in it
+        # Claude Code tells the model to run this very until-loop in the background, and a model once did. With
+        # background tasks off there is no background to send it to: no run_in_background, no Monitor, no block on a
+        # foreground sleep. The scenario's choice, set in this project's image alone; claude.yaml stays as it is.
+        And a project called "busy" of class "guarded" whose project file also says:
+            """
+              run: |
+                ENV CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
+            """
         And a terminal on the machine
         When I run "porelo task start busy --project busy --repository busy --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --clearance deny"
         Then the "claude" agent in task "busy" of "busy" reaches work without being asked anything
@@ -87,15 +94,21 @@ Feature: An agent at rest is woken by a message for it
         # GLM 5.3 Flash once chose. The path is on the input box's first line, so the try below finds it there.
         When I type "Run 'until [ -e /tmp/porelo-busy-done ]; do sleep 2; done' in the foreground with your shell tool, then reply with the single word DONE."
         And I press Enter
-        # Working, seen rather than assumed: its loop runs in the task, or its tool shows it running, so the message
-        # below comes while it works. A line still standing in the input box gets Enter again, as above. A try that sees
-        # neither says what it saw.
+        # Working, seen rather than assumed: its loop runs in the task, and its tool shows it running in the foreground,
+        # so the message below comes while it works. The loop alone is not work: one in the background leaves the agent
+        # at rest, and the try says so rather than reaching the message. A line still standing in the input box gets
+        # Enter again, as above. A try that sees neither says what it saw.
         Then within 120 seconds this script exits zero:
             """
             top=$(podman top "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" args 2>&1)
             screen=$(podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo 2>&1)
-            printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done' && exit 0
-            printf '%s\n' "$screen" | grep -qF 'Bash(until [ -e /tmp/porelo-busy-done ]' && printf '%s\n' "$screen" | grep -qF 'Running…' && exit 0
+            if printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done'; then
+              printf '%s\n' "$screen" | grep -qF 'Bash(until [ -e /tmp/porelo-busy-done ]' && printf '%s\n' "$screen" | grep -qF 'Running…' \
+                && printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel' && exit 0
+              if printf '%s\n' "$screen" | grep -qF 'bypass permissions on' && ! printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel'; then
+                echo 'the loop runs, but in the background: the agent is at rest'
+              fi
+            fi
             if printf '%s\n' "$screen" | grep -A1 '^──' | grep '^❯' | grep -qF "porelo-busy-done"; then
               podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
             fi
