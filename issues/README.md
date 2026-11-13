@@ -37,7 +37,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc42"></a>[CC42](CC42-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | M | - | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump | 0 |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 | <a id="cc54"></a>[CC54](CC54-The-Busy-Scenario-Holds-Its-Loop-In-The-Foreground.md) | S | - | `wake.feature`'s busy scenario no longer fails when the model sends the wait loop to the background: it sees the loop in the foreground before it sends the message, or sets the loop up again | 0 |
-| <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself | 0 |
 
 ## Review
 
@@ -63,6 +62,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc38"></a>[CC38](CC38-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | - | the workflows run 1:1 on the local Forgejo and the central forge: snapshots from `MAVEN_SNAPSHOTS_URL`, publishing switched by `PORELO_PUBLISH`, legs asked by kind, green on a local Forgejo | - |
 | <a id="cc41"></a>[CC41](CC41-Snapshots-Resolved-With-A-Read-Only-Token.md) | S | - | on a forge other than the central one, snapshots resolved with the runner's read-only token, the publisher's token in no step, since nothing here deploys to the registry, and a Build without `MAVEN_SNAPSHOTS_URL` refused at its start | - |
 | <a id="cc39"></a>[CC39](CC39-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CC38](README.md#cc38) | the repository's agent moves into its own Porelo task, after a dry run on this machine | - |
+| <a id="cc58"></a>[CC58](CC58-The-Status-Screen-Shows-No-Installation-Warning-In-A-Task.md) | S | - | the pinned CLI placed in a task's image the way its own installer places it, so its status screen reports no installation problem, while it still never updates itself | 0 |
 | <a id="cc67"></a>[CC67](CC67-A-Continued-Session-Is-Asked-For-Its-Word.md) | XS | - | session.feature's continued-conversation check asks the restarted Claude Code for the word it was told, instead of looking for the first turn's text on the visible screen | - |
 | <a id="cc65"></a>[CC65](CC65-The-Issue-Heads-Are-Checked-Every-Day.md) | XS | - | a daily run checks this repository's issue heads and index with the released porelo-release, as buildtools' shared rules do | - |
 

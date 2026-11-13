@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC58",
   "title": "The Status Screen Shows No Installation Warning In A Task",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "Low",
   "rank": 1,
@@ -89,3 +89,16 @@ Read in porelo core, where the image is built from an agent definition's `instal
 - A later pin may add or change these checks; the comment in `claude.yaml` names the version they were read on.
 - With `installMethod` native, the CLI may try to tidy the versions directory or reach the update host on start; the
   refused host and `DISABLE_UPDATES` should keep that quiet, and the attended task shows whether it complains.
+
+## Done
+
+- The artifact goes to `share/claude/versions/<pin>` under the agent's local directory, the image links the agent's
+  `bin/claude` there to it as the native installer does, and the first-run settings say `installMethod: native`.
+  `claude.yaml`'s comment names the version this was read on.
+- On the test VM on 2026-11-13, with the adapter built from this commit's code, in an attended task: the agent's
+  `bin/claude` link names `versions/2.1.311`, `claude --version` prints 2.1.311, the agent's Claude Code state file
+  says `"installMethod": "native"`, and `/status` shows no installation warning.
+- Through the acceptance kit with the same adapter: the unattended "a task nobody watches, started again, continues
+  its session and remembers" and the attended "an attached agent stopped and started again continues its
+  conversation" pass, so the start command finds the CLI through the link.
+- `DISABLE_UPDATES` stays in the settings and `downloads.claude.ai` stays refused; neither line changed.
