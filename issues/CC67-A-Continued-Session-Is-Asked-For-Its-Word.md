@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC67",
   "title": "A Continued Session Is Asked For Its Word",
-  "state": "Implementing",
+  "state": "Review",
   "size": "XS",
   "priority": "Low",
   "rank": 1,
@@ -41,3 +41,12 @@ Filed on the Coordinator's word.
 ## Acceptance
 
 - The scenario's last check asks for the word, and both legs pass with it.
+
+## Done
+
+- `session.feature`: after the restart the agent reaches work, is asked "Which word did I ask you to remember?",
+  and passes within 180 s once the screen shows PAPAYA outside the question and outside the first turn's own line
+  "Remember the word PAPAYA". porelo-omp's check leaves out only the question, so a first turn still on the screen
+  would pass it without an answer.
+- Checked by hand against the check's filter: the first turn's line alone fails it, an answer passes. The legs on
+  the Build after the push prove the scenario.

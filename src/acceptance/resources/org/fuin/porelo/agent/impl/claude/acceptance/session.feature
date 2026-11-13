@@ -64,7 +64,16 @@ Feature: A task that comes back continues the conversation it was having
         Then porelo says task "back" of "back" has a session to continue
         Given a terminal on the machine
         When I run "porelo task start back --project back --repository back --agent claude --provider openrouter --model ${PORELO_E2E_MODEL} --clearance deny"
-        # A fresh session would show an empty conversation; the continued one shows what was said in it.
-        Then the screen of task "back" of "back" shows "Remember the word PAPAYA"
+        # A fresh session does not know the word; the continued one does. Asked rather than looked for: a first turn
+        # that fills the screen pushes its own text off it, as omp's did (2026-11-12). Neither the question nor the first
+        # turn's own line counts as the answer.
+        Then the "claude" agent in task "back" of "back" reaches work without being asked anything
+        When I type "Which word did I ask you to remember? Reply with that word only."
+        Then the screen of task "back" of "back" shows "Which word did I ask you to remember"
+        When I press Enter
+        Then within 180 seconds this script exits zero:
+            """
+            podman exec "$(porelo task status back --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -J -t porelo | grep -v -e 'Which word did I ask' -e 'Remember the word PAPAYA' | grep -q PAPAYA
+            """
         When a script runs "porelo project remove back --force"
         Then it exits zero
