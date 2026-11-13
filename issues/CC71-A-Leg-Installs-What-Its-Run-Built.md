@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC71",
   "title": "A Leg Installs What Its Run Built",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 3,
