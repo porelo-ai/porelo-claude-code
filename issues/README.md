@@ -27,13 +27,13 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails |
 | <a id="cc68"></a>[CC68](CC68-The-Vault-Scenarios-Leave-Once-Porelo-Holds-Them.md) | XS | - | credential.feature's three scenarios that test only Porelo's vault leave the legs once Porelo's own acceptance suite proves each |
 
 ## Implementing
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
+| <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 
