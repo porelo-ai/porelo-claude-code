@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC42",
   "title": "A Sign-In Without A Browser Is Tested On Every CLI Update",
-  "state": "Implementing",
+  "state": "Review",
   "size": "M",
   "priority": "Medium",
   "rank": 3,
@@ -80,3 +80,14 @@ its pin bump, so a person signing in from a host is never left with a login that
   Ctrl-C ends the login at the paste prompt.
 - Whether `podman logs` of the login container holds the link whole once escape sequences and line breaks are removed.
 - How long the first build of the login image takes on a rented machine.
+
+## Done
+
+- `terminal.feature` signs in without BROWSER, as a person over ssh would: the theme, the login method, then the link
+  and the paste prompt, each waited for by one word of it, since Claude Code draws the space between words as a
+  cursor move. The redirect is read whole from the login's output and must not be this machine. Nothing is pasted,
+  and the login container is stopped; no credential is stored.
+- On the test VM on 2026-11-13 against 2.1.311: green, with no login container and no credential left. Red with the
+  check fed a loopback redirect: "the redirect is this machine". Porelo leaves BROWSER unset inside the login, so a
+  real loopback login cannot be forced from the host.
+- The two CI legs and the update job's run of it follow the push.

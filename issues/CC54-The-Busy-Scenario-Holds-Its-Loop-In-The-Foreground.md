@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC54",
   "title": "The Busy Scenario Holds Its Loop In The Foreground",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "Medium",
   "rank": 6,
@@ -93,3 +93,14 @@ it is seen.
   has no `run_in_background`, Monitor is gone, the until-loop runs in the foreground, and the footer at rest and at
   work still matches `at_rest` in `claude.yaml`.
 - That an `ENV` line in a project's `run` reaches the process the tmux session starts, not only `podman exec`.
+
+## Done
+
+- The busy scenario's project sets `ENV CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` in its own image, so there is no
+  background to send the loop to; `claude.yaml` is unchanged. The wait before the message passes only on the loop in
+  the foreground, and says when the loop runs in the background with the agent at rest.
+- On the test VM on 2026-11-13 against 2.1.311, through the acceptance kit: green, the loop running in the foreground
+  when the message arrived and the agent woken once at rest. Red with the variable taken out and the loop asked for in
+  the background: it fails at the wait before the message, saying "the loop runs, but in the background: the agent is
+  at rest".
+- Both CI legs follow the push.
