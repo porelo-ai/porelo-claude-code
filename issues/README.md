@@ -27,6 +27,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc69"></a>[CC69](CC69-A-Headless-Task-Shows-No-Skip-Permissions-Notice.md) | S | - | in a headless task the person never sees Claude Code's notice that CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS is set: the formatter drops its stream line and its stderr line, while the waiver stays and every other system line still passes |
 | <a id="cc68"></a>[CC68](CC68-The-Vault-Scenarios-Leave-Once-Porelo-Holds-Them.md) | XS | - | credential.feature's three scenarios that test only Porelo's vault leave the legs once Porelo's own acceptance suite proves each |
 
 ## Implementing
