@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC69",
   "title": "A Headless Task Shows No Skip-Permissions Notice",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 1,
