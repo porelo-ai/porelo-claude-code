@@ -1,0 +1,46 @@
+# shfmt, which Spotless checks every *.sh against in validate but does not download, at the version the parent pom pins,
+# checked against the digest of its release. Kept in the Actions cache by that digest, so a Build on an unchanged pin
+# never reaches github.com for it; GitHub removes an entry nobody read for 7 days. Needs the pinned-jdk action first.
+name: Pinned shfmt
+description: Puts the pinned shfmt on PATH, from the Actions cache or fetched and checked against its digest.
+runs:
+    using: composite
+    steps:
+        - name: The pom's shfmt is the one pinned here
+          id: pin
+          shell: bash
+          run: |
+              set -eu
+              VERSION="$(./mvnw -B -q -s settings.xml help:evaluate -Dexpression=shfmt.version -DforceStdout)"
+              [ "$VERSION" = 3.12.0 ] || { echo "::error::the pom pins shfmt '$VERSION'; this action installs 3.12.0"; exit 1; }
+              echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+              echo "sha256=d9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea" >> "$GITHUB_OUTPUT"
+
+        - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          id: cache
+          with:
+              path: ~/.cache/porelo-pinned/shfmt
+              key: pinned-shfmt-${{ steps.pin.outputs.sha256 }}
+
+        # pinned_fetch takes a cached file only when its digest matches, and fetches it again otherwise.
+        - name: Install the pinned shfmt
+          shell: bash
+          env:
+              # The job's token, for a download from https://github.com alone; none on a host's forge.
+              PORELO_PINNED_GITHUB_TOKEN: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+              VERSION: ${{ steps.pin.outputs.version }}
+              SHA256: ${{ steps.pin.outputs.sha256 }}
+          run: |
+              set -eu
+              . "$GITHUB_ACTION_PATH/../pinned-jdk/pinned.sh"
+              pinned_fetch "https://github.com/mvdan/sh/releases/download/v$VERSION/shfmt_v${VERSION}_linux_amd64" \
+                  "$SHA256" "$HOME/.cache/porelo-pinned/shfmt/shfmt"
+              mkdir -p "$RUNNER_TEMP/bin"
+              install -m 0755 "$HOME/.cache/porelo-pinned/shfmt/shfmt" "$RUNNER_TEMP/bin/shfmt"
+              echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+        - if: steps.cache.outputs.cache-hit != 'true'
+          uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          with:
+              path: ~/.cache/porelo-pinned/shfmt
+              key: pinned-shfmt-${{ steps.pin.outputs.sha256 }}
