@@ -30,9 +30,10 @@ subagents: count
 # every other.
 login:
     arguments: []
-    # Measured on 2.1.267: without BROWSER set, the login prints a link and waits at "Paste code
-    # here"; with BROWSER set, it waits on a loopback callback instead, which no browser on another
-    # machine reaches. The Porelo that reads this key leaves BROWSER unset for a sign-in over SSH.
+    # Without BROWSER set, the login prints a link and waits at "Paste code here"; with BROWSER set,
+    # it waits on a loopback callback instead, which no browser on another machine reaches. The
+    # Porelo that reads this key leaves BROWSER unset for a sign-in over SSH. The acceptance checks
+    # it on every pin (terminal.feature, the sign-in without a browser).
     flow: paste-code
     # What the person reads before starting it.
     documentation: "https://code.claude.com/docs/en/authentication"

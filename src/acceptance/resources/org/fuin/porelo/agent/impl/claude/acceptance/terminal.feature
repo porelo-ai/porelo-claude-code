@@ -15,6 +15,42 @@ Feature: What a person sees with this agent, before there is any credential
         Then it exits zero
         And its output contains "claude"
 
+    Scenario: a sign-in at a terminal without a browser shows its link and waits for the code
+        # What claude.yaml's login flow 'paste-code' says, checked on every pin rather than once: a release whose
+        # login waits on a loopback callback would leave a person signing in over ssh with nothing to paste. Measured
+        # on 2.1.311: the theme, then the login method with the subscription preselected, then the link and the paste
+        # prompt. The login image's first build in a fresh account is in the first wait. Nothing is pasted, so nothing
+        # is stored; neither Ctrl-C nor Esc ends the login at the prompt, so it is ended by its container. Each screen
+        # is waited for by one word of it: Claude Code draws the space between two words as a cursor move, so a
+        # phrase never stands in what the terminal read.
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        And a terminal on the machine
+        When I run "unset BROWSER; porelo vault login claude"
+        Then within 600 seconds the terminal shows "/theme"
+        When I press Enter
+        Then within 30 seconds the terminal shows "subscription"
+        When I press Enter
+        Then within 30 seconds the terminal shows "prompted"
+        # The link as the login printed it, escape sequences and line breaks taken out, so a link wrapped across lines
+        # is read whole: its redirect is Anthropic's page that shows the code, never this machine.
+        Then within 30 seconds this script exits zero:
+            """
+            id=$(podman ps -q --filter label=porelo.login.agent=claude | head -n 1)
+            [ -n "$id" ] || { echo 'no login container is running'; exit 1; }
+            link=$(podman logs "$id" 2>&1 | sed 's/\x1b\][^\x07\x1b]*\(\x07\|\x1b\\\)//g; s/\x1b\[[0-9;?]*[a-zA-Z]//g' | tr -d '\r\n' | grep -oE 'redirect_uri=[^&]*' | head -n 1)
+            printf '%s\n' "$link"
+            [ -n "$link" ] || { echo 'the login printed no redirect_uri'; exit 1; }
+            printf '%s\n' "$link" | grep -qiE 'localhost|127\.0\.0\.1|%5B%3A%3A1%5D|\[::1\]' && { echo 'the redirect is this machine'; exit 1; }
+            exit 0
+            """
+        When a script runs "podman stop -t 2 $(podman ps -q --filter label=porelo.login.agent=claude)"
+        Then within 60 seconds this script exits zero:
+            """
+            [ -z "$(podman ps -a -q --filter label=porelo.login.agent=claude)" ] || { echo 'the login container is still there'; exit 1; }
+            porelo vault list | grep -q anthropic && { echo 'a credential was stored'; exit 1; }
+            exit 0
+            """
+
     Scenario: what the agent may reach, and what it is refused, are both visible to a person
         # An undeclared name is usually a bug that breaks the agent for everyone; a refused one is a
         # decision. The two look identical to the firewall and completely different to a reviewer.
