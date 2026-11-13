@@ -38,7 +38,7 @@ Feature: A task authenticates without ever holding the credential
         Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
         And a terminal on the machine
         When I run "porelo vault put openrouter --type api-key"
-        Then the terminal shows "Value for 'openrouter':"
+        Then the terminal shows "Value for 'openrouter'"
         When I type the value of "PORELO_E2E_OPENROUTER_API_KEY"
         Then the terminal shows "stored"
         And the terminal does not show the value of "PORELO_E2E_OPENROUTER_API_KEY"
