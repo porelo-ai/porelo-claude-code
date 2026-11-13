@@ -372,6 +372,12 @@ jobs:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
 
+            # The Cucumber half runs Maven here, and Spotless checks every *.sh against shfmt in validate.
+            - name: The pinned shfmt
+              env:
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
+              uses: ./.github/actions/pinned-shfmt
+
             # Before anything is created; a leg that fails before it has the tooling rented nothing, and the cleanup says so.
             - name: Resolve the machine tooling
               env:
