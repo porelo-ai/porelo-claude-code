@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC67",
   "title": "A Continued Session Is Asked For Its Word",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "XS",
   "priority": "Low",
   "rank": 1,
