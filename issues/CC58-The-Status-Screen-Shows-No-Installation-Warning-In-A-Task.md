@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC58",
   "title": "The Status Screen Shows No Installation Warning In A Task",
-  "state": "Estimated",
+  "state": "Implementing",
   "size": "S",
   "priority": "Low",
   "rank": 1,
