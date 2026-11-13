@@ -27,6 +27,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails |
 | <a id="cc68"></a>[CC68](CC68-The-Vault-Scenarios-Leave-Once-Porelo-Holds-Them.md) | XS | - | credential.feature's three scenarios that test only Porelo's vault leave the legs once Porelo's own acceptance suite proves each |
 
 ## Implementing
