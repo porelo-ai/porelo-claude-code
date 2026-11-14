@@ -58,7 +58,7 @@ Feature: A task that comes back continues the conversation it was having
         # write during its first turn, and a stop before the turn ends leaves none to continue.
         Then within 120 seconds this script exits zero:
             """
-            podman exec "$(porelo task status back --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo | grep -v 'Reply with OK' | grep -qw OK
+            podman exec --user root "$(porelo task status back --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -t porelo | grep -v 'Reply with OK' | grep -qw OK
             """
         When a script runs "sleep 3; porelo task stop back"
         Then porelo says task "back" of "back" has a session to continue
@@ -73,7 +73,7 @@ Feature: A task that comes back continues the conversation it was having
         When I press Enter
         Then within 180 seconds this script exits zero:
             """
-            podman exec "$(porelo task status back --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -J -t porelo | grep -v -e 'Which word did I ask' -e 'Remember the word PAPAYA' | grep -q PAPAYA
+            podman exec --user root "$(porelo task status back --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -J -t porelo | grep -v -e 'Which word did I ask' -e 'Remember the word PAPAYA' | grep -q PAPAYA
             """
         When a script runs "porelo project remove back --force"
         Then it exits zero

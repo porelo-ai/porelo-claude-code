@@ -32,10 +32,10 @@ Feature: An agent at rest is woken by a message for it
         # presses Enter again, and so does a try that finds it there.
         Then within 120 seconds this script exits zero:
             """
-            screen=$(podman exec "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo 2>&1)
+            screen=$(podman exec --user root "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -t porelo 2>&1)
             printf '%s\n' "$screen" | grep -v 'single word PONG' | grep -qw PONG && exit 0
             if printf '%s\n' "$screen" | grep -A1 '^──' | grep '^❯' | grep -qF 'single word PONG'; then
-              podman exec "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
+              podman exec --user root "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
             fi
             printf 'screen, last lines:\n'; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
             exit 1
@@ -44,7 +44,7 @@ Feature: An agent at rest is woken by a message for it
         # the message below comes to an agent at rest, not to one still finishing its turn.
         Then within 60 seconds this script exits zero:
             """
-            screen=$(podman exec "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo)
+            screen=$(podman exec --user root "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -t porelo)
             printf '%s\n' "$screen" | grep -qF 'bypass permissions on' || exit 1
             ! printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel'
             """
@@ -60,7 +60,7 @@ Feature: An agent at rest is woken by a message for it
             for id in $(printf '%s\n' "$held" | awk '$1 ~ /\.json$/ && $2 == "held" {print $1}'); do
               porelo talk read wake "$id" | grep -qE '5,?555' && exit 0
             done
-            screen=$(podman exec "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -S - -t porelo)
+            screen=$(podman exec --user root "$(porelo task status wake --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -S - -t porelo)
             printf '%s\n' "$screen" | grep -qE '5,?555' && exit 0
             printf 'held: %s\nscreen, last lines:\n' "$held"; printf '%s\n' "$screen" | grep -v '^ *$' | tail -15
             exit 1
@@ -101,7 +101,7 @@ Feature: An agent at rest is woken by a message for it
         Then within 120 seconds this script exits zero:
             """
             top=$(podman top "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" args 2>&1)
-            screen=$(podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo 2>&1)
+            screen=$(podman exec --user root "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -t porelo 2>&1)
             if printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done'; then
               printf '%s\n' "$screen" | grep -qF 'Bash(until [ -e /tmp/porelo-busy-done ]' && printf '%s\n' "$screen" | grep -qF 'Running…' \
                 && printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel' && exit 0
@@ -110,7 +110,7 @@ Feature: An agent at rest is woken by a message for it
               fi
             fi
             if printf '%s\n' "$screen" | grep -A1 '^──' | grep '^❯' | grep -qF "porelo-busy-done"; then
-              podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
+              podman exec --user root "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux send-keys -t porelo Enter; echo 'the line still stood in the input box: Enter again'
             fi
             printf 'podman top:\n%s\nscreen, last lines:\n' "$top"; printf '%s\n' "$screen" | grep -v '^ *$' | tail -12
             exit 1
@@ -123,7 +123,7 @@ Feature: An agent at rest is woken by a message for it
         Then within 5 seconds this script exits zero:
             """
             top=$(podman top "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" args 2>&1)
-            screen=$(podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -t porelo 2>&1)
+            screen=$(podman exec --user root "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -t porelo 2>&1)
             printf '%s\n' "$top" | grep -qF '/tmp/porelo-busy-done' && printf '%s\n' "$screen" | grep -qF 'Running…' \
               && printf '%s\n' "$screen" | grep -qE 'esc to interrupt|Esc to cancel' \
               && ! printf '%s\n' "$screen" | grep -qF 'A message for you waits' && exit 0
@@ -143,7 +143,7 @@ Feature: An agent at rest is woken by a message for it
             for id in $(printf '%s\n' "$held" | awk '$1 ~ /\.json$/ && $2 == "held" {print $1}'); do
               porelo talk read busy "$id" | grep -qE '5,?555' && exit 0
             done
-            screen=$(podman exec "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux capture-pane -p -S - -t porelo)
+            screen=$(podman exec --user root "$(porelo task status busy --json | grep -o '"name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)" tmux -S /run/porelo-tmux/tmux capture-pane -p -S - -t porelo)
             printf '%s\n' "$screen" | grep -qE '5,?555' && exit 0
             printf 'held: %s\nscreen, last lines:\n' "$held"; printf '%s\n' "$screen" | grep -v '^ *$' | tail -15
             exit 1

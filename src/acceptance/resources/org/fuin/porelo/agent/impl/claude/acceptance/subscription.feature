@@ -114,7 +114,7 @@ Feature: A subscription is renewed only on the host
                 environment = run("podman", "exec", task, "env")
                 assert b"CLAUDE_CODE_OAUTH_TOKEN=" in environment, "OAuth environment was not read"
                 absent("environment inside the task", environment)
-                archive = run("podman", "exec", task, "tar", "-cf", "-", "-C", "/home/agent", ".")
+                archive = run("podman", "exec", "--user", "agent", task, "tar", "-cf", "-", "-C", "/home/agent", ".")
                 count = 0
                 with tarfile.open(fileobj=io.BytesIO(archive)) as home:
                     for entry in home:
