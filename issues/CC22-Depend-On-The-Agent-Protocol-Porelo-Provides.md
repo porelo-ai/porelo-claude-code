@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC22",
   "title": "Depend on the agent protocol Porelo's package provides",
-  "state": "Implementing",
+  "state": "Backlog",
   "size": "S",
   "priority": "Medium",
   "rank": 2,
@@ -36,6 +36,8 @@ work.
 
 ## Plan
 
+- **How far it got.** Built on the local branch `cc22` (ec0192b, a7f08be), kept off `main` until Porelo's packages
+  provide the protocol; the branch's issue text says what was measured. Nothing of it is on `main`.
 - **Porelo first:** `Provides: porelo-agent-protocol-<L>` in
   `dist/dist-deb/src/deb/control/control` and a `<provide>` in `dist/dist-rpm/pom.xml`, with `<L>` from
   `AgentProtocol.LOWEST` (3), not from `VERSION`. Published before any agent depends on it, or the
