@@ -37,6 +37,7 @@ repository is built.
 | [What an update takes, and when](#what-an-update-takes-and-when) | three days old and still the newest, verified on rented machines before the pull request |
 | [NullAway comes from `porelo-parent`](#nullaway-comes-from-porelo-parent) | one compiler configuration for every repository; `.mvn/jvm.config` stays here |
 | [No check requires a changelog entry](#no-check-requires-a-changelog-entry) | requiring one belongs to Porelo's changelog check, on logchange |
+| [Accepted risk: a task's subagent bound is the agent's own](#accepted-risk-a-tasks-subagent-bound-is-the-agents-own) | the CLI holds it, and its shell can start another copy; a hard bound is Porelo's |
 
 ## Why this agent needs container setup at all
 
@@ -513,3 +514,19 @@ matches answers.
 
 **What would change it:** a release whose finished run ends with another `terminal_reason`, or
 Porelo matching a record's non-text values, after which `is_error: false` says it more directly.
+
+## Accepted risk: a task's subagent bound is the agent's own
+
+A task's number of subagents is held by Claude Code's own settings, which `ClaudeSettings` writes: `Agent`,
+`Workflow` and `Skill` denied at 0, `Workflow` and `Skill` denied above it, with
+`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` as the count and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` at 1.
+
+**The exposure:** the agent has a shell and can start another copy of the CLI. The count and the depth rest on two
+undocumented variables, named only in the binary's own error texts. `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` did not
+hold when measured, so no count per session is declared. The acceptance suite sees a denial stop holding on a pin bump.
+Nothing in it covers the count and the depth.
+
+**Why it stays:** the container, not the CLI, is the boundary of a task, and a bound the agent cannot leave is Porelo's own to set, outside this repository.
+
+**What would change it:** a documented setting that counts subagents, which a scenario then holds, or a bound Porelo
+enforces from outside the agent.

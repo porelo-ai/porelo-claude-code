@@ -91,7 +91,7 @@ variables those of porelo-host's `doc/local-forge.md`, *The local registry and p
   skipped itself; a missing `PORELO_PUBLISH` that leaves `update.yml` skipped is seen first in the Build, which fails
   on it with every push of content; and `PORELO_PUBLISH` rather than the forge's address switches the jobs that call
   GitHub's API, as the plan and the sluice's workflows have it. Two findings concern the shape every repository on the
-  forge shares and are built in [CC41](README.md#cc41): the snapshots were read with the publisher's token, so a branch's
+  forge shares and are built on their own: the snapshots were read with the publisher's token, so a branch's
   tests held a token that writes the forge's registry; and a forge without `MAVEN_SNAPSHOTS_URL` fell back to Central's
   snapshots without a word.
 
