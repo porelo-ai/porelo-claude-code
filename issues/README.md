@@ -35,6 +35,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
+| <a id="cc72"></a>[CC72](CC72-The-Docs-Say-What-The-Code-Does.md) | S | - | every sentence of the user-facing documentation checked against the code on main, and each one the code does not bear out fixed | - |
 | <a id="cc56"></a>[CC56](CC56-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | M | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
 | <a id="cc57"></a>[CC57](CC57-Measure-What-The-Agents-Streams-Tell-About-Tool-Calls.md) | S | - | a measurement, no product code: each agent Porelo runs, given the same small order unattended in a task, and what its raw stream says of each tool call - name, input, start, end, own time, background jobs, sub-agents - and how the wall time splits | - |
 | <a id="cc59"></a>[CC59](CC59-Measure-What-The-Agents-Streams-Tell-About-Sub-Agents.md) | S | - | a measurement, no product code: each agent Porelo runs that has sub-agents of its own, ordered unattended in a task to start one sub-agent by a given name, and what its raw stream says of that sub-agent - its start, its end, its name, and which calls are its own | - |

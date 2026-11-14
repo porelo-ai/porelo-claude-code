@@ -14,7 +14,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 - A task's commits end with `Assisted-by: Claude Code, <model>`, the model that served the session, written by a git hook, while Claude Code's own `Co-Authored-By:` and pull request note are off; a commit whose model cannot be told is refused.
 - A task's agent starts no subagent unless the task allows it, and then no more at once than it says, with none of their own. No task has skills or workflows, which start agents past that limit.
-- The adapter says what it finds of Claude Code on the host: how it is signed in and to which provider, each finding with its path and never a value.
+- The adapter says what it finds of Claude Code on the host: how it is signed in and to which provider, each finding with its path where it has one (a sign-in in the macOS keychain has none) and never a value.
 - The definition names how its sign-in is answered, `login.flow: paste-code`, so a person signing in on a host over SSH can be told to paste the code; the Porelo it builds against reads the key, and its agent listing names the flow.
 - The package carries the full license texts of what its executable compiles in from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in `THIRD-PARTY-NOTICES`, in its doc directory and as an RPM license file, and its Debian copyright names them.
 - The adapter reads each tool call out of an unattended run's stream for Porelo: its tool, kind and times, a shell call's command line, a background job's end, and a sub-agent's name and the calls made under it.
@@ -44,13 +44,13 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 - The Build passes the event and the ref into its shell through the environment, so a branch's name is never run as a command.
 - An acceptance scenario holds a subscription's refresh token out of its task: kept through `vault login --credentials-from` against a stand-in token endpoint, renewed once by the host, and found in neither the task's environment, its files nor its logs.
 - The acceptance suite allows the agent 120 seconds to reach work and an unattended run 120 seconds to end, about four times what the adapters' rented test machine measured, so a run stuck at a question fails in minutes, not half an hour.
-- Built on the snapshot of `porelo-parent` (0.2.1-SNAPSHOT, with the release tooling 0.5.1-SNAPSHOT), against Porelo 0.5.1-SNAPSHOT.
+- Built on the snapshot of `porelo-parent` (0.2.2-SNAPSHOT, with the release tooling 0.5.2-SNAPSHOT), against Porelo 0.5.1-SNAPSHOT.
 
 ### Fixed
 
 - A task's agent no longer stops at the question Claude Code 2.1.292 asks at its first start, whether to make auto mode the default; the adapter answers it as seen and the task keeps bypass mode.
 - The log and the error a run ends with carry no terminal control characters but the line break and the tab, so nothing the model writes can clear or rewrite the screen that shows it.
-- A failed run whose result line gives no reason ends with an error saying so, never with "success" or "null", and what it said is cut at 300 characters without splitting one.
+- A failed run whose result line gives no reason ends with an error saying so, never with "success" or "null", and the log line cuts what it said at 300 characters without splitting one.
 
 ## [0.5.0] - 2026-10-17
 

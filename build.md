@@ -18,8 +18,8 @@ What the second command leaves in `target/`:
 
 ```
 porelo-agent-claude                              the adapter, run by Porelo on the host
-porelo-agent-claude_0.4.0~SNAPSHOT_amd64.deb
-porelo-agent-claude-0.4.0~SNAPSHOT-1.x86_64.rpm
+porelo-agent-claude_0.5.4~snapshot.0_amd64.deb
+porelo-agent-claude-0.5.4~snapshot.0-1.x86_64.rpm
 ```
 
 **The package version is this agent's own**, not Porelo's. An agent released against
@@ -121,7 +121,8 @@ https://downloads.claude.ai/claude-code-releases/latest   every release, promote
 
 `stable` rather than `latest`, because the question "should a release have to be a
 certain age before it is picked up" already has an answer that is not ours to
-invent. The gap between the two is an observation, not a contract - nothing says
+invent. On top of it, a release is taken only once it is three days old
+(`porelo.release.min-age`). The gap between the two is an observation, not a contract - nothing says
 `stable` cannot move twice in a day. `workflow_dispatch` takes a version to
 override both.
 
@@ -164,18 +165,20 @@ quietly did not install cannot pass.
 
 ## Publishing
 
-A push to `main` uploads the two packages to Artifactory, into the **same repositories
+Where `PORELO_PUBLISH` is `true`, a push to `main` uploads the two packages to Artifactory, into the **same repositories
 Porelo itself publishes to** - `porelo-dist-deb` and `porelo-dist-rpm`. They belong
 together: this package declares `Depends: porelo`, so split across repositories an
 operator would have to configure both for the dependency to resolve.
 
 A pull request builds and packages but publishes nothing.
 
-Two repository settings are needed, the same ones Porelo uses: the variable `JF_URL`
-(the platform url, **without** `/artifactory`) and the secret `JF_ACCESS_TOKEN`. The
+Three repository settings are needed, the same ones Porelo uses: the variable
+`PORELO_PUBLISH`, `true` to publish and `false` to build without publishing (anything else
+fails the build), the variable `JF_URL` (the platform url, **without** `/artifactory`) and
+the secret `JF_ACCESS_TOKEN`. The
 token needs Read, Deploy/Cache, **Annotate** and **Delete** on both repositories -
-Annotate because the Debian index is driven by properties, Delete because the snapshot
-file name is stable and every build overwrites it.
+Annotate because the Debian index is driven by properties, Delete because the bill's
+file name, `porelo-agent-claude.cdx.json`, is stable and every build overwrites it.
 
 `.github/workflows/artifactory-smoke.yml` checks all of that in about twenty seconds,
 without building anything. Run it after rotating the token, or before wondering why a
@@ -190,7 +193,8 @@ never a prepared snapshot - so it exercises the package repository itself: the
 signature, the index, and `Depends: porelo` resolving from the same place.
 
 `org.fuin.porelo.machines.Main acceptance` provisions the machine, installs from Artifactory
-the way [the README](README.md#install) says, creates an unprivileged user (a task runs
+the way [the README](README.md#install) says - on a publishing push to `main`; a tag, a dispatch
+or a forge that does not publish installs the packages its run built (`--candidate`) - creates an unprivileged user (a task runs
 rootless, so running the suite as root would prove less - and the scenarios refuse it), runs the
 scenarios from the runner and destroys the server in a `finally`. The smallest kind, `amd64`, is enough - one core and 2 GB, because this installs
 packages and runs a single prompt.
@@ -271,5 +275,6 @@ Ubuntu 26.04's shell integration prints `user=acceptance` in its escape sequence
 `acceptance` reads as echoed there - and not on a machine whose account has another name, which is why a
 passphrase can pass locally and fail on a rented machine.
 
-In CI the same suite runs from the runner against the rented machine on every push to `main`.
+In CI the same suite runs from the runner against the rented machine on every push to `main`, unless a
+run of this repository proved the same tree within a day; then the Build takes those legs instead.
 A run that produces no scenarios fails rather than passing quietly.

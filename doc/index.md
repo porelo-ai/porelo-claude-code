@@ -26,7 +26,7 @@ With a **Claude subscription**:
 porelo vault login claude
 ```
 
-It runs Claude Code's own login on this machine. Choose the subscription, open the link it prints in
+It runs Claude Code's own login in a throwaway container on this machine. Choose the subscription, open the link it prints in
 any browser, sign in, and paste the code shown back into the terminal. Porelo keeps the sign-in and
 renews it when it nears its end, so a task never holds it and a night off needs no new sign-in.
 
