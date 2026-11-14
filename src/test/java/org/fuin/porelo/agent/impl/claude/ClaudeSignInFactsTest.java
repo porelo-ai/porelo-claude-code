@@ -202,4 +202,23 @@ class ClaudeSignInFactsTest {
         assertThat(facts).as("the subscription, which the import takes").hasSize(1);
         assertThat(facts.toString()).as("no value in any field").doesNotContain(SECRET);
     }
+
+    // Prevents offering a sign-in Porelo's listing of what can be carried would not hold: it asks
+    // the extractor per provider and keeps only an answer that names that provider.
+    @Test
+    void eachSignInWithFactsIsOneTheExtractorAnswersForItsProvider() throws IOException {
+        subscription(EXPIRES);
+
+        final List<ClaudeSignInFacts> facts = facts();
+
+        assertThat(facts).as("the fixture holds a sign-in to carry").isNotEmpty();
+        assertThat(facts)
+                .allSatisfy(
+                        fact ->
+                                assertThat(
+                                                new ClaudeCredentialExtractor()
+                                                        .extract(config, fact.finding().provider()))
+                                        .map(found -> found.provider())
+                                        .contains(fact.finding().provider()));
+    }
 }

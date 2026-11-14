@@ -52,8 +52,9 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 
 ## To be checked
 
-- **Porelo's half.** Porelo seals the value it takes through this adapter's extractor, as an import does; the
-  listing that shows these facts is still to come from Porelo, and the facts are mapped onto it then.
+- **The facts on the wire.** Porelo's listing of what can be carried names agent, provider and kind, asked of this
+  adapter's extractor per provider; it carries no account, expiry or last change, so the facts stay in the adapter
+  until a listing takes them, and the third acceptance point is Porelo's walk.
 
 ## What was built
 
@@ -70,4 +71,5 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 - The reading by another model found the key behind a subscription offered, facts on routes the import does not
   take, and tests that passed with the time read from the wrong file or the account's guards gone; all fixed.
   Noted, not fixed: the account file is read without the extractor's check that it is a regular file.
-- Open until Porelo's half posts its listing: the facts mapped onto it, and the third acceptance point.
+- Mapped onto Porelo's listing of what can be carried, which asks the extractor per provider: each sign-in with facts
+  is one the extractor answers for its provider, named, by a test.
