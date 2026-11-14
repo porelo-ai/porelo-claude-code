@@ -11,7 +11,7 @@
   "rank": 1,
   "blockedBy": [],
   "covers": "on the person's machine the adapter lists each Claude Code sign-in it finds - provider, kind, account where known, age and expiry where known, and whether it can be carried, never its value - and hands a chosen one to Porelo, which carries it into a rented host's vault",
-  "openQuestions": 2
+  "openQuestions": 1
 }
 ```
 
@@ -44,21 +44,30 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 - No finding holds a value of its fixture.
 - With Porelo's half in, a sign-in found on the person's machine is in the host's vault and a task there runs on it.
 
-## To be checked
+## Open questions
 
-- **Porelo's half.** The fields (account, age, expiry, carriable) and the carrying are Agent Core's issue; it goes in
-  `blockedBy` once filed.
 - **Two machines on one sign-in.** An OAuth sign-in whose refresh token is replaced at each renewal works on one
   machine at a time: the first to renew signs the other out. Whether a carried sign-in is said to sign the person's
   machine out, or is carried only as a kind that does not rotate, is the operator's call.
+
+## To be checked
+
+- **Porelo's half.** Porelo seals the value it takes through this adapter's extractor, as an import does; the
+  listing that shows these facts is still to come from Porelo, and the facts are mapped onto it then.
 
 ## What was built
 
 - `ClaudeSignInFacts` says, for each sign-in `ClaudeFindings` finds in Claude Code's own files, the account
   (`oauthAccount`'s `emailAddress` in the account file), the access token's expiry (`expiresAt`, a subscription
   only) and the file's last change; an account with a control character or past 320 characters is none.
-- Carriable is the finding's `importable`, as before: the credentials file and the Console key are; a sign-in in
-  the settings has no facts and is not offered; the macOS keychain stays a finding that cannot say.
+- Carriable is the finding's `importable`, and facts are given only where it is true: the credentials file and the
+  Console key are; a Console key behind a subscription is not, since the import takes the subscription, which the
+  findings now say too; a sign-in in the settings or one sent to another provider has no facts; the macOS keychain
+  stays a finding that cannot say.
 - The value goes to Porelo only through `ClaudeCredentialExtractor`, the one an import already uses.
-- Tests: `ClaudeSignInFactsTest`, 8, each route, no account or expiry guessed, and no fixture value in any fact.
-- Open until B775's wire shape is posted: the facts mapped onto Porelo's finding, and the third acceptance point.
+- Tests: `ClaudeSignInFactsTest`, 12, each route, each time from its own file, no account or expiry guessed, and no
+  fixture value in any fact; `ClaudeFindingsTest` holds the key behind a subscription not importable.
+- The reading by another model found the key behind a subscription offered, facts on routes the import does not
+  take, and tests that passed with the time read from the wrong file or the account's guards gone; all fixed.
+  Noted, not fixed: the account file is read without the extractor's check that it is a regular file.
+- Open until Porelo's half posts its listing: the facts mapped onto it, and the third acceptance point.

@@ -1,6 +1,7 @@
 package org.fuin.porelo.agent.impl.claude;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
@@ -161,6 +162,18 @@ class ClaudeFindingsTest {
                 .extracting(Finding::kind)
                 .as("Claude Code prefers the subscription")
                 .containsExactly(Kind.SUBSCRIPTION, Kind.API_KEY);
+    }
+
+    // Prevents offering to carry a Console key the import would pass over for the subscription.
+    @Test
+    void aConsoleKeyBehindASubscriptionCannotBeImported() throws IOException {
+        credentials(SUBSCRIPTION);
+        Files.writeString(home.resolve(".claude.json"), "{\"primaryApiKey\":\"" + SECRET + "\"}");
+
+        assertThat(signIns())
+                .extracting(Finding::kind, Finding::importable)
+                .as("the import takes the subscription, never the key behind it")
+                .containsExactly(tuple(Kind.SUBSCRIPTION, true), tuple(Kind.API_KEY, false));
     }
 
     // Prevents reading the account's file when the person moved the directory: it does not count.

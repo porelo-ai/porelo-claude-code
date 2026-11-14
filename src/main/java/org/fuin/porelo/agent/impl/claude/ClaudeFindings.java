@@ -92,8 +92,8 @@ final class ClaudeFindings implements Finder {
             findings.add(routes.fromSettings(settings.path(), null));
         }
         findSettingsRoutes(settings, env, routes, findings);
-        findCredentialsFile(directory, routes, findings);
-        findConsoleKey(directory, routes, findings);
+        final boolean subscription = findCredentialsFile(directory, routes, findings);
+        findConsoleKey(directory, routes, subscription, findings);
         final Path profileConfigs = profiles.resolve("configs");
         if (holdsAnything(profileConfigs)) {
             findings.add(cannotSay(profileConfigs));
@@ -129,7 +129,8 @@ final class ClaudeFindings implements Finder {
         }
     }
 
-    private void findCredentialsFile(
+    /** Returns whether the credentials file holds a subscription, which the import takes first. */
+    private boolean findCredentialsFile(
             final Path directory, final Routes routes, final List<Finding> findings) {
 
         final JsonFile file =
@@ -140,7 +141,7 @@ final class ClaudeFindings implements Finder {
             case BROKEN, OBJECT -> {
                 if (ClaudeCredentialExtractor.holdsSubscription(file.root())) {
                     findings.add(routes.fromFile(file.path(), Kind.SUBSCRIPTION));
-                    return;
+                    return true;
                 }
                 findings.add(
                         new Finding(
@@ -155,10 +156,15 @@ final class ClaudeFindings implements Finder {
         if (keychain) {
             findings.add(new Finding(What.SIGN_IN, null, SignedIn.CANNOT_SAY, null, null, null));
         }
+        return false;
     }
 
+    /** A key behind a subscription is signed in, but the import takes the subscription instead. */
     private static void findConsoleKey(
-            final Path directory, final Routes routes, final List<Finding> findings) {
+            final Path directory,
+            final Routes routes,
+            final boolean behindSubscription,
+            final List<Finding> findings) {
 
         final JsonFile file = JsonFile.read(ClaudeCredentialExtractor.accountFile(directory));
         switch (file.state()) {
@@ -166,7 +172,10 @@ final class ClaudeFindings implements Finder {
             case UNREADABLE, BROKEN -> findings.add(cannotSay(file.path()));
             case OBJECT -> {
                 if (isSet(file.get(ClaudeCredentialExtractor.CONSOLE_KEY))) {
-                    findings.add(routes.fromFile(file.path(), Kind.API_KEY));
+                    findings.add(
+                            behindSubscription
+                                    ? routes.passedOver(file.path(), Kind.API_KEY)
+                                    : routes.fromFile(file.path(), Kind.API_KEY));
                 }
             }
         }
@@ -216,6 +225,11 @@ final class ClaudeFindings implements Finder {
     private record Routes(boolean elsewhere, boolean open) {
 
         Finding fromSettings(final Path path, final @Nullable Kind kind) {
+            return signedIn(path, false, kind);
+        }
+
+        /** A route Claude Code holds but the import passes over for one before it. */
+        Finding passedOver(final Path path, final Kind kind) {
             return signedIn(path, false, kind);
         }
 

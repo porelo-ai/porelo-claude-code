@@ -38,9 +38,9 @@ record ClaudeSignInFacts(
     static final int LONGEST_ACCOUNT = 320;
 
     /**
-     * Returns the facts of each finding that is a sign-in in one of Claude Code's own files, in the
-     * findings' order. A sign-in in the settings is left out: its value is the person's to give,
-     * and an import does not take it.
+     * Returns the facts of each sign-in in one of Claude Code's own files that the import takes, in
+     * the findings' order. A sign-in in the settings, one whose requests go to another provider and
+     * a Console key behind a subscription are left out: an import does not take them.
      *
      * @param findings What {@link ClaudeFindings} found in the directory.
      * @param configDirectory Claude Code's configuration directory.
@@ -54,6 +54,7 @@ record ClaudeSignInFacts(
         return findings.stream()
                 .filter(finding -> finding.what() == What.SIGN_IN)
                 .filter(finding -> finding.signedIn() == SignedIn.SIGNED_IN)
+                .filter(finding -> Boolean.TRUE.equals(finding.importable()))
                 .filter(finding -> finding.path() != null)
                 .<ClaudeSignInFacts>mapMulti(
                         (finding, out) -> {

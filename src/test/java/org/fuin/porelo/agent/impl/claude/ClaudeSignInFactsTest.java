@@ -20,6 +20,7 @@ class ClaudeSignInFactsTest {
     private static final String ACCOUNT = "person@example.org";
     private static final long EXPIRES = 1_800_000_000_000L;
     private static final Instant CHANGED = Instant.parse("2026-11-01T10:00:00Z");
+    private static final Instant ACCOUNT_CHANGED = Instant.parse("2026-10-01T10:00:00Z");
 
     @TempDir Path home;
 
@@ -52,7 +53,8 @@ class ClaudeSignInFactsTest {
 
     private void accountFile(final String content) throws IOException {
         Files.setLastModifiedTime(
-                Files.writeString(home.resolve(".claude.json"), content), FileTime.from(CHANGED));
+                Files.writeString(home.resolve(".claude.json"), content),
+                FileTime.from(ACCOUNT_CHANGED));
     }
 
     private static String account(final String address) {
@@ -73,7 +75,9 @@ class ClaudeSignInFactsTest {
                             assertThat(facts.finding().importable()).as("carriable").isTrue();
                             assertThat(facts.account()).isEqualTo(ACCOUNT);
                             assertThat(facts.expires()).isEqualTo(Instant.ofEpochMilli(EXPIRES));
-                            assertThat(facts.changed()).isEqualTo(CHANGED);
+                            assertThat(facts.changed())
+                                    .as("the credentials file's own time, which a renewal moves")
+                                    .isEqualTo(CHANGED);
                         });
     }
 
@@ -94,7 +98,7 @@ class ClaudeSignInFactsTest {
                             assertThat(facts.finding().kind()).isEqualTo(Kind.API_KEY);
                             assertThat(facts.account()).isEqualTo(ACCOUNT);
                             assertThat(facts.expires()).isNull();
-                            assertThat(facts.changed()).isEqualTo(CHANGED);
+                            assertThat(facts.changed()).isEqualTo(ACCOUNT_CHANGED);
                         });
     }
 
@@ -113,6 +117,47 @@ class ClaudeSignInFactsTest {
         accountFile(account("person\\u001b[2J@example.org"));
 
         assertThat(facts()).singleElement().extracting(ClaudeSignInFacts::account).isNull();
+    }
+
+    // Prevents an empty name from reaching the person's dialog as an account.
+    @Test
+    void aBlankAccountIsNoAccount() throws IOException {
+        subscription(EXPIRES);
+        accountFile(account("   "));
+
+        assertThat(facts()).singleElement().extracting(ClaudeSignInFacts::account).isNull();
+    }
+
+    // Prevents an endless text from reaching the person's dialog as an account.
+    @Test
+    void anAccountPastItsLengthIsNoAccount() throws IOException {
+        subscription(EXPIRES);
+        accountFile(account("a".repeat(ClaudeSignInFacts.LONGEST_ACCOUNT - 12) + "@example.org"));
+        assertThat(facts()).singleElement().extracting(ClaudeSignInFacts::account).isNotNull();
+
+        accountFile(account("a".repeat(ClaudeSignInFacts.LONGEST_ACCOUNT - 11) + "@example.org"));
+        assertThat(facts()).singleElement().extracting(ClaudeSignInFacts::account).isNull();
+    }
+
+    // Prevents offering a sign-in whose requests Claude Code sends to another provider.
+    @Test
+    void aSignInSwitchedToAnotherProviderHasNoFacts() throws IOException {
+        subscription(EXPIRES);
+        Files.writeString(
+                config.resolve("settings.json"), "{\"env\":{\"CLAUDE_CODE_USE_BEDROCK\":\"1\"}}");
+
+        assertThat(facts()).isEmpty();
+    }
+
+    // Prevents a Console key the import passes over, for the subscription, being offered.
+    @Test
+    void aConsoleKeyBehindASubscriptionHasNoFacts() throws IOException {
+        subscription(EXPIRES);
+        accountFile("{\"primaryApiKey\":\"" + SECRET + "\"}");
+
+        assertThat(facts())
+                .extracting(facts -> facts.finding().kind())
+                .containsExactly(Kind.SUBSCRIPTION);
     }
 
     // Prevents a zero or missing expiry from reading as one in 1970.
@@ -154,7 +199,7 @@ class ClaudeSignInFactsTest {
 
         final List<ClaudeSignInFacts> facts = facts();
 
-        assertThat(facts).as("both routes were read").hasSize(2);
+        assertThat(facts).as("the subscription, which the import takes").hasSize(1);
         assertThat(facts.toString()).as("no value in any field").doesNotContain(SECRET);
     }
 }
