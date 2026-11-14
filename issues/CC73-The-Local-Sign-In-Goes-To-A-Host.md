@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC73",
   "title": "The Local Sign-In Goes To A Host",
-  "state": "Backlog",
+  "state": "Review",
   "size": "M",
   "priority": "High",
   "rank": 1,
@@ -51,3 +51,14 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 - **Two machines on one sign-in.** An OAuth sign-in whose refresh token is replaced at each renewal works on one
   machine at a time: the first to renew signs the other out. Whether a carried sign-in is said to sign the person's
   machine out, or is carried only as a kind that does not rotate, is the operator's call.
+
+## What was built
+
+- `ClaudeSignInFacts` says, for each sign-in `ClaudeFindings` finds in Claude Code's own files, the account
+  (`oauthAccount`'s `emailAddress` in the account file), the access token's expiry (`expiresAt`, a subscription
+  only) and the file's last change; an account with a control character or past 320 characters is none.
+- Carriable is the finding's `importable`, as before: the credentials file and the Console key are; a sign-in in
+  the settings has no facts and is not offered; the macOS keychain stays a finding that cannot say.
+- The value goes to Porelo only through `ClaudeCredentialExtractor`, the one an import already uses.
+- Tests: `ClaudeSignInFactsTest`, 8, each route, no account or expiry guessed, and no fixture value in any fact.
+- Open until B775's wire shape is posted: the facts mapped onto Porelo's finding, and the third acceptance point.
