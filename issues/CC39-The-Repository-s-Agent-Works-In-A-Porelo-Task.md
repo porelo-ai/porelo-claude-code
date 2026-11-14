@@ -40,8 +40,8 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
   task's firewall. The task's build reads Sonatype's snapshots: the forge's registry refuses a task today (the organization is private), and nothing sets
   `MAVEN_SNAPSHOTS_URL` in a task yet, so the `forge` profile stays off there until both are in.
 - **The sub-agent reading:** no sub-agent CLI is in the task's image, since a project file names one
-  agent per repository and porelo describes no second sign-in inside a task. Until Porelo has a task that reviews, an agent outside the task reads the pull request's diff against the skills, as today's sub-agent reading does, and posts its
-  findings in the room.
+  agent per repository and porelo describes no second sign-in inside a task. The reading before a hand-over is done on the host: a reader started apart from the task, by the
+  host's forge or by hand, reads the pull request's diff against the skills and posts its findings in the host's room.
 - **Steps:**
   0. *A dry run on this machine first*, only the part that needs nobody: the task's image built from
      `porelo.yml` with podman, and inside it, as a user other than root on an empty local Maven repository,
@@ -95,9 +95,7 @@ image*) and `doc/running.md` (the agent's layer), and porelo-project's `project.
 - That the forge's Build and *Shared rules check* pass on this issue's commits, once the forge reads the Porelo
   snapshots its registry does not hold.
 - That the task reads its builds through the `forgejo` reader; the trial had none in the task.
-- That the outside reader can fetch `porelo/<task>` from the host's forge, not only from GitHub.
+- That the reader on the host can fetch `porelo/<task>` from the host's forge, not only from GitHub.
 - The way back, rehearsed once: the task's open work fetched from the host's forge into the checkout here.
 - That a revoked sign-in is renewed with `porelo vault login claude --force` and a stop and start of the task: a
   running task keeps the credential it started with.
-- That the outside reader may join the room from its harness; otherwise it posts its findings in the channel and the
-  operator relays them.
