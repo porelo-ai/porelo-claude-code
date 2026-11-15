@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC79",
   "title": "Start Work Offers Claude Code's Models And Efforts",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 1,
