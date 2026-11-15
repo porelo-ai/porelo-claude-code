@@ -10,7 +10,7 @@
   "priority": "Low",
   "rank": 1,
   "blockedBy": [],
-  "covers": "what [CC76](README.md#cc76) left open in the unattended view: a rate limit read one level down, a NaN cost, assistant text on one line, and whether a push is said"
+  "covers": "what [CC76](README.md#cc76) left open in the unattended view: a rate limit read one level down, a NaN cost, and assistant text on one line"
 }
 ```
 
@@ -37,8 +37,8 @@ recording did not answer.
 - **Assistant text on one line.** Assistant text, a tool's command and a notice's text before [CC76](README.md#cc76) keep their line
   breaks, so a reply can hold a line that reads like `[error] ...`. Decide with the coordinator whether a person's
   view folds them, since a reply's own line breaks are what a person reads.
-- **A push.** The 2.1.311 recording held a commit (`vcs_state_changed`, `kind: commit`), not a push: whether a push
-  writes the same event, and with which kind, is to be read from a run with a push on the test VM.
+- **A push** is answered: the operator's live test of ST369 showed `[git] push`, so a push writes `vcs_state_changed`
+  with `kind: push` ([CC78](README.md#cc78)).
 - **Level:** unit tests of the formatter; the recording through the coordinator's VM slot.
 
 ## Acceptance
