@@ -31,11 +31,18 @@ lists its models: `--model` takes an alias (`fable`, `opus`, `sonnet`, `haiku`) 
 
 ## Plan
 
-- **Wait for the shape.** Agent Core posts the `models` section; until then this issue is planned, not built.
-- **Then:** whether a subscription sign-in can read `GET /v1/models`. If it can, nothing is declared and this issue
-  closes with that evidence. If not, the definition declares the aliases with readable names, the form the section
-  takes for a static list.
-- **Level:** unit tests of the definition.
+- **The shape stands.** Porelo's `Models` (B795, porelo 6cdb7a158) asks the provider: `providers/anthropic.yaml`
+  declares `GET /v1/models`, with `anthropic-beta: oauth-2025-04-20` beside a sign-in's token. Claude Code's
+  provider is `anthropic` and its `--model` takes a full id, so the ids that list gives pass as they are. With an
+  API key this already serves the list. An agent's own list (`from: agent`) is reserved in the contract, not built.
+- **The one open fact:** whether a subscription sign-in's token reads `GET /v1/models`. Agent Core has not seen it;
+  its tests only assume the beta header, and no test vault holds a sign-in. It is one check in the operator's live
+  test: `Models` with `fresh` for `anthropic` on a machine whose vault holds the sign-in.
+- **A list comes back:** this issue is done by B795 and closes with that evidence; nothing is declared here.
+- **`ModelsFailed`:** this issue waits on Agent Core's "An Agent's Own Model List" (a definition's `models` section
+  with `from: agent`, a static list of id and name, offered where the provider refuses the sign-in), and then the
+  definition declares the aliases `fable`, `opus`, `sonnet` and `haiku` with readable names.
+- **Level:** the operator's live check; unit tests of the definition only in the second case.
 
 ## Acceptance
 
