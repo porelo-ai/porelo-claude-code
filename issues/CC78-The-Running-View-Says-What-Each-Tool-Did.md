@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC78",
   "title": "The Running View Says What Each Tool Did",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -52,3 +52,28 @@ write `vcs_state_changed`, with `kind: push`.
 - Rendered through the formatter, the recorded 2.1.311 run shows each tool call with its key input and each result with
   its failure and its first line or size; no `> [tool_result]` line and no run of `[thinking]` lines.
 - A result that failed always says so, and its test fails when the rule is taken out.
+
+## What was built
+
+- `ClaudeStreamJsonFormatter` says a `tool_use` block as `[<tool>] <key input>`, folded to one line and cut like
+  every other field: Bash by its command's first line that is not blank, Read/Edit/MultiEdit/Write by `file_path`,
+  NotebookEdit by `notebook_path` (its own field) or `file_path`, Grep/Glob by `pattern`, WebFetch by `url`,
+  WebSearch by `query`, Task/Agent by `description`, TodoWrite by its number of items; any other tool by the first of
+  `description`, `file_path`, `path`, `pattern`, `query`, `url`, `command`, `subject`, `name` that holds text, else
+  by its name alone. A field that holds what a tool writes or asks at length (a content, a prompt) is never shown.
+- A `tool_result` block says `[failed]` first when `is_error` is set, then its first line that is not blank, cut,
+  and its number of lines when it has more than one (`(5 lines)`); its content is read as a string or as a list of
+  blocks with text. A result with no text says what it holds (`1 image`), or `no output`.
+- Thinking is dropped, the choice the plan left open: a thinking or redacted-thinking block shows nothing, and a
+  message of thinking alone shows no line, since the tool call it leads to says what was done. A message with no
+  block at all still gets the `[unreadable]` marker.
+- The assistant's own text is unchanged; the blocks of one message are joined with a space.
+- Tests, each seen red before the code and again when its rule was broken on purpose (the input taken off, the
+  failure mark taken off, the whole output shown, thinking shown, the cut and the fold taken off):
+  `aRecordedRunSaysEachToolCallWithItsInputAndEachResultByHowItBegan` over the recorded 2.1.311 run,
+  `aToolCallIsSaidWithWhatItWasCalledOn`, `aToolsInputIsCut`, `aResultSaysHowItBeganOrHowLongItWas`,
+  `aResultThatFailedAlwaysSaysSo`, `thinkingIsLeftOut` and `aToolsInputOrResultCannotOpenALineOfItsOwn`.
+  `ClaudeAgentTest` no longer holds `[Bash]`, `> [tool_result]` or `[thinking]`; it names an unknown block type
+  instead.
+- The recorded run has no failed result and only Bash calls; the other tools and a failure are shown by single lines.
+- Open: the plan's level "seen once in a live task through the coordinator" is not done here.

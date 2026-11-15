@@ -203,4 +203,214 @@ class ClaudeStreamJsonFormatterTest {
                 .as("a line break in what the agent or a tool wrote is folded away")
                 .allSatisfy(shown -> assertThat(shown).isNotNull().doesNotContain("\n"));
     }
+
+    @Test
+    void aRecordedRunSaysEachToolCallWithItsInputAndEachResultByHowItBegan() throws IOException {
+
+        final List<String> shown =
+                Files.readAllLines(BACKGROUND_RUN, StandardCharsets.UTF_8).stream()
+                        .map(formatter::format)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+        assertThat(shown)
+                .as("each Bash call with its command")
+                .anySatisfy(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("[Bash]")
+                                        .contains("sleep 4; echo BG-DONE > bg.txt"))
+                .anySatisfy(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("[Bash]")
+                                        .contains("pwd; ls -la; git status"));
+        assertThat(shown)
+                .as("each result by its first line, never its whole output")
+                .anySatisfy(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("> ")
+                                        .contains("/workspace")
+                                        .doesNotContain("fatal: not a git repository"))
+                .anySatisfy(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("> ")
+                                        .contains("/workspace/bg.txt")
+                                        .doesNotContain("BG-DONE"));
+        assertThat(shown)
+                .as("no result by its block type alone, and no thinking block")
+                .noneMatch(line -> line.contains("[tool_result]"))
+                .noneMatch(line -> line.contains("thinking"));
+    }
+
+    @Test
+    void aToolCallIsSaidWithWhatItWasCalledOn() {
+
+        assertThat(call("Bash", "{\"command\":\"git status\\ngit log\",\"description\":\"d\"}"))
+                .as("a command by its first line")
+                .contains("Bash", "git status")
+                .doesNotContain("git log", "\n");
+        for (final String tool : List.of("Read", "Edit", "Write")) {
+            assertThat(
+                            call(
+                                    tool,
+                                    "{\"file_path\":\"/workspace/a.txt\",\"content\":\"secret body\"}"))
+                    .as("%s by its path, not what it writes", tool)
+                    .contains(tool, "/workspace/a.txt")
+                    .doesNotContain("secret body");
+        }
+        assertThat(
+                        call(
+                                "NotebookEdit",
+                                "{\"notebook_path\":\"/workspace/n.ipynb\",\"new_source\":\"x\"}"))
+                .as("a notebook by its path")
+                .contains("/workspace/n.ipynb");
+        assertThat(call("Grep", "{\"pattern\":\"TODO\",\"path\":\"src\"}"))
+                .as("a search by its pattern")
+                .contains("TODO");
+        assertThat(call("Glob", "{\"pattern\":\"**/*.java\"}"))
+                .as("a glob by its pattern")
+                .contains("**/*.java");
+        assertThat(call("WebFetch", "{\"url\":\"https://example.org/a\",\"prompt\":\"p\"}"))
+                .as("a fetch by its URL")
+                .contains("https://example.org/a");
+        assertThat(call("WebSearch", "{\"query\":\"jspecify nullmarked\"}"))
+                .as("a web search by its query")
+                .contains("jspecify nullmarked");
+        for (final String tool : List.of("Task", "Agent")) {
+            assertThat(call(tool, "{\"description\":\"Review the parser\",\"prompt\":\"long\"}"))
+                    .as("%s by its description, not its prompt", tool)
+                    .contains("Review the parser")
+                    .doesNotContain("long");
+        }
+        assertThat(
+                        call(
+                                "TodoWrite",
+                                "{\"todos\":[{\"content\":\"one\"},{\"content\":\"two\"},"
+                                        + "{\"content\":\"three\"}]}"))
+                .as("a todo list by its number of items, not their words")
+                .contains("3")
+                .doesNotContain("one");
+        assertThat(call("mcp__notes__find", "{\"limit\":5,\"query\":\"open bugs\"}"))
+                .as("another tool by its most telling string field")
+                .contains("mcp__notes__find", "open bugs");
+        assertThat(call("Odd", "{\"limit\":5}"))
+                .as("another tool with no such field by its name alone")
+                .contains("Odd")
+                .doesNotContain("5");
+    }
+
+    @Test
+    void aToolsInputIsCut() {
+
+        final String input = "x".repeat(5000);
+        assertThat(call("Bash", "{\"command\":\"" + input + "\"}"))
+                .as("a long command is cut")
+                .contains("xxx")
+                .hasSizeLessThan(1000);
+    }
+
+    @Test
+    void aResultSaysHowItBeganOrHowLongItWas() {
+
+        assertThat(result("\"\\n  \\nfirst words\\nsecond line\\nthird line\"", false))
+                .as("a result by its first line that is not blank, and its size")
+                .startsWith("> ")
+                .contains("first words", "3 lines")
+                .doesNotContain("second line", "\n");
+        assertThat(
+                        result(
+                                "[{\"type\":\"text\",\"text\":\"from a block\\nmore\"},"
+                                        + "{\"type\":\"text\",\"text\":\"other\"}]",
+                                false))
+                .as("a result given as blocks of text")
+                .contains("from a block")
+                .doesNotContain("more", "other");
+        assertThat(result("[{\"type\":\"image\"}]", false))
+                .as("a result with no text says what it holds")
+                .isNotNull()
+                .contains("image");
+        assertThat(result("\"\"", false))
+                .as("an empty result says so rather than nothing")
+                .isNotNull()
+                .doesNotContain("tool_result");
+        assertThat(result("\"" + "y".repeat(5000) + "\"", false))
+                .as("a long first line is cut")
+                .hasSizeLessThan(1000);
+    }
+
+    @Test
+    void aResultThatFailedAlwaysSaysSo() {
+
+        assertThat(result("\"Exit code 1\\nboom\"", true))
+                .as("a failed result with text")
+                .contains("failed", "Exit code 1");
+        assertThat(result("[{\"type\":\"image\"}]", true))
+                .as("a failed result without text")
+                .contains("failed");
+        assertThat(result("\"\"", true)).as("a failed result that is empty").contains("failed");
+        assertThat(result("\"all good\"", false))
+                .as("a result that did not fail")
+                .doesNotContain("failed");
+    }
+
+    @Test
+    void thinkingIsLeftOut() {
+
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":"
+                                        + "[{\"type\":\"thinking\",\"thinking\":\"hmm\"}]}}"))
+                .as("a message of thinking alone")
+                .isNull();
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":"
+                                        + "[{\"type\":\"redacted_thinking\",\"data\":\"x\"}]}}"))
+                .as("a message of redacted thinking alone")
+                .isNull();
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"assistant\",\"message\":{\"content\":"
+                                        + "[{\"type\":\"thinking\",\"thinking\":\"hmm\"},{\"text\":\"Done.\"}]}}"))
+                .as("the words beside it")
+                .contains("Done.")
+                .doesNotContain("thinking", "hmm");
+    }
+
+    @Test
+    void aToolsInputOrResultCannotOpenALineOfItsOwn() {
+
+        assertThat(call("Read", "{\"file_path\":\"a\\n[error] forged\"}"))
+                .as("a path with a line break")
+                .doesNotContain("\n");
+        assertThat(call("Odd", "{\"query\":\"a\\u2028[error] forged\"}"))
+                .as("a field with a Unicode separator")
+                .doesNotContain("\u2028");
+        assertThat(result("[{\"type\":\"text\",\"text\":\"a\\u2029[error] forged\"}]", false))
+                .as("a result with a Unicode separator")
+                .doesNotContain("\u2029");
+    }
+
+    private String call(String name, String input) {
+        return formatter.format(
+                "{\"type\":\"assistant\",\"message\":{\"content\":[{\"type\":\"tool_use\","
+                        + "\"id\":\"c\",\"name\":\""
+                        + name
+                        + "\",\"input\":"
+                        + input
+                        + "}]}}");
+    }
+
+    private String result(String content, boolean failed) {
+        return formatter.format(
+                "{\"type\":\"user\",\"message\":{\"content\":[{\"tool_use_id\":\"c\","
+                        + "\"type\":\"tool_result\",\"content\":"
+                        + content
+                        + ",\"is_error\":"
+                        + failed
+                        + "}]}}");
+    }
 }

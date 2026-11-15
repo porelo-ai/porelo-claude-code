@@ -205,8 +205,10 @@ class ClaudeAgentTest {
         assertThat(
                         formatter.format(
                                 "{\"type\":\"assistant\",\"message\":{\"content\":"
-                                        + "[{\"type\":\"tool_use\",\"name\":\"Bash\"}]}}"))
-                .isEqualTo("[Bash]");
+                                        + "[{\"type\":\"tool_use\",\"name\":\"Bash\","
+                                        + "\"input\":{\"command\":\"ls -la\"}}]}}"))
+                .as("a tool call with what it was called on")
+                .contains("Bash", "ls -la");
         assertThat(
                         formatter.format(
                                 "{\"type\":\"result\",\"num_turns\":4,\"total_cost_usd\":0.12}"))
@@ -333,13 +335,16 @@ class ClaudeAgentTest {
 
         assertThat(
                         formatter.format(
-                                "{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\"}]}}"))
-                .isEqualTo("> [tool_result]");
+                                "{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"something_new\"}]}}"))
+                .as("a block of a type never seen, by that type")
+                .startsWith("> ")
+                .contains("something_new");
         assertThat(
                         formatter.format(
                                 "{\"type\":\"assistant\",\"message\":{\"content\":"
-                                        + "[{\"text\":\"Here: \"},{\"type\":\"thinking\"}]}}"))
-                .isEqualTo("Here: [thinking]");
+                                        + "[{\"text\":\"Here: \"},{\"type\":\"something_new\"}]}}"))
+                .as("beside the words it came with")
+                .contains("Here:", "something_new");
     }
 
     @Test
