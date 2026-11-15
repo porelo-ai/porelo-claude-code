@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC78",
   "title": "The Running View Says What Each Tool Did",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 1,

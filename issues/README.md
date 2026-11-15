@@ -29,12 +29,17 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cc78"></a>[CC78](CC78-The-Running-View-Says-What-Each-Tool-Did.md) | S | - | the running view of an unattended Claude Code task says each tool call with its key input and each result by whether it failed and its first line or its size, and thinking as one marker at most, instead of only the tool's name | - |
 | <a id="cc80"></a>[CC80](CC80-Start-Work-Lists-Claude-Code-s-Models.md) | S | - | where a task's provider is Claude Code's own sign-in and no list can be read from the provider, the definition declares the models Claude Code takes - its aliases and the pin's full ids with readable names - in the contract's models section, so Start work offers them; kept from [CC79](README.md#cc79) | - |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
 | <a id="cc68"></a>[CC68](CC68-The-Vault-Scenarios-Leave-Once-Porelo-Holds-Them.md) | XS | - | credential.feature's three scenarios that test only Porelo's vault leave the legs once Porelo's own acceptance suite proves each | - |
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 | <a id="cc77"></a>[CC77](CC77-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CC76](README.md#cc76) left open in the unattended view: a rate limit read one level down, a NaN cost, and assistant text on one line | - |
+
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cc78"></a>[CC78](CC78-The-Running-View-Says-What-Each-Tool-Did.md) | S | - | the running view of an unattended Claude Code task says each tool call with its key input and each result by whether it failed and its first line or its size, and thinking as one marker at most, instead of only the tool's name |
 
 ## Review
 
