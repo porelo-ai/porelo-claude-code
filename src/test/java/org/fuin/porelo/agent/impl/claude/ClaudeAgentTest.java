@@ -290,36 +290,15 @@ class ClaudeAgentTest {
     }
 
     @Test
-    void showsAnythingItDoesNotUnderstand() {
+    void showsALineThatIsNotAnEventAsItCame() {
 
-        // A viewer that swallowed unrecognised lines would hide exactly the output worth reading
-        // when something has gone wrong.
+        // A crash writes plain text, and a partial line does not parse; both may be the only
+        // trace of what went wrong.
         final var formatter = agent.logFormatter();
 
         assertThat(formatter.format("plain text from a crash"))
                 .isEqualTo("plain text from a crash");
         assertThat(formatter.format("{not valid json")).isEqualTo("{not valid json");
-        assertThat(formatter.format("{\"type\":\"something_new\"}"))
-                .isEqualTo("{\"type\":\"something_new\"}");
-    }
-
-    @Test
-    void showsEverySystemEventExceptTheStartupLine() {
-
-        // "system" is a category, not a severity: a warning, an error and a schema change after an
-        // upstream bump arrive under it. Only the startup line is noise, and it is matched by its
-        // subtype so that everything else stays visible.
-        final var formatter = agent.logFormatter();
-
-        final String error =
-                "{\"type\":\"system\",\"subtype\":\"error\",\"message\":\"no credit\"}";
-        assertThat(formatter.format(error)).isEqualTo(error);
-
-        final String unknown = "{\"type\":\"system\",\"subtype\":\"something_new\"}";
-        assertThat(formatter.format(unknown)).isEqualTo(unknown);
-
-        final String noSubtype = "{\"type\":\"system\"}";
-        assertThat(formatter.format(noSubtype)).isEqualTo(noSubtype);
     }
 
     @Test

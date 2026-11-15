@@ -81,16 +81,22 @@ class RemovalWaiverTest {
     }
 
     @Test
-    void everyOtherSystemLineStillReachesTheLog() {
+    void everyOtherNoticeAndErrorStillReachesTheLog() {
 
         final var formatter = new ClaudeAgent().logFormatter();
 
         final String other =
                 "{\"type\":\"system\",\"subtype\":\"notification\",\"key\":\"other\","
                         + "\"text\":\"something else\"}";
-        assertThat(formatter.format(other)).as("a notification with another key").isEqualTo(other);
-        final String retry = "{\"type\":\"system\",\"subtype\":\"api_retry\",\"attempt\":1}";
-        assertThat(formatter.format(retry)).as("another system subtype").isEqualTo(retry);
+        assertThat(formatter.format(other))
+                .as("a notification with another key")
+                .isEqualTo("[notice] something else");
+        final String retry =
+                "{\"type\":\"system\",\"subtype\":\"api_retry\",\"attempt\":1,"
+                        + "\"error\":\"overloaded\"}";
+        assertThat(formatter.format(retry))
+                .as("another system subtype that reports an error")
+                .isEqualTo("[error] overloaded");
         // That the waiver does nothing is what a task's log must still say.
         final String lost =
                 WAIVER

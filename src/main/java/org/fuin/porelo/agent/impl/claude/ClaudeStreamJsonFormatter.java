@@ -17,19 +17,14 @@ import org.jspecify.annotations.Nullable;
  * so an agent added later either supplies its own formatter or gets plain text - and either way
  * says which, rather than inheriting a decision made about somebody else.
  *
- * <p>Anything unrecognised is passed through, and anything recognised but unreadable is passed
- * through with a marker; either way without its terminal control characters. A log viewer that
- * swallowed lines it did not understand would hide exactly the output worth reading when something
- * has gone wrong - and for an unattended run this is the only record there is.
+ * <p>A person reads what the agent says and does, so an event of Claude Code's own is said in words
+ * where it tells them something - a command in the background, a commit, a notice - and is left out
+ * otherwise, an unknown one included; one that reports an error or a warning is always shown, since
+ * for an unattended run this is the only record there is. A line that is not JSON, and one
+ * recognised but unreadable, which gets a marker, still pass through; every line loses its terminal
+ * control characters.
  */
 public class ClaudeStreamJsonFormatter implements LogFormatter {
-
-    /**
-     * A line that is dropped: the CLI announces its session at startup and the operator has that
-     * information from the task itself. Matched by subtype, because "system" as a category also
-     * carries warnings and errors, and those are the lines an unattended run is read for.
-     */
-    private static final String BENIGN = "init";
 
     /**
      * The key of the notice that the task image's waiver of the dangerous-rm check is set. The task
@@ -99,16 +94,94 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             case "assistant" -> text(event, "", line);
             case "user" -> text(event, "> ", line);
             case "result" -> result(event);
-            case "system" -> system(event) ? null : line;
-            default -> line;
+            case "system" -> system(event);
+            default -> trouble(event);
         };
     }
 
-    /** Whether a system line is one the person is not shown. */
-    private static boolean system(Map<?, ?> event) {
-        final String subtype = String.valueOf(event.get("subtype"));
-        return BENIGN.equals(subtype)
-                || "notification".equals(subtype) && WAIVER_NOTICE.equals(event.get("key"));
+    /** A system line in words, or {@code null} when it tells the person nothing. */
+    private static @Nullable String system(Map<?, ?> event) {
+        final String trouble = trouble(event);
+        if (trouble != null) {
+            return trouble;
+        }
+        return switch (String.valueOf(event.get("subtype"))) {
+            case "task_started" ->
+                    Boolean.TRUE.equals(event.get("is_backgrounded"))
+                            ? words(event, "description", "[background] ", " started")
+                            : null;
+            // Measured on 2.1.311: a job in the background writes its output to a file, a call in
+            // the foreground, which shows as its own tool call, names none.
+            case "task_notification" ->
+                    event.get("output_file") instanceof String file && !file.isBlank()
+                            ? words(event, "summary", "[background] ", "")
+                            : null;
+            case "vcs_state_changed" ->
+                    event.get("kind") instanceof String kind && !kind.isBlank()
+                            ? "[git] "
+                                    + kind
+                                    + (event.get("branch") instanceof String branch
+                                                    && !branch.isBlank()
+                                            ? " on " + branch
+                                            : "")
+                            : null;
+            case "notification" ->
+                    WAIVER_NOTICE.equals(event.get("key"))
+                            ? null
+                            : words(event, "text", "[notice] ", "");
+            default -> null;
+        };
+    }
+
+    /** A field's text between a prefix and a suffix, or {@code null} when it holds none. */
+    private static @Nullable String words(
+            Map<?, ?> event, String key, String prefix, String suffix) {
+        return event.get(key) instanceof String text && !text.isBlank()
+                ? prefix + cut(text.strip()) + suffix
+                : null;
+    }
+
+    /**
+     * An event that reports an error or a warning, said as such with its message, or {@code null}
+     * when it reports neither: marked {@code is_error}, of an error subtype, carrying an {@code
+     * error}, or of the level error or warning.
+     */
+    private static @Nullable String trouble(Map<?, ?> event) {
+        final Object level = event.get("level");
+        final boolean warning = "warning".equals(level);
+        final boolean error =
+                Boolean.TRUE.equals(event.get("is_error"))
+                        || String.valueOf(event.get("subtype")).startsWith("error")
+                        || errorText(event) != null
+                        || event.get("error") instanceof Map<?, ?>
+                        || "error".equals(level);
+        if (!error && !warning) {
+            return null;
+        }
+        return (error ? "[error] " : "[warning] ") + cut(troubleText(event));
+    }
+
+    /** What an error says: its own text, its message, the event's message, or what the event is. */
+    private static String troubleText(Map<?, ?> event) {
+        final String text = errorText(event);
+        if (text != null) {
+            return text;
+        }
+        if (event.get("error") instanceof Map<?, ?> error
+                && error.get("message") instanceof String message
+                && !message.isBlank()) {
+            return message.strip();
+        }
+        if (event.get("message") instanceof String message && !message.isBlank()) {
+            return message.strip();
+        }
+        return event.get("subtype") instanceof String subtype
+                ? subtype
+                : String.valueOf(event.get("type"));
+    }
+
+    private static @Nullable String errorText(Map<?, ?> event) {
+        return event.get("error") instanceof String text && !text.isBlank() ? text.strip() : null;
     }
 
     private String text(Map<?, ?> event, String prefix, String line) {
