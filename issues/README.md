@@ -6,11 +6,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Idea
 
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc63"></a>[CC63](CC63-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Claude Code's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off |
-| <a id="cc74"></a>[CC74](CC74-The-Sign-In-Facts-Smaller-Findings.md) | - | - | the smaller gaps left in how the adapter finds and describes a local Claude Code sign-in for carrying to a host, each fixed or measured |
-| <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| <a id="cc75"></a>[CC75](CC75-A-Rotating-Sign-In-Is-Made-On-The-Host.md) | M | - | which of Claude Code's sign-ins rotate their refresh token, measured on the pinned CLI and declared per provider and kind, and how Claude Code signs in on a headless host instead of having a rotating sign-in carried there | 1 |
+| <a id="cc63"></a>[CC63](CC63-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Claude Code's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off | - |
+| <a id="cc74"></a>[CC74](CC74-The-Sign-In-Facts-Smaller-Findings.md) | - | - | the smaller gaps left in how the adapter finds and describes a local Claude Code sign-in for carrying to a host, each fixed or measured | - |
+| <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner | - |
 
 ## Accepted
 
