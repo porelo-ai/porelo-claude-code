@@ -23,7 +23,7 @@
 ## Why
 
 Part of ST369, *Findings of the second live test on a rented host* (High). In the operator's live test (porelo
-snapshot.553, porelo-agent-claude snapshot.186, which holds CC76) the running view of an unattended Claude Code task
+snapshot.553, porelo-agent-claude snapshot.186, which holds [CC76](README.md#cc76)) the running view of an unattended Claude Code task
 showed almost nothing of the work: its lines were only `[Bash]`, `> [tool_result]`, `[thinking]` and once `[git] push`,
 over and over. The operator asked whether it is normal to see nothing of the tools. It is not: a reader must see what
 each tool did, in short.
