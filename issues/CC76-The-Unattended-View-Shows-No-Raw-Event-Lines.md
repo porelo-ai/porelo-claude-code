@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC76",
   "title": "The Unattended View Shows No Raw Event Lines",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -35,6 +35,21 @@
 - A recorded unattended run of the pinned CLI, with a background command and a push, rendered through the formatter, holds no line that begins with `{`.
 - An error line of an unknown subtype still shows, and the test of it fails when the error rule is taken out.
 
-## To be checked
+## What was built
 
-- **The fixtures.** The fields of `task_notification`, `background_tasks_changed`, `vcs_state_changed` and `tool_progress`, read from an unattended run of 2.1.311 on a VM, values replaced; whether `vcs_state_changed` names a push worth wording, or only a change of the working tree.
+- `ClaudeStreamJsonFormatter` says a command in the background in words when it starts (`task_started` marked
+  `is_backgrounded`) and ends (`task_notification` with an output file, the one mark 2.1.311 gives a job in the
+  background that a call in the foreground lacks), a commit (`vcs_state_changed`) and a notice; every other event of its
+  own, unknown ones included, is left out.
+- An event that reports an error or a warning is always shown, as `[error]` or `[warning]` with its message on one line:
+  by its type or subtype (error, fail, fatal, exception, warn), its level in any case, a status or outcome of failure
+  (failed, error, killed, rejected, denied, aborted; a job's `patch` too), `is_error`, or any error it carries. A line
+  break, a Unicode separator or an invisible format mark in what an event says is folded away.
+- Fixture: an unattended run recorded with the pinned 2.1.311 in a task on a VM, a command in the background, a wait and
+  a commit, ids replaced, `src/test/resources/streams/unattended-background-run-2.1.311.jsonl`.
+- Tests: `ClaudeStreamJsonFormatterTest`, 9, each seen red first; the error rule, the status rule and the fold each
+  broken on purpose and seen red. Three older tests that held the pass-through changed with it.
+- The reading by another model found errors still dropped - a top-level `error` type, an `api_error` subtype, a level
+  in capitals, a hook's `error` outcome, a failed status - and a line break in a worded field that could forge a line;
+  all fixed. Noted, not fixed: a `rate_limit_event`'s status one level down is not read (its shape is not recorded
+  here); a cost of NaN would throw in the result line, and assistant text keeps its line breaks, both as before.

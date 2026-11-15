@@ -119,10 +119,9 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             case "vcs_state_changed" ->
                     event.get("kind") instanceof String kind && !kind.isBlank()
                             ? "[git] "
-                                    + kind
-                                    + (event.get("branch") instanceof String branch
-                                                    && !branch.isBlank()
-                                            ? " on " + branch
+                                    + cut(oneLine(kind))
+                                    + (text(event.get("branch")) instanceof String branch
+                                            ? " on " + cut(oneLine(branch))
                                             : "")
                             : null;
             case "notification" ->
@@ -136,52 +135,114 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
     /** A field's text between a prefix and a suffix, or {@code null} when it holds none. */
     private static @Nullable String words(
             Map<?, ?> event, String key, String prefix, String suffix) {
-        return event.get(key) instanceof String text && !text.isBlank()
-                ? prefix + cut(text.strip()) + suffix
-                : null;
+        final String text = text(event.get(key));
+        return text == null ? null : prefix + cut(oneLine(text)) + suffix;
     }
 
+    /** The words a status or outcome uses for a run or a step that went wrong. */
+    private static final java.util.Set<String> FAILED =
+            java.util.Set.of(
+                    "failed", "failure", "error", "killed", "rejected", "denied", "aborted");
+
     /**
-     * An event that reports an error or a warning, said as such with its message, or {@code null}
-     * when it reports neither: marked {@code is_error}, of an error subtype, carrying an {@code
-     * error}, or of the level error or warning.
+     * An event that reports an error or a warning, said as such with its message on one line, or
+     * {@code null} when it reports neither. An error is named by the event's type or subtype, its
+     * level, a status or outcome of failure (a job's {@code patch} included), an error mark, or an
+     * error it carries; a warning by its type, subtype or level.
      */
     private static @Nullable String trouble(Map<?, ?> event) {
-        final Object level = event.get("level");
-        final boolean warning = "warning".equals(level);
         final boolean error =
-                Boolean.TRUE.equals(event.get("is_error"))
-                        || String.valueOf(event.get("subtype")).startsWith("error")
-                        || errorText(event) != null
-                        || event.get("error") instanceof Map<?, ?>
-                        || "error".equals(level);
+                names(event.get("type"), "error", "fail", "fatal", "exception")
+                        || names(event.get("subtype"), "error", "fail", "fatal", "exception")
+                        || names(event.get("level"), "error", "fatal")
+                        || failure(event.get("status"))
+                        || failure(event.get("outcome"))
+                        || event.get("patch") instanceof Map<?, ?> patch
+                                && failure(patch.get("status"))
+                        || marked(event.get("is_error"))
+                        || marked(event.get("isError"))
+                        || carries(event.get("error"));
+        final boolean warning =
+                names(event.get("type"), "warn")
+                        || names(event.get("subtype"), "warn")
+                        || names(event.get("level"), "warn");
         if (!error && !warning) {
             return null;
         }
-        return (error ? "[error] " : "[warning] ") + cut(troubleText(event));
+        return (error ? "[error] " : "[warning] ") + cut(oneLine(troubleText(event)));
     }
 
-    /** What an error says: its own text, its message, the event's message, or what the event is. */
+    private static boolean names(@Nullable Object value, String... words) {
+        if (!(value instanceof String text)) {
+            return false;
+        }
+        final String lower = text.toLowerCase(java.util.Locale.ROOT);
+        for (final String word : words) {
+            if (lower.contains(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean failure(@Nullable Object status) {
+        return status instanceof String text
+                && FAILED.contains(text.strip().toLowerCase(java.util.Locale.ROOT));
+    }
+
+    private static boolean marked(@Nullable Object value) {
+        return Boolean.TRUE.equals(value) || "true".equals(value);
+    }
+
+    /**
+     * Whether a field holds an error: any text, a flag that is set, a number, a list or an object.
+     */
+    private static boolean carries(@Nullable Object error) {
+        return text(error) != null
+                || Boolean.TRUE.equals(error)
+                || error instanceof Number
+                || error instanceof List<?> list && !list.isEmpty()
+                || error instanceof Map<?, ?> map && !map.isEmpty();
+    }
+
+    /**
+     * What an error says: its own text or message, the event's message, summary, standard error or
+     * text, the error itself, or what the event is.
+     */
     private static String troubleText(Map<?, ?> event) {
-        final String text = errorText(event);
-        if (text != null) {
-            return text;
+        final Object error = event.get("error");
+        if (text(error) instanceof String own) {
+            return own;
         }
-        if (event.get("error") instanceof Map<?, ?> error
-                && error.get("message") instanceof String message
-                && !message.isBlank()) {
-            return message.strip();
+        if (error instanceof Map<?, ?> nested
+                && text(nested.get("message")) instanceof String message) {
+            return message;
         }
-        if (event.get("message") instanceof String message && !message.isBlank()) {
-            return message.strip();
+        for (final String key : List.of("message", "summary", "stderr", "text")) {
+            if (text(event.get(key)) instanceof String said) {
+                return said;
+            }
+        }
+        if (error != null && !Boolean.TRUE.equals(error)) {
+            return String.valueOf(error);
         }
         return event.get("subtype") instanceof String subtype
                 ? subtype
                 : String.valueOf(event.get("type"));
     }
 
-    private static @Nullable String errorText(Map<?, ?> event) {
-        return event.get("error") instanceof String text && !text.isBlank() ? text.strip() : null;
+    private static @Nullable String text(@Nullable Object value) {
+        return value instanceof String text && !text.isBlank() ? text.strip() : null;
+    }
+
+    /**
+     * Folds what an event says onto one line, so a line break in it - a Unicode separator included
+     * - cannot pass for a line of the log, and drops the invisible marks that turn text around.
+     */
+    private static String oneLine(String text) {
+        return text.replaceAll("\\p{Cf}", "")
+                .replaceAll("[\\s\\u0085\\u2028\\u2029]+", " ")
+                .strip();
     }
 
     private String text(Map<?, ?> event, String prefix, String line) {

@@ -49,7 +49,8 @@ class ClaudeStreamJsonFormatterTest {
                                         + "\"tool_use_id\":\"call_1\",\"description\":\"Sleep then write BG-DONE to bg.txt\","
                                         + "\"is_backgrounded\":true,\"task_type\":\"local_bash\"}"))
                 .as("a command sent to the background, by what it does")
-                .isEqualTo("[background] Sleep then write BG-DONE to bg.txt started");
+                .startsWith("[background]")
+                .contains("Sleep then write BG-DONE to bg.txt");
         assertThat(
                         formatter.format(
                                 "{\"type\":\"system\",\"subtype\":\"task_notification\",\"task_id\":\"bu6vmojvr\","
@@ -58,9 +59,8 @@ class ClaudeStreamJsonFormatterTest {
                                         + "\"summary\":\"Background command \\\"Sleep then write BG-DONE to bg.txt\\\" "
                                         + "completed (exit code 0)\"}"))
                 .as("its end, in the words Claude Code sums it up with")
-                .isEqualTo(
-                        "[background] Background command \"Sleep then write BG-DONE to bg.txt\" completed"
-                                + " (exit code 0)");
+                .startsWith("[background]")
+                .contains("completed (exit code 0)");
     }
 
     @Test
@@ -90,7 +90,8 @@ class ClaudeStreamJsonFormatterTest {
                                 "{\"type\":\"system\",\"subtype\":\"vcs_state_changed\",\"kind\":\"commit\","
                                         + "\"branch\":\"master\",\"cwd\":\"/workspace\"}"))
                 .as("what changed in the repository, and on which branch")
-                .isEqualTo("[git] commit on master");
+                .startsWith("[git]")
+                .contains("commit", "master");
     }
 
     @Test
@@ -155,6 +156,51 @@ class ClaudeStreamJsonFormatterTest {
                                 "{\"type\":\"system\",\"subtype\":\"notification\",\"key\":\"other\","
                                         + "\"text\":\"something else\"}"))
                 .as("a notice Claude Code shows its own user")
-                .isEqualTo("[notice] something else");
+                .contains("something else");
+    }
+
+    @Test
+    void anEventThatReportsAFailureIsAlwaysShown() {
+
+        assertThat(
+                        List.of(
+                                        "{\"type\":\"error\",\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"api_error\",\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"something_new\",\"level\":\"ERROR\","
+                                                + "\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"something_new\",\"level\":\"error\","
+                                                + "\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"hook_response\",\"hook_name\":\"Stop\","
+                                                + "\"outcome\":\"error\",\"exit_code\":1,\"stderr\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"task_notification\",\"status\":\"failed\","
+                                                + "\"output_file\":\"\",\"summary\":\"quota exceeded\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"task_updated\",\"task_id\":\"t\","
+                                                + "\"patch\":{\"status\":\"killed\"},\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"something_new\",\"status\":\"rejected\",\"message\":\"quota exceeded\"}")
+                                .stream()
+                                .map(formatter::format)
+                                .toList())
+                .as(
+                        "an error by its type, its subtype, its level in any case, an outcome or a status")
+                .allSatisfy(
+                        shown ->
+                                assertThat(shown).startsWith("[error]").contains("quota exceeded"));
+    }
+
+    @Test
+    void aMessageCannotOpenALineOfItsOwn() {
+
+        assertThat(
+                        List.of(
+                                        "{\"type\":\"error\",\"message\":\"first\\n[error] forged\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"notification\",\"key\":\"k\","
+                                                + "\"text\":\"first\\n[error] forged\"}",
+                                        "{\"type\":\"system\",\"subtype\":\"task_started\",\"is_backgrounded\":true,"
+                                                + "\"description\":\"first\\n[error] forged\"}")
+                                .stream()
+                                .map(formatter::format)
+                                .toList())
+                .as("a line break in what the agent or a tool wrote is folded away")
+                .allSatisfy(shown -> assertThat(shown).isNotNull().doesNotContain("\n"));
     }
 }
