@@ -45,8 +45,7 @@ the reasoning effort from what the chosen agent offers, not type them. Codex (`c
 
 - The definition declares the effort levels and the flag, in the contract's shape, and today's reader still reads the
   definition.
-- Open beyond this issue: that a task started on the pin with a picked effort runs with it (2.1.311 takes the flag),
-  and the model list, [CC80](README.md#cc80).
+- Open beyond this issue: a task started with a picked effort, once Porelo passes it, and the model list, [CC80](README.md#cc80).
 
 ## What was built
 
@@ -63,6 +62,5 @@ the reasoning effort from what the chosen agent offers, not type them. Codex (`c
   to the effort and the model list filed as [CC80](README.md#cc80). Test: `EffortDeclarationTest`, 2 tests, read from the definition itself since the API record does not hold the
   section yet. Both seen red first; a value taken out on purpose was seen red and restored identical. Unit suite 306
   run, 0 failures, 0 skipped.
-- To be checked, not by a unit test: that the pinned 2.1.311 takes `--effort` with these levels. The help read was
-  2.1.325's, and no 2.1.311 binary is on the build laptop. A CLI that does not know the flag would refuse every start
-  that picks an effort; one `claude --help` in a task of the pin answers it.
+- Checked on the pin: `claude --help` of 2.1.311, run offline in the task image on the test VM (2026-11-15), names
+  `--effort <level>` with low, medium, high, xhigh and max - the declared flag and values.
