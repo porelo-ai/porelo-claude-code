@@ -57,6 +57,14 @@ sandboxed:
 instructions:
     arguments: ["--append-system-prompt-file", "{file}"]
 
+# How Claude Code takes a reasoning effort, for a Start that names one; none named passes nothing,
+# and the CLI keeps its own default. 'claude --help' on 2.1.325 names --effort <level> with the
+# levels low, medium, high, xhigh and max. Read by a Porelo that knows the section, skipped by an
+# older one.
+effort:
+    arguments: ["--effort", "{effort}"]
+    values: [low, medium, high, xhigh, max]
+
 git_identity:
     name: Claude
     email: noreply@anthropic.com

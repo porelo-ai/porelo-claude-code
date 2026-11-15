@@ -35,12 +35,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 | <a id="cc77"></a>[CC77](CC77-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CC76](README.md#cc76) left open in the unattended view: a rate limit read one level down, a NaN cost, and assistant text on one line | - |
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc79"></a>[CC79](CC79-Start-Work-Offers-Claude-Code-s-Models-And-Efforts.md) | S | - | the adapter declares the models Claude Code takes - aliases and full ids with readable names - and the effort levels it accepts with how they are passed, so Start work offers them to pick instead of typing; Claude Code has no command that lists them |
-
 ## Review
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -52,6 +46,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc62"></a>[CC62](CC62-A-Finished-Run-Answers-Its-Last-Message.md) | S | - | a finished unattended Claude Code run answers the text of its last message, declared in session.waiting.last_message, so a reader's answer is not empty; the declaration adds no screen rule and so changes nothing in how Porelo wakes the agent | - |
 | <a id="cc66"></a>[CC66](CC66-The-Protocol-Refusal-Played-As-A-Person-Would.md) | S | - | a script plays story ST35 on the test VM as a person would: Claude Code's adapter installs beside a Porelo it speaks with and is refused beside one it does not, and `task start --now` is refused rather than accepted without effect; part of ST347 | - |
 | <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
+| <a id="cc79"></a>[CC79](CC79-Start-Work-Offers-Claude-Code-s-Models-And-Efforts.md) | S | - | the adapter declares the models Claude Code takes - aliases and full ids with readable names - and the effort levels it accepts with how they are passed, so Start work offers them to pick instead of typing; Claude Code has no command that lists them | - |
 | <a id="cc71"></a>[CC71](CC71-A-Leg-Installs-What-Its-Run-Built.md) | S | - | every acceptance leg of a run that publishes nothing - a dispatch, a tag - installs the packages that run built, so its result speaks for its own commit; only a push to main, which publishes its snapshot first, installs from the package repository | - |
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones | - |
 | <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | XS | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class | 0 |
