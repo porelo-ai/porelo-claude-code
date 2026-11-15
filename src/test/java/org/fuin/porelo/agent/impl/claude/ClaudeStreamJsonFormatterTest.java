@@ -334,8 +334,7 @@ class ClaudeStreamJsonFormatterTest {
                 .contains("image");
         assertThat(result("\"\"", false))
                 .as("an empty result says so rather than nothing")
-                .isNotNull()
-                .doesNotContain("tool_result");
+                .contains("no output");
         assertThat(result("\"" + "y".repeat(5000) + "\"", false))
                 .as("a long first line is cut")
                 .hasSizeLessThan(1000);
@@ -351,6 +350,18 @@ class ClaudeStreamJsonFormatterTest {
                 .as("a failed result without text")
                 .contains("failed");
         assertThat(result("\"\"", true)).as("a failed result that is empty").contains("failed");
+        assertThat(result("\"BG-DONE\\nfatal: not a git repository\\n\\nexit 128\"", true))
+                .as("a failure by its first three lines that are not blank, so its cause shows")
+                .contains("failed", "BG-DONE", "fatal: not a git repository", "exit 128")
+                .doesNotContain("\n");
+        assertThat(result("\"Exit code 1\\none\\ntwo\\nthree\"", true))
+                .as("a failure by no more than three lines")
+                .contains("Exit code 1", "two")
+                .doesNotContain("three");
+        assertThat(result("\"first\\nsecond\"", false))
+                .as("a result that did not fail keeps its first line")
+                .contains("first")
+                .doesNotContain("second");
         assertThat(result("\"all good\"", false))
                 .as("a result that did not fail")
                 .doesNotContain("failed");
@@ -392,6 +403,26 @@ class ClaudeStreamJsonFormatterTest {
         assertThat(result("[{\"type\":\"text\",\"text\":\"a\\u2029[error] forged\"}]", false))
                 .as("a result with a Unicode separator")
                 .doesNotContain("\u2029");
+    }
+
+    @Test
+    void aToolsNameOrBlockTypeCannotForgeAMark() {
+
+        assertThat(call("x] [error", "{\"command\":\"ls\"}"))
+                .as("a tool name holding brackets")
+                .doesNotContain("[error");
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"user\",\"message\":{\"content\":"
+                                        + "[{\"type\":\"x] [error\"}]}}"))
+                .as("a block type holding brackets")
+                .doesNotContain("[error");
+        assertThat(call("Bash", "{\"command\":\"a\\u001b[2Jb\\u202ec\"}"))
+                .as("an escape and a direction mark in a tool's input")
+                .doesNotContain("\u001b", "\u202e");
+        assertThat(result("\"a\\u001b[2Jb\\u202ec\"", true))
+                .as("an escape and a direction mark in a result")
+                .doesNotContain("\u001b", "\u202e");
     }
 
     private String call(String name, String input) {

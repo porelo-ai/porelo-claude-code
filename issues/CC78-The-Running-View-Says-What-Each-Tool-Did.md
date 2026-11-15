@@ -61,9 +61,10 @@ write `vcs_state_changed`, with `kind: push`.
   WebSearch by `query`, Task/Agent by `description`, TodoWrite by its number of items; any other tool by the first of
   `description`, `file_path`, `path`, `pattern`, `query`, `url`, `command`, `subject`, `name` that holds text, else
   by its name alone. A field that holds what a tool writes or asks at length (a content, a prompt) is never shown.
-- A `tool_result` block says `[failed]` first when `is_error` is set, then its first line that is not blank, cut,
-  and its number of lines when it has more than one (`(5 lines)`); its content is read as a string or as a list of
-  blocks with text. A result with no text says what it holds (`1 image`), or `no output`.
+- A `tool_result` block that did not fail says its first line that is not blank, cut, and its number of lines when
+  it has more than one (`(5 lines)`). One with `is_error` set says `[failed]` and its first three lines that are not
+  blank, joined with ` | `, folded and cut, since a cause rarely stands on the first line (Bash's begins
+  `Exit code N`). Its content is read as a string or as a list of blocks with text. A result with no text says what it holds (`1 image`), or `no output`.
 - Thinking is dropped, the choice the plan left open: a thinking or redacted-thinking block shows nothing, and a
   message of thinking alone shows no line, since the tool call it leads to says what was done. A message with no
   block at all still gets the `[unreadable]` marker.
@@ -77,3 +78,7 @@ write `vcs_state_changed`, with `kind: push`.
   instead.
 - The recorded run has no failed result and only Bash calls; the other tools and a failure are shown by single lines.
 - Open: the plan's level "seen once in a live task through the coordinator" is not done here.
+- The reading by another model found two faults, both fixed with a test seen red first and again under a deliberate
+  break: a failed result hid its cause behind its first line (now its first three lines), and a tool name or a block
+  type holding `]` could close its mark and open a forged one like `[error]` (brackets are now taken out of both).
+  The test of an empty result now checks that it says `no output`. Nothing of the reading is left open.

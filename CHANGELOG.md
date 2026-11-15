@@ -25,7 +25,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 
 ### Changed
 
-- An unattended task's log says each tool call with what it was called on - a command's first line, a file's path, a search's pattern, a todo list's size - and each result by whether it failed and its first line and length, never its whole output; thinking shows nothing.
+- An unattended task's log says each tool call with what it was called on - a command's first line, a file's path, a search's pattern, a todo list's size - and each result by its first line and length, or, when it failed, by `[failed]` and its first three lines so the cause shows, never its whole output; thinking shows nothing.
 - An unattended task's log shows what Claude Code says and does and no event as raw JSON: a command in the background is said when it starts and ends, a commit and a notice in words, its other events left out, and an event that reports an error or a warning always shown as such.
 - Central's snapshots (`central.sonatype.snapshots`) are asked only for `org.fuin.porelo`, the group listed in `.mvn/rrf/`, through the switch in the now committed `.mvn/maven.config`, on a forge too, where they are read beside its registry and the newest wins; the forge's own repository stays unfiltered. The daily shared rules check refuses a filter that would let another name out.
 - The daily shared rules check also holds every issue head to its schema and each index to its heads.

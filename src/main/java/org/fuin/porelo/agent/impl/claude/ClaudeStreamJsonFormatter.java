@@ -277,7 +277,7 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
                     }
                     // A block shape this formatter does not render, named by what it calls
                     // itself rather than by a guess: the operator sees that something was there.
-                    part = "[" + type + "]";
+                    part = "[" + label(type) + "]";
                 }
             }
             if (!out.isEmpty() && !Character.isWhitespace(out.charAt(out.length() - 1))) {
@@ -336,7 +336,7 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
         } else {
             said = keyInput(input, KEY_INPUT.getOrDefault(name, TELLING));
         }
-        final String head = "[" + cut(oneLine(name)) + "]";
+        final String head = "[" + label(name) + "]";
         return said == null ? head : head + " " + cut(oneLine(said));
     }
 
@@ -372,9 +372,21 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             }
         }
         if (text(text.toString()) instanceof String said) {
+            if (!failed.isEmpty()) {
+                // A failure's cause rarely stands on its first line: Bash's begins "Exit code N".
+                return failed
+                        + cut(
+                                oneLine(
+                                        String.join(
+                                                " | ",
+                                                said.lines()
+                                                        .filter(l -> !l.isBlank())
+                                                        .limit(FAILURE_LINES)
+                                                        .map(String::strip)
+                                                        .toList())));
+            }
             final long lines = said.lines().count();
-            return failed
-                    + cut(oneLine(firstLine(said)))
+            return cut(oneLine(firstLine(said)))
                     + (lines > 1 ? " (" + count(lines, "line") + ")" : "");
         }
         if (!other.isEmpty()) {
@@ -383,6 +395,17 @@ public class ClaudeStreamJsonFormatter implements LogFormatter {
             return failed + String.join(", ", held);
         }
         return failed + "no output";
+    }
+
+    /** How many lines that are not blank a failed result shows, so its cause is among them. */
+    private static final int FAILURE_LINES = 3;
+
+    /**
+     * A name between brackets, on one line, cut, and without brackets of its own, so it cannot
+     * close its mark and open another.
+     */
+    private static String label(String name) {
+        return cut(oneLine(name.replaceAll("[\\[\\]]", " ")));
     }
 
     /** The first line of a text that is not blank; the text itself when it has none. */
