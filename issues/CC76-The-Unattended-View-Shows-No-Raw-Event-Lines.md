@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC76",
   "title": "The Unattended View Shows No Raw Event Lines",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 1,
