@@ -35,7 +35,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cc72"></a>[CC72](CC72-The-Docs-Say-What-The-Code-Does.md) | S | - | every sentence of the user-facing documentation checked against the code on main, and each one the code does not bear out fixed | - |
 | <a id="cc56"></a>[CC56](CC56-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | M | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
 | <a id="cc57"></a>[CC57](CC57-Measure-What-The-Agents-Streams-Tell-About-Tool-Calls.md) | S | - | a measurement, no product code: each agent Porelo runs, given the same small order unattended in a task, and what its raw stream says of each tool call - name, input, start, end, own time, background jobs, sub-agents - and how the wall time splits | - |
 | <a id="cc59"></a>[CC59](CC59-Measure-What-The-Agents-Streams-Tell-About-Sub-Agents.md) | S | - | a measurement, no product code: each agent Porelo runs that has sub-agents of its own, ordered unattended in a task to start one sub-agent by a given name, and what its raw stream says of that sub-agent - its start, its end, its name, and which calls are its own | - |
@@ -61,6 +60,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Title | What was built |
 |---|---|---|
+| <a id="cc72"></a>[CC72](README.md#cc72) | The Docs Say What The Code Does | The user-facing documentation was read sentence by sentence against the code on main: of about 155 claims, the 12 it did not bear out were fixed in the README, `doc/index.md`, `build.md` and the changelog, and none was a fault of the code. |
 | <a id="cc44"></a>[CC44](README.md#cc44) | Subagents Only As Many As The Task Allows | Claude Code in a task starts no subagent unless the task allows it: its settings deny `Agent`, `Workflow` and `Skill` at 0, and above 0 deny `Workflow` and `Skill` and cap the concurrent subagents at the task's number with a depth of 1. |
 | <a id="cc60"></a>[CC60](README.md#cc60) | The Build Takes Its Downloads From A Cache | A Build, an update run and the workflow check take the runner's packages from the Actions cache, each `.deb` checked against the hash its signed apt metadata names before it is installed, and the update job keeps the pinned Claude Code binary under its digest, checked again on every hit; an old pin's entries go by themselves. |
 | <a id="cc53"></a>[CC53](README.md#cc53) | Third-Party Notices Ship With The Package | `porelo-agent-claude` carries the license texts of every component compiled into its executable from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in one `THIRD-PARTY-NOTICES` file, named in `copyright` and marked `%license` in the RPM, and `PackageNoticesCheck` refuses a package without it. |
