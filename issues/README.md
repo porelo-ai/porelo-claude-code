@@ -12,6 +12,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc63"></a>[CC63](CC63-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Claude Code's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off | - |
 | <a id="cc74"></a>[CC74](CC74-The-Sign-In-Facts-Smaller-Findings.md) | - | - | the smaller gaps left in how the adapter finds and describes a local Claude Code sign-in for carrying to a host, each fixed or measured | - |
 | <a id="cc48"></a>[CC48](CC48-The-Acceptance-Legs-Run-Side-By-Side.md) | - | - | a Build's acceptance legs run at the same time, two machines held at once instead of one, the Build done about one leg sooner | - |
+| <a id="cc81"></a>[CC81](CC81-Audit-the-documentation-against-the-code-and-fix-every-mismatch.md) | - | - | Audit the documentation against the code and fix every mismatch | - |
 
 ## Accepted
 
