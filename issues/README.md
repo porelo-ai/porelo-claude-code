@@ -19,17 +19,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cc64"></a>[CC64](CC64-A-WSL-Host-Keeps-The-Waived-rm-Check.md) | M | - | on a WSL host the task's Claude Code honours CLAUDE_CODE_EVEN_MORE_DANGEROUSLY_SKIP_PERMISSIONS again: a root-owned reg.exe in the task image answers Claude Code's two managed-settings queries as Windows does where no policy is set and refuses all else |
 
-## Under estimation
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc81"></a>[CC81](CC81-Audit-the-documentation-against-the-code-and-fix-every-mismatch.md) | M | - | Audit the documentation against the code and fix every mismatch |
-
 ## Estimated
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | - | package-level signatures on the published RPMs |
+| <a id="cc81"></a>[CC81](CC81-Audit-the-documentation-against-the-code-and-fix-every-mismatch.md) | M | - | Audit the documentation against the code and fix every mismatch |
 
 ## Backlog
 
