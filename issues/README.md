@@ -24,7 +24,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cc23"></a>[CC23](CC23-Sign-The-RPMs-With-Porelos.md) | S | - | package-level signatures on the published RPMs |
-| <a id="cc81"></a>[CC81](CC81-Audit-the-documentation-against-the-code-and-fix-every-mismatch.md) | M | - | Audit the documentation against the code and fix every mismatch |
 
 ## Backlog
 
