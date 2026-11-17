@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC81",
   "title": "Audit the documentation against the code and fix every mismatch",
-  "state": "Idea",
+  "state": "In analysis",
   "size": "-",
   "priority": "Medium",
   "rank": 9,
