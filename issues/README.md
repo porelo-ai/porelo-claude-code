@@ -29,6 +29,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
+| <a id="cc83"></a>[CC83](CC83-The-Maven-Cache-Follows-What-The-Build-Resolves.md) | S | - | the Build's Maven cache is saved again when the versions it resolves move, so a Build after a cache hit fetches nothing from Maven Central | - |
 | <a id="cc81"></a>[CC81](CC81-No-Graphics-Query-In-An-Attached-Title.md) | S | - | a task's Claude Code attached from a terminal in tmux sends no kitty graphics query that tmux shows as the window's title | - |
 | <a id="cc22"></a>[CC22](CC22-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | - |
 | <a id="cc68"></a>[CC68](CC68-The-Vault-Scenarios-Leave-Once-Porelo-Holds-Them.md) | XS | - | credential.feature's three scenarios that test only Porelo's vault leave the legs once Porelo's own acceptance suite proves each | - |
