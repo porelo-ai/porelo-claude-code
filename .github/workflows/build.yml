@@ -59,6 +59,7 @@ jobs:
                   esac
 
             - name: The pinned GraalVM
+              id: pinned-jdk
               env:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
@@ -284,6 +285,12 @@ jobs:
                   done
                   echo "::error::porelo-agent-claude never appeared in the index - uploaded but not indexed"
                   exit 1
+
+            # Even after a failure, so what the job fetched is not asked of Central again.
+            - if: always()
+              uses: ./.github/actions/maven-cache-save
+              with:
+                  key: ${{ steps.pinned-jdk.outputs.maven-cache-key }}
 
     # The last step, and the only one that installs what an operator installs.
     # A Build on main whose tree a run of this repository already proved within a day - both legs of a Build,
