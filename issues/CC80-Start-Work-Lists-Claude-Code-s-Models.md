@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CC80",
   "title": "Start Work Lists Claude Code's Models",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "S",
   "priority": "High",
   "rank": 2,
