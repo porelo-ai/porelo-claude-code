@@ -36,12 +36,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc40"></a>[CC40](CC40-The-Acceptance-Legs-Run-On-The-Host-s-Forge.md) | S | [CC38](README.md#cc38) | the acceptance legs on the host's pool again, once it lends a forge job a machine by kind | 0 |
 | <a id="cc77"></a>[CC77](CC77-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CC76](README.md#cc76) left open in the unattended view: a rate limit read one level down, a NaN cost, and assistant text on one line | - |
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cc80"></a>[CC80](CC80-Start-Work-Lists-Claude-Code-s-Models.md) | S | - | where a task's provider is Claude Code's own sign-in and no list can be read from the provider, the definition declares the models Claude Code takes - its aliases and the pin's full ids with readable names - in the contract's models section, so Start work offers them; waits on Porelo's own model list for an agent, since a sign-in gets no list from the provider; kept from [CC79](README.md#cc79) |
-
 ## Review
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -55,6 +49,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cc70"></a>[CC70](CC70-Claude-Code-Is-Installed-Root-Owned.md) | M | - | the claude binary a task starts, and the link that names it, are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Claude Code next time; its version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
 | <a id="cc78"></a>[CC78](CC78-The-Running-View-Says-What-Each-Tool-Did.md) | S | - | the running view of an unattended Claude Code task says each tool call with its key input and each result by whether it failed and its first line or its size, and thinking as one marker at most, instead of only the tool's name | - |
 | <a id="cc79"></a>[CC79](CC79-Start-Work-Offers-Claude-Code-s-Efforts.md) | S | - | the definition declares the reasoning efforts Claude Code takes and the flag that passes one, so Start work offers them to pick instead of typing and an absent effort passes nothing; its own model list went to [CC80](README.md#cc80) | - |
+| <a id="cc80"></a>[CC80](CC80-Start-Work-Lists-Claude-Code-s-Models.md) | S | - | where Anthropic gives a sign-in no model list, the definition's `models` names the aliases `--model` takes - sonnet, fable, opus, haiku - with the names Claude Code's `/model` shows, for Anthropic alone, so Start work offers them; kept from [CC79](README.md#cc79) | - |
 | <a id="cc71"></a>[CC71](CC71-A-Leg-Installs-What-Its-Run-Built.md) | S | - | every acceptance leg of a run that publishes nothing - a dispatch, a tag - installs the packages that run built, so its result speaks for its own commit; only a push to main, which publishes its snapshot first, installs from the package repository | - |
 | <a id="cc45"></a>[CC45](CC45-Mutation-Testing-With-PIT.md) | S | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones | - |
 | <a id="cc49"></a>[CC49](CC49-The-Clean-Up-Says-When-Nothing-Was-Rented.md) | XS | - | a leg that failed before resolving the machine tooling rented nothing, and its clean-up says so instead of failing on a missing class | 0 |

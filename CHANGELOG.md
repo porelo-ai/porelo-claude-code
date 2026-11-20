@@ -13,6 +13,7 @@ appears as an entry rather than a heading. One sentence per change - `git log` h
 ### Added
 
 - The definition says how Claude Code takes a reasoning effort - `--effort` with low, medium, high, xhigh or max - for a Porelo that offers it at a start; an older Porelo skips it.
+- The definition lists the models Claude Code takes - Sonnet, Fable, Opus and Haiku by their aliases, named as Claude Code's `/model` names them - for a Porelo to offer at Start work where the provider lists none for a sign-in; an older Porelo skips it.
 - A task's commits end with `Assisted-by: Claude Code, <model>`, the model that served the session, written by a git hook, while Claude Code's own `Co-Authored-By:` and pull request note are off; a commit whose model cannot be told is refused.
 - A task's agent starts no subagent unless the task allows it, and then no more at once than it says, with none of their own. No task has skills or workflows, which start agents past that limit.
 - The adapter says what it finds of Claude Code on the host: how it is signed in and to which provider, each finding with its path where it has one (a sign-in in the macOS keychain has none) and never a value.

@@ -65,6 +65,18 @@ effort:
     arguments: ["--effort", "{effort}"]
     values: [low, medium, high, xhigh, max]
 
+# The models Start work offers where the provider lists none for a sign-in: Anthropic gave a subscription
+# token in CLAUDE_CODE_OAUTH_TOKEN no list, measured in a task on 2.1.311. The ids are the aliases
+# --model takes; names and order are those of /model on 2.1.311, so a new pin reads /model again.
+# Keyed by provider: an alias names a model only at Anthropic, so no other provider is offered it.
+# Read by a Porelo that knows the section, skipped by an older one; a list from the provider wins.
+models:
+    anthropic:
+        - {id: sonnet, name: "Sonnet 5.5"}
+        - {id: fable, name: "Fable 5.1"}
+        - {id: opus, name: "Opus 5.5"}
+        - {id: haiku, name: "Haiku 5.5"}
+
 git_identity:
     name: Claude
     email: noreply@anthropic.com

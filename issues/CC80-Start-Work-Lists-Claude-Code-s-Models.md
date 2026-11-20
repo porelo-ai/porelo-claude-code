@@ -5,12 +5,12 @@
   "$schema": "issue-1.json",
   "id": "CC80",
   "title": "Start Work Lists Claude Code's Models",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 2,
   "blockedBy": [],
-  "covers": "where a task's provider is Claude Code's own sign-in and no list can be read from the provider, the definition declares the models Claude Code takes - its aliases and the pin's full ids with readable names - in the contract's models section, so Start work offers them; waits on Porelo's own model list for an agent, since a sign-in gets no list from the provider; kept from [CC79](README.md#cc79)"
+  "covers": "where Anthropic gives a sign-in no model list, the definition's `models` names the aliases `--model` takes - sonnet, fable, opus, haiku - with the names Claude Code's `/model` shows, for Anthropic alone, so Start work offers them; kept from [CC79](README.md#cc79)"
 }
 ```
 
@@ -30,20 +30,16 @@ lists its models: `--model` takes an alias (`fable`, `opus`, `sonnet`, `haiku`) 
 
 ## Plan
 
-- **The shape stands.** Porelo's `Models` (porelo 6cdb7a158) asks the provider: `providers/anthropic.yaml`
-  declares `GET /v1/models`, with `anthropic-beta: oauth-2025-04-20` beside a sign-in's token. Claude Code's
-  provider is `anthropic` and its `--model` takes a full id, so the ids that list gives pass as they are. With an
-  API key this already serves the list. An agent's own list (`from: agent`) is reserved in the contract, not built.
-- **What the operator saw:** Start work with Claude Code on a subscription sign-in (in the task, the token arrived as
-  `CLAUDE_CODE_OAUTH_TOKEN` beside `ANTHROPIC_BASE_URL`, with no `ANTHROPIC_API_KEY`) shows the model as free
-  text, with "The agent's own default: nothing names a model for anthropic", and no list. The provider gave a sign-in
-  no list there, so this issue waits on Porelo's own model list for an agent: a definition's `models`
-  section with `from: agent`, a static list of id and name, offered where the provider gives none. On porelo
-  05c58a30e a listing comes only `from: provider` or `none`, and the agent API's `ModelListing` is a provider-file
-  section alone.
-- **Once that shape stands,** the definition declares the aliases `fable`, `opus`, `sonnet` and `haiku` with
-  readable names, in the shape Porelo publishes, and a unit test reads them back from the packaged definition.
-- **Level:** a unit test of the definition, then the operator's look at Start work.
+- **Measured:** Start work with Claude Code on a subscription sign-in (in the task the token arrived as
+  `CLAUDE_CODE_OAUTH_TOKEN` beside `ANTHROPIC_BASE_URL`, with no `ANTHROPIC_API_KEY`) showed the model as free text
+  and no list: Anthropic's `GET /v1/models` serves an API key, not that sign-in.
+- **The shape Porelo reads:** a definition's `models`, keyed by provider, each a list of `id` and `name`; Porelo
+  answers it with `from: agent` where the provider gives no list, the name as the label and no efforts, and a list
+  from the provider wins. Keyed by provider, since an alias names a model only at Anthropic.
+- **Built:** `claude.yaml` declares `models.anthropic` with `sonnet`, `fable`, `opus` and `haiku`, named and ordered
+  as `/model` shows them on the pinned 2.1.311; a new pin reads `/model` again. `ModelsReadByPoreloTest` reads it
+  through the agent API's own reader, which refuses the earlier flat list ("models must be a mapping").
+- **Level:** unit tests against the agent API that carries the section, then the operator's look at Start work.
 
 ## Acceptance
 
