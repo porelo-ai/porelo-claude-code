@@ -34,7 +34,8 @@ lists its models: `--model` takes an alias (`fable`, `opus`, `sonnet`, `haiku`) 
   declares `GET /v1/models`, with `anthropic-beta: oauth-2025-04-20` beside a sign-in's token. Claude Code's
   provider is `anthropic` and its `--model` takes a full id, so the ids that list gives pass as they are. With an
   API key this already serves the list. An agent's own list (`from: agent`) is reserved in the contract, not built.
-- **What the operator saw:** Start work with Claude Code on a machine signed in to Claude shows the model as free
+- **What the operator saw:** Start work with Claude Code on a subscription sign-in (in the task, the token arrived as
+  `CLAUDE_CODE_OAUTH_TOKEN` beside `ANTHROPIC_BASE_URL`, with no `ANTHROPIC_API_KEY`) shows the model as free
   text, with "The agent's own default: nothing names a model for anthropic", and no list. The provider gave a sign-in
   no list there, so this issue waits on Porelo's own model list for an agent: a definition's `models`
   section with `from: agent`, a static list of id and name, offered where the provider gives none. On porelo
