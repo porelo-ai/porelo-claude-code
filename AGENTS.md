@@ -85,8 +85,9 @@ like the shared block, and so is the skill `adapter-building`; what is one adapt
 
 ## Work in this repository
 
-- **Issues here are `CCnn-Short-Title.md`, with the prefix `CC`.** `porelo-release check-citations`,
-  run by the `shared-rules` workflow, refuses a citation that breaks once an issue is deleted.
+- **Issues here are in the repository's GitHub Issues**, each named by its reference there
+  (`porelo-ai/porelo-claude-code#<number>`); one carried over from the Markdown files keeps its old id (`CC`) as a
+  fixed alias.
 - **The tests tagged `documents` run alone with `./mvnw -o -B -s settings.xml -Pdocuments test`**, and
   `DocumentTestsTaggedTest` fails when a test reads a document without the tag.
 - **Once the vendor publishes a signature, a provenance attestation or a digest through a channel

@@ -211,43 +211,6 @@ class WorkflowRulesTest {
     }
 
     @Test
-    void theDailyCheckHoldsTheIssueHeadsAndFailsWithThem(@TempDir final Path dir) throws Exception {
-
-        // An issue head or index that breaks the rules would otherwise turn nothing red until the
-        // next push, and a [skip ci] push of issues alone starts no Build.
-        final List<String> steps =
-                WorkflowSteps.named("shared-rules.yml", "Every issue head holds to its schema");
-        assertThat(steps).as("the issue heads' step in shared-rules.yml").hasSize(1);
-        final Path bin = dir.resolve("bin");
-        WorkflowSteps.stub(
-                bin, "java", "echo \"$*\" >> \"$HOME/java-calls\"\nexit \"${CHECK_EXIT:-0}\"\n");
-        Files.createDirectories(dir.resolve("target"));
-        Files.writeString(dir.resolve("target/cp.txt"), "tooling.jar");
-
-        final WorkflowSteps.Run held =
-                WorkflowSteps.run(steps.get(0), dir, Map.of("PATH", WorkflowSteps.pathWith(bin)));
-        assertThat(held.exit()).as("exit of the step:%n%s", held.output()).isZero();
-        assertThat(Files.readAllLines(dir.resolve("java-calls")))
-                .as("the release tooling, called by the step on the resolved classpath")
-                .containsExactly(
-                        "-cp tooling.jar org.fuin.porelo.release.Main issues check issues");
-        assertThat(stepBlock("shared-rules.yml", "Every issue head holds to its schema"))
-                .as("the step runs on every trigger: a daily run, a pull request, a dispatch")
-                .noneMatch(
-                        line ->
-                                line.trim().startsWith("if:")
-                                        || line.trim().startsWith("continue-on-error:"));
-
-        // The other half: a head the tooling refuses fails the step, and so the day's run.
-        final WorkflowSteps.Run broken =
-                WorkflowSteps.run(
-                        steps.get(0),
-                        dir,
-                        Map.of("PATH", WorkflowSteps.pathWith(bin), "CHECK_EXIT", "1"));
-        assertThat(broken.exit()).as("exit of the step:%n%s", broken.output()).isNotZero();
-    }
-
-    @Test
     void theAcceptanceLegsRunOnEveryForge() throws IOException {
 
         // On the host's forge a leg takes a machine of its kind from the host's pool, told where by

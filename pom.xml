@@ -222,8 +222,8 @@
 
     <profiles>
 
-        <!-- Runs only the tests that read the repository's documents, for a change to documents
-             or issues. DocumentTestsTaggedTest keeps every such test tagged. -->
+        <!-- Runs only the tests that read the repository's documents, for a change to documents.
+             DocumentTestsTaggedTest keeps every such test tagged. -->
         <profile>
             <id>documents</id>
             <properties>

@@ -9,10 +9,10 @@ on:
         branches: [main]
         # A release: v<version>, built and published to the 'releases' channel. Paths are not filtered for a tag.
         tags: ['v*']
-        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**', 'porelo.yml']
+        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', '.github/**', 'porelo.yml']
     pull_request:
         branches: ['**']
-        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**', 'porelo.yml']
+        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', '.github/**', 'porelo.yml']
     workflow_dispatch:
 
 # Read by every Maven call, the pinned-jdk action's too. On a tag -P!standard,!forge,!upstream: no snapshot
